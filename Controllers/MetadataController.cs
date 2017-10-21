@@ -8,6 +8,8 @@ using Aetna.DevOps.Dashboard.UIWeb.Models;
 using Swashbuckle.Swagger.Annotations;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Collections;
+using Newtonsoft.Json;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
@@ -37,6 +39,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             projects = 1,
             lifecycles = 2,
             environments = 3,
+            builds = 4,
         }
 
         private static string GetResponse(APIdatum apid)
@@ -46,20 +49,23 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             switch (apid)
             {
                 case APIdatum.projectGroups:
-                    reqString = "projectGroups";
+                    reqString = "projectGroups?";
                     break;
                 case APIdatum.projects:
-                    reqString = "projects";
+                    reqString = "projects?";
                     break;
                 case APIdatum.lifecycles:
-                    reqString = "lifecycles";
+                    reqString = "lifecycles?";
                     break;
                 case APIdatum.environments:
-                    reqString = "environments";
+                    reqString = "environments?";
+                    break;
+                case APIdatum.builds:
+                    reqString = "events?take=1000&";
                     break;
                 default: break;
             }
-            request = WebRequest.Create(API_URL + reqString + "?apikey=" + API_KEY);
+            request = WebRequest.Create(API_URL + reqString + "apikey=" + API_KEY);
             request.Credentials = CredentialCache.DefaultCredentials;
             WebResponse response = request.GetResponse();
             Stream dataStream = response.GetResponseStream();
@@ -82,6 +88,23 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return int1;
             }
             return "API error";
+        }
+
+        private string graphDeployments(string jsonTxt)
+        {
+            ArrayList deploysStarted = new ArrayList();
+            dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+            foreach(dynamic o in jsonDeser.Items)
+            {
+                //deploysStarted.Add(new String[] { o.Message, o.Occurred });
+                if (o.Category== "DeploymentStarted" || o.Category=="DeploymentQueued" || o.Category== "DeploymentSucceeded") { deploysStarted.Add(new String[] { o.Message, o.Occurred }); }
+            }
+            string retVal = String.Empty;
+            foreach(String[] strArr in deploysStarted)
+            {
+                retVal += strArr[0].ToString() + "," + strArr[1].ToString() + Environment.NewLine;
+            }
+            return retVal;
         }
         #endregion
 
@@ -155,6 +178,25 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 return Ok(getFirstInt(GetResponse(APIdatum.environments)));
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+
+        /// <summary>
+        /// Pulls information about how many builds there are over the past 24 hours
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/builds")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetBuilds()
+        {
+            try
+            {
+                return Ok(graphDeployments(GetResponse(APIdatum.builds)));
             }
             catch (Exception exception)
             {
