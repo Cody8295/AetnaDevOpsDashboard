@@ -59,7 +59,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     break;
                 default: break;
             }
-            request = WebRequest.Create(API_URL + reqString + API_KEY);
+            request = WebRequest.Create(API_URL + reqString + "?apikey=" + API_KEY);
             request.Credentials = CredentialCache.DefaultCredentials;
             WebResponse response = request.GetResponse();
             Stream dataStream = response.GetResponseStream();
