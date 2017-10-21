@@ -28,6 +28,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public UserDetailHelper UserHelper { get; private set; }
 
         #region "API Setup"
+        const string API_URL = "http://ec2-18-220-206-192.us-east-2.compute.amazonaws.com:81/api/";
+        const String API_KEY = "API-A5I5VUHAOV0VJJN6LQ6MXCPSMS";
+
         private enum APIdatum
         {
             projectGroups = 0,
@@ -43,7 +46,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             switch (apid)
             {
                 case APIdatum.projectGroups:
-                    //request = WebRequest.Create("http://ec2-18-220-206-192.us-east-2.compute.amazonaws.com:81/api/projectgroups?apikey=API-837MQRR6IWHPNTQ9H5FLZSQJ4Y");
                     reqString = "projectGroups";
                     break;
                 case APIdatum.projects:
@@ -57,18 +59,29 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     break;
                 default: break;
             }
-            request = WebRequest.Create("http://ec2-18-220-206-192.us-east-2.compute.amazonaws.com:81/api/"+ reqString +"?apikey=API-837MQRR6IWHPNTQ9H5FLZSQJ4Y");
-
+            request = WebRequest.Create(API_URL + reqString + API_KEY);
             request.Credentials = CredentialCache.DefaultCredentials;
             WebResponse response = request.GetResponse();
-            //Console.WriteLine(((HttpWebResponse)response).StatusDescription); 
             Stream dataStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(dataStream);
-            string responseFromServer = reader.ReadToEnd(); 
-            //Console.WriteLine(responseFromServer);
+            string serverResponse = reader.ReadToEnd(); 
             reader.Close();
             response.Close();
-            return responseFromServer;
+            return serverResponse;
+        }
+
+        private string getFirstInt(string haystack) // credits to txt2re.com
+        {
+            string re1 = ".*?"; // Non-greedy match on filler
+            string re2 = "(\\d+)";  // Integer Number 1
+            Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            Match m = r.Match(haystack);
+            if (m.Success)
+            {
+                String int1 = m.Groups[1].ToString();
+                return int1;
+            }
+            return "API error";
         }
         #endregion
 
@@ -84,16 +97,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                string re1 = ".*?"; // Non-greedy match on filler
-                string re2 = "(\\d+)";  // Integer Number 1
-                Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                Match m = r.Match(GetResponse(APIdatum.projectGroups));
-                if (m.Success)
-                {
-                    String int1 = m.Groups[1].ToString();
-                    return Ok(int1);
-                }
-                return InternalServerError();
+                return Ok(getFirstInt(GetResponse(APIdatum.projectGroups)));
             }
             catch (Exception exception)
             {
@@ -112,16 +116,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                string re1 = ".*?"; // Non-greedy match on filler
-                string re2 = "(\\d+)";  // Integer Number 1
-                Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                Match m = r.Match(GetResponse(APIdatum.lifecycles));
-                if (m.Success)
-                {
-                    String int1 = m.Groups[1].ToString();
-                    return Ok(int1);
-                }
-                return InternalServerError();
+                return Ok(getFirstInt(GetResponse(APIdatum.lifecycles)));
             }
             catch (Exception exception)
             {
@@ -140,16 +135,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                string re1 = ".*?"; // Non-greedy match on filler
-                string re2 = "(\\d+)";  // Integer Number 1
-                Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                Match m = r.Match(GetResponse(APIdatum.projects));
-                if (m.Success)
-                {
-                    String int1 = m.Groups[1].ToString();
-                    return Ok(int1);
-                }
-                return InternalServerError();
+                return Ok(getFirstInt(GetResponse(APIdatum.projects)));
             }
             catch (Exception exception)
             {
@@ -168,16 +154,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                string re1 = ".*?"; // Non-greedy match on filler
-                string re2 = "(\\d+)";  // Integer Number 1
-                Regex r = new Regex(re1 + re2, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                Match m = r.Match(GetResponse(APIdatum.environments));
-                if (m.Success)
-                {
-                    String int1 = m.Groups[1].ToString();
-                    return Ok(int1);
-                }
-                return InternalServerError();
+                return Ok(getFirstInt(GetResponse(APIdatum.environments)));
             }
             catch (Exception exception)
             {
