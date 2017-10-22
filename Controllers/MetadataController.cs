@@ -94,15 +94,38 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             ArrayList deploysStarted = new ArrayList();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+
+            DateTime yesterday = DateTime.Now.AddDays(-1); // get yesterday
+            string date = yesterday.ToString("yyyy-MM-ddTHH");
+
             foreach(dynamic o in jsonDeser.Items)
             {
                 //deploysStarted.Add(new String[] { o.Message, o.Occurred });
-                if (o.Category== "DeploymentStarted" || o.Category=="DeploymentQueued" || o.Category== "DeploymentSucceeded") { deploysStarted.Add(new String[] { o.Message, o.Occurred }); }
+                if (o.Category== "DeploymentStarted" || o.Category=="DeploymentFailed" || o.Category== "DeploymentSucceeded")
+                {
+                    // API date format is yyyy-MM-ddTHH:mm:ss
+                    string occurred = o.Occurred;
+                    string[] timeCheck = occurred.Split(':');
+                    
+                    if(date.CompareTo(timeCheck[0]) > 0)
+                    {
+                        string[] returnHour = timeCheck[0].Split(' '); // split between date and time
+                        int h = int.Parse(returnHour[1]);
+                        deploysStarted.Add(new String[] { o.Category, h.ToString() }); // select hour
+                    }
+                }
             }
             string retVal = String.Empty;
             foreach(String[] strArr in deploysStarted)
             {
-                retVal += strArr[0].ToString() + "," + strArr[1].ToString() + Environment.NewLine;
+                if (retVal == String.Empty)
+                {
+                    retVal += strArr[0] + ":" + strArr[1];
+                }
+                else
+                {
+                    retVal += "," + strArr[0] + ":" + strArr[1];
+                }
             }
             return retVal;
         }
