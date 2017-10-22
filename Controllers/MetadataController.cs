@@ -110,8 +110,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     if(date.CompareTo(timeCheck[0]) > 0)
                     {
                         string[] returnHour = timeCheck[0].Split(' '); // split between date and time
-                        int h = int.Parse(returnHour[1]);
-                        deploysStarted.Add(new String[] { o.Category, h.ToString() }); // select hour
+                        int h = int.Parse(returnHour[1]); // get rid of the extra zero before number < 10
+                        deploysStarted.Add(new String[] { o.Category, h.ToString() });
                     }
                 }
             }
