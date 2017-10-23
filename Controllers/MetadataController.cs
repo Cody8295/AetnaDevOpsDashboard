@@ -106,11 +106,19 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 if (o.Category == "DeploymentSucceeded") { deploysSucceeded.Add(deploy); }
                 if (o.Category == "DeploymentFailed") { deploysFailed.Add(deploy); }
             }
-            ArrayList allDeploys = new ArrayList();
-            //, deploysQueued.ToArray(), deploysStarted.ToArray(), deploysSucceeded.ToArray()});
+            string allDeploys = String.Empty;
+            string retVal = formatDeployTimes(deploysStarted) + "|" +
+                formatDeployTimes(deploysSucceeded) + "|" +
+                formatDeployTimes(deploysQueued) + "|" +
+                formatDeployTimes(deploysFailed);
+            return retVal;
+        }
+
+        private string formatDeployTimes(ArrayList deploys)
+        {
             string retVal = String.Empty;
             int[] c = new int[24]; // one for each hour
-            foreach(String[] strArr in deploysStarted)
+            foreach (String[] strArr in deploys)
             {
                 DateTime occ = Convert.ToDateTime(strArr[1]);
                 int t = int.Parse(occ.ToString("HH"));
@@ -128,7 +136,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             foreach (string a in times) { retVal += a; }
-            
+
             return retVal;
         }
         #endregion
