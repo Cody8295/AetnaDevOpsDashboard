@@ -124,7 +124,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 if (endTime + i + 1 <= 23)
                     times[i] = (endTime + i + 1).ToString() + ":00" + "," + c[(endTime + i + 1)].ToString() + ";";
                 else
-                    times[i] = (endTime + i - 24).ToString() + ":00" + "," + c[(endTime + i - 23)].ToString() + ";";
+                    times[i] = (endTime + i - 23).ToString() + ":00" + "," + c[(endTime + i - 23)].ToString() + ";";
             }
 
             foreach (string a in times) { retVal += a; }
