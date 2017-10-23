@@ -93,40 +93,42 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private string graphDeployments(string jsonTxt)
         {
             ArrayList deploysStarted = new ArrayList();
+            ArrayList deploysQueued = new ArrayList();
+            ArrayList deploysSucceeded = new ArrayList();
+            ArrayList deploysFailed = new ArrayList();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
-
-            DateTime yesterday = DateTime.Now.AddDays(-1); // get yesterday
-            string date = yesterday.ToString("yyyy-MM-ddTHH");
-
             foreach(dynamic o in jsonDeser.Items)
             {
                 //deploysStarted.Add(new String[] { o.Message, o.Occurred });
-                if (o.Category== "DeploymentStarted" || o.Category=="DeploymentFailed" || o.Category== "DeploymentSucceeded")
-                {
-                    // API date format is yyyy-MM-ddTHH:mm:ss
-                    string occurred = o.Occurred;
-                    string[] timeCheck = occurred.Split(':');
-                    
-                    if(date.CompareTo(timeCheck[0]) > 0)
-                    {
-                        string[] returnHour = timeCheck[0].Split(' '); // split between date and time
-                        int h = int.Parse(returnHour[1]); // get rid of the extra zero before number < 10
-                        deploysStarted.Add(new String[] { o.Category, h.ToString() });
-                    }
-                }
+                string[] deploy = new String[] { o.Message, o.Occurred };
+                if (o.Category == "DeploymentStarted") { deploysStarted.Add(deploy); }
+                if (o.Category == "DeploymentQueued") { deploysQueued.Add(deploy); }
+                if (o.Category == "DeploymentSucceeded") { deploysSucceeded.Add(deploy); }
+                if (o.Category == "DeploymentFailed") { deploysFailed.Add(deploy); }
             }
+            ArrayList allDeploys = new ArrayList();
+            //, deploysQueued.ToArray(), deploysStarted.ToArray(), deploysSucceeded.ToArray()});
             string retVal = String.Empty;
+            int[] c = new int[24]; // one for each hour
             foreach(String[] strArr in deploysStarted)
             {
-                if (retVal == String.Empty)
-                {
-                    retVal += strArr[0] + ":" + strArr[1];
-                }
-                else
-                {
-                    retVal += "," + strArr[0] + ":" + strArr[1];
-                }
+                DateTime occ = Convert.ToDateTime(strArr[1]);
+                int t = int.Parse(occ.ToString("HH"));
+                c[t] += (occ > DateTime.Now.AddHours(-24) && occ <= DateTime.Now ? 1 : 0);
+                //retVal += strArr[0].ToString() + "," + strArr[1].ToString() + Environment.NewLine;
             }
+            int endTime = int.Parse(DateTime.Now.ToString("HH"));
+            string[] times = new string[24];
+            for (int i = 0; i < 24; i++)
+            {
+                if (endTime + i + 1 <= 23)
+                    times[i] = (endTime + i + 1).ToString() + ":00" + "," + c[(endTime + i + 1)].ToString() + ";";
+                else
+                    times[i] = (endTime + i - 24).ToString() + ":00" + "," + c[(endTime + i - 23)].ToString() + ";";
+            }
+
+            foreach (string a in times) { retVal += a; }
+            
             return retVal;
         }
         #endregion
