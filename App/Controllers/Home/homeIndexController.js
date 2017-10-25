@@ -17,30 +17,61 @@
             $(".environments").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
         });
 
-        $http.get("/api/Octo/builds").then(function (response) {
+        $http.get("/api/Octo/deploys").then(function (response) {
+            var hr = new Date();
+            var startTime = hr.getHours();
+            var times = [];
+            var failed = []; failed.length = 24; failed.fill(0);
+            var succeeded = []; succeeded.length = 24; succeeded.fill(0);
+            var queued = []; queued.length = 24; queued.fill(0);
+            var started = []; started.length = 24; started.fill(0);
 
-            var buildGroups = response.data.split("|");
-            //var builds = response.split(";");
-
-            var startTime = buildGroups[0].split(";")[0];
-            
-            var started = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            var times = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            var failed = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            var queued = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            var succeeded = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-            for (var c = 0; c <= 3; c++) {
-                for (var i = 0; i < 24; i++) {
-                    var occ = buildGroups[c].split(";")[i].split(",");
-                    times[i] = occ[0]; //(occ[0]>12 ? 24-occ[0] : occ[0]) // 12 hour format
-                    if (c == 0) { started[i] = occ[1]; }
-                    if (c == 1) { succeeded[i] = occ[1]; }
-                    if (c == 2) { queued[i] = occ[1]; }
-                    if (c == 3) { failed[i] = occ[1]; }
+            var lastHour = 1;
+            for (var hs = startTime-24; hs < startTime; hs++)
+            {
+                var s = (hs < 0 ? 24 + hs : (hs == 0 ? 12 : hs));
+                if (lastHour == 11 || lastHour == 23) {
+                    if (lastHour == 11) { times.push("Noon"); }
+                    if (lastHour == 23) { times.push("Midnight"); }
+                    lastHour = s;
+                    continue;
                 }
+                times.push((s <= 11 ? s + "AM" : (s == 12 ? 12 : s % 12) + "PM"));
+                lastHour = s;
             }
             
+            response.data.forEach(function (d) {
+                var timeString = new Date(d.timeAndDate);
+                var hour = timeString.getHours();
+                hour = hour + (24 - startTime);
+                if (d.category === "DeploymentFailed") {
+                    failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
+                };
+                if (d.category === "DeploymentSucceeded") {
+                    succeeded[hour] = (succeeded[hour] !== undefined ? succeeded[hour] + 1 : 1)
+                };
+                if (d.category === "DeploymentQueued") {
+                    queued[hour] = (queued[hour] !== undefined ? queued[hour] + 1 : 1)
+                };
+                if (d.category === "DeploymentStarted") {
+                    started[hour] = (started[hour] !== undefined ? started[hour] + 1 : 1)
+                };
+            });
+
+            var failedCounts = $.map(failed, function (k, v) {
+                return v;
+            });
+
+            var startedCounts = $.map(started, function (k, v) {
+                return v;
+            });
+            var succeededCounts = $.map(succeeded, function (k, v) {
+                return v;
+            });
+            var queuedCounts = $.map(queued, function (k, v) {
+                return v;
+            });
+            console.log(queued);
             
             var ctx = document.getElementById("canvas");
             ctx.height = 300;
@@ -87,7 +118,14 @@
                     scales: {
                         yAxes: [{
                             ticks: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                stepSize: 1,
+                                autoSkip: false
                             }
                         }]
                     }
