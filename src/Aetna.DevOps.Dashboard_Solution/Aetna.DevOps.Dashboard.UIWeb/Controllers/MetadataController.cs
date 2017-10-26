@@ -13,6 +13,32 @@ using Newtonsoft.Json;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
+    public class Deploy
+    {
+        public DateTime TimeAndDate;
+        public string Message;
+        public System.Collections.Generic.List<string> RelatedDocs;
+        public string Category;
+        public Deploy(DateTime timeAndDate, string msg, System.Collections.Generic.List<string> related, string category)
+        {
+            TimeAndDate = timeAndDate;
+            Message = msg;
+            RelatedDocs = related;
+            Category = category;
+        }
+        public override string ToString()
+        {
+            return Message;
+        }
+    }
+
+    public class DeployList
+    {
+        public System.Collections.Generic.List<Deploy> deploys;
+        public DeployList() { deploys = new System.Collections.Generic.List<Deploy>(); }
+        public void add(Deploy d) { deploys.Add(d); }
+    }
+
     public class MetadataController : ApiController
     {
         public MetadataController() : this(new UserDetailHelper())
@@ -39,7 +65,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             projects = 1,
             lifecycles = 2,
             environments = 3,
-            builds = 4,
+            deploys = 4,
         }
 
         private static string GetResponse(APIdatum apid)
@@ -60,7 +86,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 case APIdatum.environments:
                     reqString = "environments?";
                     break;
-                case APIdatum.builds:
+                case APIdatum.deploys:
                     reqString = "events?take=1000&";
                     break;
                 default: break;
@@ -90,28 +116,24 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return "API error";
         }
 
-        private string graphDeployments(string jsonTxt)
+        private DeployList graphDeployments(string jsonTxt)
         {
-            ArrayList deploysStarted = new ArrayList();
-            ArrayList deploysQueued = new ArrayList();
-            ArrayList deploysSucceeded = new ArrayList();
-            ArrayList deploysFailed = new ArrayList();
+            DeployList dl = new DeployList();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach(dynamic o in jsonDeser.Items)
             {
-                //deploysStarted.Add(new String[] { o.Message, o.Occurred });
-                string[] deploy = new String[] { o.Message, o.Occurred };
-                if (o.Category == "DeploymentStarted") { deploysStarted.Add(deploy); }
-                if (o.Category == "DeploymentQueued") { deploysQueued.Add(deploy); }
-                if (o.Category == "DeploymentSucceeded") { deploysSucceeded.Add(deploy); }
-                if (o.Category == "DeploymentFailed") { deploysFailed.Add(deploy); }
+                if(DateTime.Now.AddDays(-1) > Convert.ToDateTime(o.Occurred)) { continue; } // ignore events that took place more than 1 day ago
+                Deploy d = new Deploy(Convert.ToDateTime(o.Occurred.ToString()), o.Message.ToString(),
+                    JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
+                    o.Category.ToString());
+                //Console.Write(d.ToString());
+                if (o.Category == "DeploymentStarted") { dl.add(d); }
+                if (o.Category == "DeploymentQueued") { dl.add(d); }
+                if (o.Category == "DeploymentSucceeded") { dl.add(d); }
+                if (o.Category == "DeploymentFailed") { dl.add(d); }
             }
-            string allDeploys = String.Empty;
-            string retVal = formatDeployTimes(deploysStarted) + "|" +
-                formatDeployTimes(deploysSucceeded) + "|" +
-                formatDeployTimes(deploysQueued) + "|" +
-                formatDeployTimes(deploysFailed);
-            return retVal;
+            return dl;
+            //return JsonConvert.SerializeObject(dl,Formatting.Indented);
         }
 
         private string formatDeployTimes(ArrayList deploys)
@@ -122,7 +144,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             {
                 DateTime occ = Convert.ToDateTime(strArr[1]);
                 int t = int.Parse(occ.ToString("HH"));
-                c[t] += (occ > DateTime.Now.AddHours(-24) && occ <= DateTime.Now ? 1 : 0);
+                c[t] += (occ > DateTime.Now.AddDays(-1) && occ <= DateTime.Now ? 1 : 0);
                 //retVal += strArr[0].ToString() + "," + strArr[1].ToString() + Environment.NewLine;
             }
             int endTime = int.Parse(DateTime.Now.ToString("HH"));
@@ -219,17 +241,20 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
 
         /// <summary>
-        /// Pulls information about how many builds there are over the past 24 hours
+        /// Pulls information about how many deploys there are over the past 24 hours and information about each one
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/builds")]
+        
+        [Route("api/Octo/deploys")]
         [ResponseType(typeof(int))]
         [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
-        public IHttpActionResult GetBuilds()
+        public IHttpActionResult GetDeploys()
         {
             try
             {
-                return Ok(graphDeployments(GetResponse(APIdatum.builds)));
+                DeployList dl = graphDeployments(GetResponse(APIdatum.deploys));
+                //if (dl.deploys.Count == 0) { return Ok(""); }
+                return Ok<System.Collections.Generic.List<Deploy>>(dl.deploys);
             }
             catch (Exception exception)
             {
