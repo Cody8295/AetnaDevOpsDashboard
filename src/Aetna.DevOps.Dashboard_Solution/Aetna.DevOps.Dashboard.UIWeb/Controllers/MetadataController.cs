@@ -9,6 +9,7 @@ using Swashbuckle.Swagger.Annotations;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Collections;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
@@ -39,6 +40,35 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public void add(Deploy d) { deploys.Add(d); }
     }
 
+    public class Environment
+    {
+        public string name;
+        public string id;
+        public string numMachines;
+
+        public Environment(string name, string id, string numMachines)
+        {
+            this.name = name;
+            this.id = id;
+            this.numMachines = numMachines;
+        }
+
+
+        public override string ToString()
+        {
+            return name + ":" + numMachines;
+        }
+    }
+
+    public class EnvironmentList
+    {
+        public List<Environment> environments;
+
+        public EnvironmentList() { environments = new List<Environment>(); }
+
+        public void addEnvironment(Environment environment) { environments.Add(environment); }
+    }
+
     public class MetadataController : ApiController
     {
         public MetadataController() : this(new UserDetailHelper())
@@ -66,6 +96,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             lifecycles = 2,
             environments = 3,
             deploys = 4,
+            machines = 5,
         }
 
         private static string GetResponse(APIdatum apid)
@@ -89,6 +120,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 case APIdatum.deploys:
                     reqString = "events?take=1000&";
                     break;
+                case APIdatum.machines:
+                    reqString = "machines?take=100000&";
+                    break;
                 default: break;
             }
             request = WebRequest.Create(API_URL + reqString + "apikey=" + API_KEY);
@@ -101,6 +135,57 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             response.Close();
             return serverResponse;
         }
+
+        private Dictionary<string, string> getNumberEnviroments(string jsonTxt)
+        {
+            dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+            Dictionary<string, string> environments = new Dictionary<string, string>();
+
+            foreach (dynamic o in jsonDeser.Items)
+            {
+                if (environments.ContainsKey(o.Name.ToString()))
+                    environments[o.Name.ToString()]++;
+                else
+                    environments.Add(o.Name.ToString(), o.Id.ToString());
+
+            }
+            return environments;
+        }
+
+        private Dictionary<string, int> getNumberMachines(string jsonTxt)
+        {
+            dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+            Dictionary<string, int> machines = new Dictionary<string, int>();
+
+            foreach (dynamic o in jsonDeser.Items)
+            {
+                foreach (dynamic machine in o.EnvironmentIds)
+                {
+                    if (machines.ContainsKey(machine.ToString()))
+                        machines[machine.ToString()]++;
+                    else
+                        machines.Add(machine.ToString(), 1);
+                }
+            }
+
+            return machines;
+        }
+
+        private EnvironmentList makeEnvironmentList()
+        {
+            EnvironmentList el = new EnvironmentList();
+            Dictionary<string, int> numMachines = getNumberMachines(GetResponse(APIdatum.machines));
+            Dictionary<string, string> enviromnents = getNumberEnviroments(GetResponse(APIdatum.environments));
+
+            foreach (string key in enviromnents.Keys)
+            {
+                el.addEnvironment(new Environment(key, enviromnents[key], numMachines[enviromnents[key]].ToString()));
+            }
+
+            return el;
+        }
+
+
 
         private string getFirstInt(string haystack) // credits to txt2re.com
         {
@@ -232,7 +317,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                return Ok(getFirstInt(GetResponse(APIdatum.environments)));
+                EnvironmentList el = makeEnvironmentList();
+                return Ok<List<Environment>>(el.environments);
             }
             catch (Exception exception)
             {

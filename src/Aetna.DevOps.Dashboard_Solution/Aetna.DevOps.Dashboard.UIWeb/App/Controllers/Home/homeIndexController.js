@@ -14,7 +14,16 @@
             $(".lifecycles").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
         });
         $http.get("/api/Octo/environments").then(function (response) {
-            $(".environments").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
+            var replace = "<div id=\"environments\" class=\"environment panel-collapse collapse environment\">";
+            var count = 0;
+            response.data.forEach(function (d) {
+                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.numMachines + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+                count += 1;
+            })
+            replace += "</div>";
+            $(".environments").replaceWith(replace);
+            $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + count + "</span>");
+
         });
 
         $http.get("/api/Octo/deploys").then(function (response) {

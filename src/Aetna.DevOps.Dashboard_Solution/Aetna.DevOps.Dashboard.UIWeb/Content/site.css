@@ -1,4 +1,9 @@
-﻿.navbar-brand {
+﻿.environment {
+    border: 1px solid #44484b !important;
+    border-radius: 5px;
+}
+
+.navbar-brand {
     margin-top:-8px;
 }
 
