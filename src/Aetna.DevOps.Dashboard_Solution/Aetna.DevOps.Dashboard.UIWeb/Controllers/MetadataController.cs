@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
+    #region "API Classes"
     public class Deploy
     {
         public DateTime TimeAndDate;
@@ -69,6 +70,80 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public void addEnvironment(Environment environment) { environments.Add(environment); }
     }
 
+    public class Project
+    {
+        public string groupId;
+        public string name;
+        public string lifecycle;
+        public string deploymentProcess;
+        public List<string> relatedDocs;
+
+        public Project(string groupId, string name, string lifecycle, string deploymentProcess)
+        {
+            this.groupId = groupId;
+            this.name = name;
+            this.lifecycle = lifecycle;
+            this.deploymentProcess = deploymentProcess;
+        }
+        public string getGroupId() { return groupId; }
+    }
+
+    public class ProjectList
+    {
+        public int count;
+        public List<Project> projects;
+
+
+        public ProjectList() { projects = new List<Project>(); count = 0; }
+
+        public void Add(Project p) { projects.Add(p); count++; }
+    }
+
+    public class ProjectGroup
+    {
+        public string groupName;
+        public string groupId;
+        public ProjectList projectList;
+
+        public ProjectGroup (string groupName, string groupId)
+        {
+            this.groupName = groupName;
+            this.groupId = groupId;
+            projectList = new ProjectList();
+        }
+
+        public void AddProject(Project project)
+        {
+            projectList.Add(project);
+        }
+    }
+
+    public class ProjectGroupDictionary
+    {
+        public Dictionary<string, ProjectGroup> pGroupDictionary;
+
+        public ProjectGroupDictionary()
+        {
+            pGroupDictionary = new Dictionary<string, ProjectGroup>();
+        }
+
+        public void AddProjectGroup (string groupId, ProjectGroup pGroup)
+        {
+            pGroupDictionary.Add(groupId, pGroup);
+        }
+
+        public void addProject (string groupId, Project project)
+        {
+            pGroupDictionary[groupId].AddProject(project);
+        }
+
+        public List<ProjectGroup> getProjectGroups()
+        {
+            return new List<ProjectGroup>(pGroupDictionary.Values);
+        }
+    }
+    #endregion
+
     public class MetadataController : ApiController
     {
         public MetadataController() : this(new UserDetailHelper())
@@ -106,7 +181,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             switch (apid)
             {
                 case APIdatum.projectGroups:
-                    reqString = "projectGroups?";
+                    reqString = "projectGroups?take=1000&";
                     break;
                 case APIdatum.projects:
                     reqString = "projects?";
@@ -184,6 +259,46 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             return el;
         }
+
+        private List<Project> makeProjectList()
+        {
+            List<Project> pl = new List<Project>();
+            string jsonTxt = GetResponse(APIdatum.projects);
+
+            dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+
+            foreach (dynamic o in jsonDeser.Items)
+            {
+                pl.Add(new Project(o.ProjectGroupId.ToString(), o.Name.ToString(), o.LifecycleId.ToString(), o.DeploymentProcessId.ToString()));
+            }
+
+            return pl;
+        }
+
+        private List<ProjectGroup> sortProjectGroups()
+        {
+            List<ProjectGroup> pg;
+            ProjectGroupDictionary pgd = new ProjectGroupDictionary();
+
+            string jsonTxt = GetResponse(APIdatum.projectGroups);
+
+            dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+
+            foreach (dynamic o in jsonDeser.Items)
+            {
+                pgd.AddProjectGroup(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
+            }
+
+            List<Project> projects = makeProjectList();
+
+            foreach(Project p in projects)
+            {
+                pgd.addProject(p.getGroupId(), p);
+            }
+
+            pg = pgd.getProjectGroups();
+            return pg;
+        } 
 
 
 
@@ -317,8 +432,47 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
+                return Ok (getFirstInt(GetResponse(APIdatum.environments)));
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+
+        /// <summary>
+        /// Pulls information about how many enviornments there are
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/environmentList")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetEnvironmentList()
+        {
+            try
+            {
                 EnvironmentList el = makeEnvironmentList();
                 return Ok<List<Environment>>(el.environments);
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+
+        /// <summary>
+        /// Pulls information about how many enviornments there are
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/ProjectList")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetProjectList()
+        {
+            try
+            {
+                List<ProjectGroup> pg = sortProjectGroups();
+                return Ok<List<ProjectGroup>>(pg);
             }
             catch (Exception exception)
             {
@@ -330,7 +484,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// Pulls information about how many deploys there are over the past 24 hours and information about each one
         /// </summary>
         /// <returns></returns>
-        
+
         [Route("api/Octo/deploys")]
         [ResponseType(typeof(int))]
         [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]

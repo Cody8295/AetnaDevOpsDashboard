@@ -13,19 +13,28 @@
         $http.get("/api/Octo/lifecycles").then(function (response) {
             $(".lifecycles").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
         });
+
         $http.get("/api/Octo/environments").then(function (response) {
-            var replace = "<div id=\"environments\" class=\"environment panel-collapse collapse environment\">";
-            var count = 0;
+            $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
+        });
+
+        $http.get("/api/Octo/environmentList").then(function (response) {
+            var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\">";
             response.data.forEach(function (d) {
                 replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.numMachines + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
-                count += 1;
             })
             replace += "</div>";
             $(".environments").replaceWith(replace);
-            $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + count + "</span>");
-
         });
 
+        $http.get("/api/Octo/ProjectList").then(function(response) {
+            var replace = "<div id=\"projectGroupList\" class=\"collapsible panel-collapse collapse\">";
+            response.data.forEach(function (d) {
+                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+            })
+            $(".projectGroupList").replaceWith(replace);
+        });
+        
         $http.get("/api/Octo/deploys").then(function (response) {
             var hr = new Date();
             var startTime = hr.getHours();

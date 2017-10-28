@@ -62,9 +62,10 @@
                 <div class="panel-body">
 
                     <div class="panel panel-default">
-                        <div class="panel-footer">
+                        <div class="panel-footer" data-toggle="collapse" href="#projectGroupList">
                             <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups <div class="projectGroups"><span class="pull-right">0</span></div>
                         </div>
+                        <div id="projectGroupList" class="collapsible collapse projectGroupList"><span class="pull-right">0</span></div>
                         <div class="panel-footer">
                             <i class="fa fa-product-hunt"></i>&nbsp;Projects <div class="projects"><span class="pull-right">0</span></div>
                         </div>
@@ -74,9 +75,9 @@
                         <div class="panel-footer" data-toggle="collapse" href="#environments">
                             <i class="fa fa-photo"></i>&nbsp;Environments <div class="numEnvironments"></div>
                         </div>
-                        <div id="environments" class="panel-collapse collapse environments"><span class="pull-right">0</span></div>
+                        <div id="environments" class="collapsible collapse environments"><span class="pull-right">0</span></div>
                         <div class="panel-footer">
-                            <i class="fa fa-space-shuttle"></i>&nbsp;Deploys <div class="deploys"><span class="pull-right"><canvas id="canvas"></canvas></span></div>
+                            <i class="fa fa-space-shuttle"></i>&nbsp;Deploys <div class="deploys"><span class="pull-right"><br/><canvas id="canvas"></canvas></span></div>
                         </div>
 
                     </div>
