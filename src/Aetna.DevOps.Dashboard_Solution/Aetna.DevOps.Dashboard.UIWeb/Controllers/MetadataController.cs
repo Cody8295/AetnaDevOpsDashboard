@@ -15,11 +15,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
     public class Deploy
     {
-        public DateTime TimeAndDate;
+        public long TimeAndDate;
         public string Message;
         public System.Collections.Generic.List<string> RelatedDocs;
         public string Category;
-        public Deploy(DateTime timeAndDate, string msg, System.Collections.Generic.List<string> related, string category)
+        public Deploy(long timeAndDate, string msg, System.Collections.Generic.List<string> related, string category)
         {
             TimeAndDate = timeAndDate;
             Message = msg;
@@ -41,6 +41,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class MetadataController : ApiController
     {
+        #region "Aetna Provided"
         public MetadataController() : this(new UserDetailHelper())
         {
         }
@@ -52,12 +53,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             UserHelper = userDetailHelper;
         }
-
+        
         public UserDetailHelper UserHelper { get; private set; }
+        #endregion
 
         #region "API Setup"
-        const string API_URL = "http://ec2-18-220-206-192.us-east-2.compute.amazonaws.com:81/api/";
-        const String API_KEY = "API-A5I5VUHAOV0VJJN6LQ6MXCPSMS";
+        private const string API_URL = "http://ec2-18-220-206-192.us-east-2.compute.amazonaws.com:81/api/";
+        private const String API_KEY = "API-A5I5VUHAOV0VJJN6LQ6MXCPSMS";
+        private readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         private enum APIdatum
         {
@@ -116,14 +119,27 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return "API error";
         }
 
+        private DateTime dateTimeFromEpoch(long time)
+        {
+            return epoch.AddSeconds(time);
+        }
+
+        private long epochFromDateTime(DateTime dt)
+        {
+            TimeSpan epochSpan = dt.ToUniversalTime() - epoch;
+            return (long)Math.Floor(epochSpan.TotalSeconds);
+        }
+
         private DeployList graphDeployments(string jsonTxt)
         {
             DeployList dl = new DeployList();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach(dynamic o in jsonDeser.Items)
             {
-                if(DateTime.Now.AddDays(-1) > Convert.ToDateTime(o.Occurred)) { continue; } // ignore events that took place more than 1 day ago
-                Deploy d = new Deploy(Convert.ToDateTime(o.Occurred.ToString()), o.Message.ToString(),
+                DateTime parsedDt = Convert.ToDateTime(o.Occurred.ToString());
+                long occur = epochFromDateTime(parsedDt);
+                if(DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
+                Deploy d = new Deploy(occur, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
                     o.Category.ToString());
                 //Console.Write(d.ToString());
