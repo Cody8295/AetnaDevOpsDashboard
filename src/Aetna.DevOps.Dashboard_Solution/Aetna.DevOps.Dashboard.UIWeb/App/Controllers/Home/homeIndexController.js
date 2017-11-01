@@ -242,10 +242,10 @@
             }
 
             function setupLineGraph() {
-                theLineGraph.onclick = function (e) {
+                document.getElementById("canvas").onclick = function (e) {
                     console.log("Line graph clicked");
                     var htmlDeploys = "";
-                    var points = $("#canvas").getElementsAtEvent(e);
+                    var points = theLineGraph.getElementsAtEvent(e);
                     if (points[0] === undefined) { // user didn't click on a point
                         $(".list-group").replaceWith("");
                         //$(".list-group").hide();
