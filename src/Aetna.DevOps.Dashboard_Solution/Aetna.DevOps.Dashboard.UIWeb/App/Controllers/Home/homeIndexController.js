@@ -55,13 +55,13 @@
             }
 
             response.data.forEach(function (d) {
-                console.log(d.timeAndDate);
+                console.log(d);
                 var timeString = new Date(0);
                 timeString.setUTCSeconds(d.timeAndDate);
                 var hour = timeString.getHours();
                 hour = hour + (23 - startTime);
                 console.log(timeString + ",");
-                allDeploys[hour] = (allDeploys[hour]===undefined?[]:allDeploys[hour]).concat({"message":d.message, "category":d.category, "dateTime":timeString});
+                allDeploys[hour] = (allDeploys[hour]===undefined?[]:allDeploys[hour]).concat({"message":d.message, "category":d.category, "dateTime":timeString, "environs":d.environs});
                 if (d.category === "DeploymentFailed") {
                     failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
                     failedCount++;
@@ -256,8 +256,15 @@
                         var cat = d.category;
                         var dt = d.dateTime;
                         console.log(msg + "," + cat);
-                        htmlDeploys += "<a href=\"#\" class=\"list-group-item " + coloredListElement(cat) + "\" data-toggle=\"tooltip\" data-original-title=\"" + dt + "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" + msg + "</a>";
+                        var environData = "";
+                        d.environs.forEach(function (e) {
+                            environData += e.id + "<br>" + e.name;
+
+                        });
+                        htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').replaceWith('" + environData +"');\" class=\"list-group-item " + coloredListElement(cat) + "\" data-toggle=\"tooltip\" data-original-title=\"" + dt + "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" + msg + "</a>";
                     });
+                    if (htmlDeploys == "") { return; }
+                    $("#octoModal").modal("show");
                     $(".list-group").replaceWith(htmlDeploys);
                     $(".list-group").show();
                 };

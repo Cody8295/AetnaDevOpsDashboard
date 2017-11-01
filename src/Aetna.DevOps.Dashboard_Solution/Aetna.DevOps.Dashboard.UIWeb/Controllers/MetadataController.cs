@@ -13,18 +13,72 @@ using Newtonsoft.Json;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
+    #region "JSON API Classes"
+    public class Machine
+    {
+        public string id;
+        public string name;
+        public string url;
+        public System.Collections.Generic.List<string> environs;
+        public string status;
+        public string statusSummary;
+        public string isInProcess;
+        public Machine(string Id, string Name, string Url, System.Collections.Generic.List<string> Environs, string Status, string StatusSummary, string IsInProcess)
+        {
+            id = Id;
+            name = Name;
+            Url = url;
+            environs = Environs;
+            status = Status;
+            statusSummary = StatusSummary;
+            isInProcess = IsInProcess;
+        }
+    }
+
+    public class MachineList
+    {
+        public System.Collections.Generic.List<Machine> machines;
+        public MachineList() { machines = new System.Collections.Generic.List<Machine>(); }
+        public void add(Machine m) { machines.Add(m); }
+    }
+
+    public class Environment
+    {
+        public string id;
+        public string name;
+        public string description;
+        public System.Collections.Generic.List<Machine> machines;
+        public Environment(string Id, string Name, string Description, System.Collections.Generic.List<Machine> Machines)
+        {
+            id = Id;
+            name = Name;
+            description = Description;
+            machines = Machines;
+        }
+    }
+
+    public class EnvironmentList
+    {
+        public System.Collections.Generic.List<Environment> environs;
+        public EnvironmentList() { environs = new System.Collections.Generic.List<Environment>(); }
+        public void add(Environment e) { environs.Add(e); }
+    }
+
     public class Deploy
     {
         public long TimeAndDate;
         public string Message;
         public System.Collections.Generic.List<string> RelatedDocs;
         public string Category;
+        public System.Collections.Generic.List<Environment> Environs;
+
         public Deploy(long timeAndDate, string msg, System.Collections.Generic.List<string> related, string category)
         {
             TimeAndDate = timeAndDate;
             Message = msg;
             RelatedDocs = related;
             Category = category;
+            Environs = new System.Collections.Generic.List<Environment>();
         }
         public override string ToString()
         {
@@ -38,6 +92,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public DeployList() { deploys = new System.Collections.Generic.List<Deploy>(); }
         public void add(Deploy d) { deploys.Add(d); }
     }
+    #endregion
 
     public class MetadataController : ApiController
     {
@@ -69,9 +124,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             lifecycles = 2,
             environments = 3,
             deploys = 4,
+            machines = 5
         }
 
-        private static string GetResponse(APIdatum apid)
+        private static string GetResponse(APIdatum apid, string param="")
         {
             WebRequest request;
             string reqString = String.Empty;
@@ -87,10 +143,20 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     reqString = "lifecycles?";
                     break;
                 case APIdatum.environments:
-                    reqString = "environments?";
+                    reqString = "environments/"+ (param==String.Empty?"":param) +"?";
                     break;
                 case APIdatum.deploys:
                     reqString = "events?take=1000&";
+                    break;
+                case APIdatum.machines:
+                    if (param == string.Empty) // all machines
+                    {
+                        reqString = "machines?";
+                    }
+                    else // asking for info on machines about specific environment
+                    {
+                        reqString = "environments/" + param + "/machines?";
+                    }
                     break;
                 default: break;
             }
@@ -119,6 +185,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return "API error";
         }
 
+        #region "Datetime functions"
         private DateTime dateTimeFromEpoch(long time)
         {
             return epoch.AddSeconds(time);
@@ -129,7 +196,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             TimeSpan epochSpan = dt.ToUniversalTime() - epoch;
             return (long)Math.Floor(epochSpan.TotalSeconds);
         }
+        #endregion
 
+        #region "Format deploys for graphing"
         private DeployList graphDeployments(string jsonTxt)
         {
             DeployList dl = new DeployList();
@@ -142,40 +211,40 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 Deploy d = new Deploy(occur, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
                     o.Category.ToString());
-                //Console.Write(d.ToString());
                 if (o.Category == "DeploymentStarted") { dl.add(d); }
                 if (o.Category == "DeploymentQueued") { dl.add(d); }
                 if (o.Category == "DeploymentSucceeded") { dl.add(d); }
                 if (o.Category == "DeploymentFailed") { dl.add(d); }
             }
             return dl;
-            //return JsonConvert.SerializeObject(dl,Formatting.Indented);
+        }
+        #endregion
+
+        private MachineList getMachines(string envName)
+        {
+            string machineResponse = GetResponse(APIdatum.machines, envName);
+            dynamic mach = JsonConvert.DeserializeObject(machineResponse);
+            MachineList m = new MachineList();
+            foreach(dynamic mac in mach.Items)
+            {
+                System.Collections.Generic.List<string> el = new System.Collections.Generic.List<string>();
+                foreach(dynamic env in mac.EnvironmentIds)
+                {
+                    //Environment e = getEnviron(envName);
+                    el.Add(env.ToString());
+                }
+                Machine machine = new Machine(mac.Id.ToString(), mac.Name.ToString(), mac.Uri.ToString(), el, mac.Status.ToString(), mac.StatusSummary.ToString(), mac.IsInProcess.ToString());
+                m.add(machine);
+            }
+            return m;
         }
 
-        private string formatDeployTimes(ArrayList deploys)
+        private Environment getEnviron(string envName)
         {
-            string retVal = String.Empty;
-            int[] c = new int[24]; // one for each hour
-            foreach (String[] strArr in deploys)
-            {
-                DateTime occ = Convert.ToDateTime(strArr[1]);
-                int t = int.Parse(occ.ToString("HH"));
-                c[t] += (occ > DateTime.Now.AddDays(-1) && occ <= DateTime.Now ? 1 : 0);
-                //retVal += strArr[0].ToString() + "," + strArr[1].ToString() + Environment.NewLine;
-            }
-            int endTime = int.Parse(DateTime.Now.ToString("HH"));
-            string[] times = new string[24];
-            for (int i = 0; i < 24; i++)
-            {
-                if (endTime + i + 1 <= 23)
-                    times[i] = (endTime + i + 1).ToString() + ":00" + "," + c[(endTime + i + 1)].ToString() + ";";
-                else
-                    times[i] = (endTime + i - 23).ToString() + ":00" + "," + c[(endTime + i - 23)].ToString() + ";";
-            }
-
-            foreach (string a in times) { retVal += a; }
-
-            return retVal;
+            string environData = GetResponse(APIdatum.environments, envName);
+            dynamic env = JsonConvert.DeserializeObject(environData);
+            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName).machines);
+            return e;
         }
         #endregion
 
@@ -269,7 +338,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 DeployList dl = graphDeployments(GetResponse(APIdatum.deploys));
-                //if (dl.deploys.Count == 0) { return Ok(""); }
+                for(int x = 0; x < dl.deploys.Count; x++)
+                {
+                    if (dl.deploys[x].RelatedDocs.Count > 0)
+                    {
+                        foreach(string docID in dl.deploys[x].RelatedDocs){
+                            if (docID.Contains("Environments"))
+                            {
+                                dl.deploys[x].Environs.Add(getEnviron(docID));
+                            }
+                        }
+                    }
+                }
                 return Ok<System.Collections.Generic.List<Deploy>>(dl.deploys);
             }
             catch (Exception exception)
@@ -279,6 +359,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
+        #region "Aetna Provided"
         /// <summary>
         /// Gets information about the current user.
         /// </summary>
@@ -336,5 +417,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return InternalServerError(exception);
             }
         }
+        #endregion
     }
 }
