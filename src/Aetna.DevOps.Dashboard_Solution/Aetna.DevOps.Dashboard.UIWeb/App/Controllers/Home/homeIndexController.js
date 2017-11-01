@@ -59,7 +59,7 @@
                 var timeString = new Date(0);
                 timeString.setUTCSeconds(d.timeAndDate);
                 var hour = timeString.getHours();
-                hour = hour + (24 - startTime);
+                hour = hour + (23 - startTime);
                 console.log(timeString + ",");
                 allDeploys[hour] = (allDeploys[hour]===undefined?[]:allDeploys[hour]).concat({"message":d.message, "category":d.category, "dateTime":timeString});
                 if (d.category === "DeploymentFailed") {
