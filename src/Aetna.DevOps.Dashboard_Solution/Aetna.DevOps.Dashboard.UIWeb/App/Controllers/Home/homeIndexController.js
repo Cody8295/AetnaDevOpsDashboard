@@ -21,7 +21,7 @@
         $http.get("/api/Octo/environmentList").then(function (response) {
             var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\">";
             response.data.forEach(function (d) {
-                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.numMachines + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
             })
             replace += "</div>";
             $(".environments").replaceWith(replace);

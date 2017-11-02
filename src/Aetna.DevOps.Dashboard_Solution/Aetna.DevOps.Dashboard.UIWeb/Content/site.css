@@ -2,6 +2,10 @@
     border: 1px solid #777777 !important;
     border-radius: 5px;
 }
+.collapse-trigger:hover {
+    text-decoration: underline;
+    background-color: #cccccc;
+}
 
 .navbar-brand {
     margin-top:-8px;

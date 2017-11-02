@@ -309,7 +309,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (string key in enviromnents.Keys)
             {
-                el.add(new Environment(key, enviromnents[key], numMachines[enviromnents[key]].ToString(),getMachines(GetResponse(APIdatum.machines))));
+                el.add(new Environment(enviromnents[key], key, numMachines[enviromnents[key]].ToString(), getMachines(enviromnents[key])));
             }
 
             return el;
