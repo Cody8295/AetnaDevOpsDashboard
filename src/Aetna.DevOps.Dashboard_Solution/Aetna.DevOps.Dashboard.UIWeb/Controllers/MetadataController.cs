@@ -48,8 +48,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public string id;
         public string name;
         public string description;
-        public System.Collections.Generic.List<Machine> machines;
-        public Environment(string Id, string Name, string Description, System.Collections.Generic.List<Machine> Machines)
+        public MachineList machines;
+
+        public Environment(string Id, string Name, string Description, MachineList Machines)
         {
             id = Id;
             name = Name;
@@ -57,12 +58,32 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             machines = Machines;
         }
     }
+    /*
+    public class Environment
+    {
+        public string name;
+        public string id;
+        public string numMachines;
 
+        public Environment(string name, string id, string numMachines)
+        {
+            this.name = name;
+            this.id = id;
+            this.numMachines = numMachines;
+        }
+
+
+        public override string ToString()
+        {
+            return name + ":" + numMachines;
+        }
+    }
+    */
     public class EnvironmentList
     {
-        public System.Collections.Generic.List<Environment> environs;
-        public EnvironmentList() { environs = new System.Collections.Generic.List<Environment>(); }
-        public void add(Environment e) { environs.Add(e); }
+        public System.Collections.Generic.List<Environment> environments;
+        public EnvironmentList() { environments = new System.Collections.Generic.List<Environment>(); }
+        public void add(Environment e) { environments.Add(e); }
     }
 
     public class Deploy
@@ -92,36 +113,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public System.Collections.Generic.List<Deploy> deploys;
         public DeployList() { deploys = new System.Collections.Generic.List<Deploy>(); }
         public void add(Deploy d) { deploys.Add(d); }
-    }
-    #endregion
-
-    public class Environment
-    {
-        public string name;
-        public string id;
-        public string numMachines;
-
-        public Environment(string name, string id, string numMachines)
-        {
-            this.name = name;
-            this.id = id;
-            this.numMachines = numMachines;
-        }
-
-
-        public override string ToString()
-        {
-            return name + ":" + numMachines;
-        }
-    }
-
-    public class EnvironmentList
-    {
-        public List<Environment> environments;
-
-        public EnvironmentList() { environments = new List<Environment>(); }
-
-        public void addEnvironment(Environment environment) { environments.Add(environment); }
     }
 
     public class Project
@@ -318,7 +309,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (string key in enviromnents.Keys)
             {
-                el.addEnvironment(new Environment(key, enviromnents[key], numMachines[enviromnents[key]].ToString()));
+                el.add(new Environment(key, enviromnents[key], numMachines[enviromnents[key]].ToString(),getMachines(GetResponse(APIdatum.machines))));
             }
 
             return el;
@@ -438,7 +429,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             string environData = GetResponse(APIdatum.environments, envName);
             dynamic env = JsonConvert.DeserializeObject(environData);
-            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName).machines);
+            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName));
             return e;
         }
         #endregion
