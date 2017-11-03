@@ -42,7 +42,7 @@
 
             var lastHour = 1; // used to determine if 12 o'clock is noon or midnight
 
-            for (var hs = startTime - 24; hs < startTime; hs++) {
+            for (var hs = startTime - 23; hs <= startTime; hs++) {
                 var s = (hs < 0 ? 24 + hs : (hs == 0 ? 12 : hs));
                 if (lastHour == 11 || lastHour == 23) {
                     if (lastHour == 11) { times.push("Noon"); }
@@ -60,7 +60,7 @@
                 timeString.setUTCSeconds(d.timeAndDate);
                 var hour = timeString.getHours();
                 hour = hour + (23 - startTime);
-                console.log(timeString + ",");
+                //console.log(timeString + ",");
                 allDeploys[hour] = (allDeploys[hour]===undefined?[]:allDeploys[hour]).concat({"message":d.message, "category":d.category, "dateTime":timeString, "environs":d.environs});
                 if (d.category === "DeploymentFailed") {
                     failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
@@ -258,10 +258,16 @@
                         console.log(msg + "," + cat);
                         var environData = "";
                         d.environs.forEach(function (e) {
-                            environData += e.id + "<br>" + e.name;
+                            environData += msg + "<br>" + dt + "<br>" + e.id + "<br>" + e.name + (e.description === undefined ? "" : "(" + e.description + ")<br><br>");
+                            if (e.machines !== undefined) {
+                                environData += "Machines for " + e.name + ":<br>";
+                                e.machines.forEach(function (m) {
+                                    environData += m.id + "<br>" + m.name + "<br>" + m.url + "<br>" + m.status + "<br>" + m.statusSummary + "<br>Is running: " + m.isInProcess + "<br><br>";
+                                });
+                            }
 
                         });
-                        htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').replaceWith('" + environData +"');\" class=\"list-group-item " + coloredListElement(cat) + "\" data-toggle=\"tooltip\" data-original-title=\"" + dt + "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" + msg + "</a>";
+                        htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" + environData +"'); $('.deployData').show();\" class=\"list-group-item " + coloredListElement(cat) + "\" data-toggle=\"tooltip\" data-original-title=\"" + dt + "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" + msg + "</a>";
                     });
                     if (htmlDeploys == "") { return; }
                     $("#octoModal").modal("show");

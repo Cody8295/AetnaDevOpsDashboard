@@ -27,7 +27,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             id = Id;
             name = Name;
-            Url = url;
+            url = Url;
             environs = Environs;
             status = Status;
             statusSummary = StatusSummary;
@@ -233,6 +233,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     //Environment e = getEnviron(envName);
                     el.Add(env.ToString());
                 }
+                //Machine m = new Machine()
                 Machine machine = new Machine(mac.Id.ToString(), mac.Name.ToString(), mac.Uri.ToString(), el, mac.Status.ToString(), mac.StatusSummary.ToString(), mac.IsInProcess.ToString());
                 m.add(machine);
             }
