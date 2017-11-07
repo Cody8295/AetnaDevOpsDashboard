@@ -11,9 +11,28 @@ using System.Net;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Microsoft.AspNet.SignalR;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
+    [Microsoft.AspNet.SignalR.Hubs.HubName("deployAction")]
+    public class DeployAction : Hub
+    {
+        private static LiveDeploys currentState = new LiveDeploys();
+        private static Random rnd = new Random();
+        private static System.Timers.Timer timer = new Sysyem.Timers.Timer(400);
+        [Microsoft.AspNet.SignalR.Hubs.HubMethodName("onAction")]
+        public void onAction()
+        {
+
+        }
+    }
+
+    public class LiveDeploys
+    {
+
+    }
+
     #region "JSON API Classes"
     public class Machine
     {
@@ -40,6 +59,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     {
         public System.Collections.Generic.List<Machine> machines;
         public MachineList() { machines = new System.Collections.Generic.List<Machine>(); }
+        
         public void add(Machine m) { machines.Add(m); }
     }
 
@@ -48,8 +68,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public string id;
         public string name;
         public string description;
-        public System.Collections.Generic.List<Machine> machines;
-        public Environment(string Id, string Name, string Description, System.Collections.Generic.List<Machine> Machines)
+        public MachineList machines;
+
+        public Environment(string Id, string Name, string Description, MachineList Machines)
         {
             id = Id;
             name = Name;
@@ -59,17 +80,37 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
         public override string ToString()
         {
-            return name + ":" + machines.Count;
+            return name + ":" + machines.machines.Count;
         }
     }
+    /*
+    public class Environment
+    {
+        public string name;
+        public string id;
+        public string numMachines;
 
+        public Environment(string name, string id, string numMachines)
+        {
+            this.name = name;
+            this.id = id;
+            this.numMachines = numMachines;
+        }
+
+
+        public override string ToString()
+        {
+            return name + ":" + numMachines;
+        }
+    }
+    */
     public class EnvironmentList
     {
-        public System.Collections.Generic.List<Environment> environs;
-        public EnvironmentList() { environs = new System.Collections.Generic.List<Environment>(); }
-        public void add(Environment e) { environs.Add(e); }
+        public System.Collections.Generic.List<Environment> environments;
+        public EnvironmentList() { environments = new System.Collections.Generic.List<Environment>(); }
+        public void add(Environment e) { environments.Add(e); }
     }
-    
+
     public class Deploy
     {
         public long TimeAndDate;
@@ -98,7 +139,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public DeployList() { deploys = new System.Collections.Generic.List<Deploy>(); }
         public void add(Deploy d) { deploys.Add(d); }
     }
- 
+
     public class Project
     {
         public string groupId;
@@ -230,7 +271,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 case APIdatum.machines:
                     if (param == string.Empty) // all machines
                     {
-                        reqString = "machines?";
+                        reqString = "machines?take=100000&";
                     }
                     else // asking for info on machines about specific environment
                     {
@@ -293,13 +334,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (string key in enviromnents.Keys)
             {
-                //needed aegs: ID, name, decription, list of machines
-                System.Collections.Generic.List<Machine> ml = new System.Collections.Generic.List<Machine>();
-                for(int x=0;x< numMachines[enviromnents[key]]; x++)
-                {
-                    ml.Add(new Machine(null, null, null, null, null, null, null));
-                }
-                el.add(new Environment(key, enviromnents[key], null, ml));
+                el.add(new Environment(enviromnents[key], key, numMachines[enviromnents[key]].ToString(), getMachines(enviromnents[key])));
             }
 
             return el;
@@ -420,7 +455,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             string environData = GetResponse(APIdatum.environments, envName);
             dynamic env = JsonConvert.DeserializeObject(environData);
-            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName).machines);
+            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName));
             return e;
         }
         #endregion
@@ -514,7 +549,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 EnvironmentList el = makeEnvironmentList();
-                return Ok<List<Environment>>(el.environs);
+                return Ok<List<Environment>>(el.environments);
             }
             catch (Exception exception)
             {
