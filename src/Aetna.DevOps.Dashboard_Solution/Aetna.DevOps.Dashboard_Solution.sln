@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aetna.DevOps.Dashboard.UIWeb", "Aetna.DevOps.Dashboard.UIWeb\Aetna.DevOps.Dashboard.UIWeb.csproj", "{A6450091-FD8F-4B27-A77B-DEB3506A9F36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aetna.DevOps.Dashboard.UIWeb.Tests", "Aetna.DevOps.Dashboard.UIWeb.Tests\Aetna.DevOps.Dashboard.UIWeb.Tests.csproj", "{2F2C0B5C-6158-4BC0-BD65-5A4094B241E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A6450091-FD8F-4B27-A77B-DEB3506A9F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6450091-FD8F-4B27-A77B-DEB3506A9F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6450091-FD8F-4B27-A77B-DEB3506A9F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6450091-FD8F-4B27-A77B-DEB3506A9F36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F2C0B5C-6158-4BC0-BD65-5A4094B241E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2C0B5C-6158-4BC0-BD65-5A4094B241E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2C0B5C-6158-4BC0-BD65-5A4094B241E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2C0B5C-6158-4BC0-BD65-5A4094B241E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
