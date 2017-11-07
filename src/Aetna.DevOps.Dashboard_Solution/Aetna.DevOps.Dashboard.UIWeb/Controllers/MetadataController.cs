@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.AspNet.SignalR;
+using Owin;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
@@ -20,11 +21,19 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     {
         private static LiveDeploys currentState = new LiveDeploys();
         private static Random rnd = new Random();
-        private static System.Timers.Timer timer = new Sysyem.Timers.Timer(400);
+        private static System.Timers.Timer timer = new System.Timers.Timer(400);
         [Microsoft.AspNet.SignalR.Hubs.HubMethodName("onAction")]
         public void onAction()
         {
 
+        }
+    }
+
+    public class Startup
+    {
+        public static void Configuration(IAppBuilder app)
+        {
+            app.MapSignalR();
         }
     }
 
