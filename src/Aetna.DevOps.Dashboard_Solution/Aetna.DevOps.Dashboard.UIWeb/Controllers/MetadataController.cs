@@ -12,17 +12,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Owin;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
-    [Microsoft.AspNet.SignalR.Hubs.HubName("deployAction")]
+    [HubName("deployAction")]
     public class DeployAction : Hub
     {
         private static LiveDeploys currentState = new LiveDeploys();
         private static Random rnd = new Random();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
-        [Microsoft.AspNet.SignalR.Hubs.HubMethodName("onAction")]
+        [HubMethodName("onAction")]
         public void OnAction()
         {
 
@@ -60,7 +61,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public string id;
         public string name;
         public string url;
-        public System.Collections.Generic.List<string> environs;
+        public List<string> environs;
         public string status;
         public string statusSummary;
         public string isInProcess;
@@ -78,8 +79,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class MachineList
     {
-        public System.Collections.Generic.List<Machine> machines;
-        public MachineList() { machines = new System.Collections.Generic.List<Machine>(); }
+        public List<Machine> machines;
+        public MachineList() { machines = new List<Machine>(); }
         
         public void add(Machine m) { machines.Add(m); }
     }
@@ -127,8 +128,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     */
     public class EnvironmentList
     {
-        public System.Collections.Generic.List<Environment> environments;
-        public EnvironmentList() { environments = new System.Collections.Generic.List<Environment>(); }
+        public List<Environment> environments;
+        public EnvironmentList() { environments = new List<Environment>(); }
         public void add(Environment e) { environments.Add(e); }
     }
 
@@ -136,17 +137,17 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     {
         public long TimeAndDate;
         public string Message;
-        public System.Collections.Generic.List<string> RelatedDocs;
+        public List<string> RelatedDocs;
         public string Category;
-        public System.Collections.Generic.List<Environment> Environs;
+        public List<Environment> Environs;
 
-        public Deploy(long timeAndDate, string msg, System.Collections.Generic.List<string> related, string category)
+        public Deploy(long timeAndDate, string msg, List<string> related, string category)
         {
             TimeAndDate = timeAndDate;
             Message = msg;
             RelatedDocs = related;
             Category = category;
-            Environs = new System.Collections.Generic.List<Environment>();
+            Environs = new List<Environment>();
         }
         public override string ToString()
         {
@@ -156,8 +157,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class DeployList
     {
-        public System.Collections.Generic.List<Deploy> deploys;
-        public DeployList() { deploys = new System.Collections.Generic.List<Deploy>(); }
+        public List<Deploy> deploys;
+        public DeployList() { deploys = new List<Deploy>(); }
         public void add(Deploy d) { deploys.Add(d); }
     }
 
