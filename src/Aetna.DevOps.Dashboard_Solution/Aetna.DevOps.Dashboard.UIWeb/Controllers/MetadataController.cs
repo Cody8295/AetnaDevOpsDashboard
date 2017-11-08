@@ -23,9 +23,19 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private static Random rnd = new Random();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
         [Microsoft.AspNet.SignalR.Hubs.HubMethodName("onAction")]
-        public void onAction()
+        public void OnAction()
         {
 
+        }
+        public DeployAction() : base()
+        {
+            currentState.StartTime = DateTime.Now;
+            timer.Elapsed += (sender, e) =>
+            {
+                OnAction();
+            };
+            timer.Enabled = true;
+            timer.Start();
         }
     }
 
@@ -39,7 +49,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class LiveDeploys
     {
-
+        public DateTime StartTime { get; set; }
+        public Int32 RequestsProcessed { get; set; }
+        public Int64 BytesProcessed { get; set; }
     }
 
     #region "JSON API Classes"
