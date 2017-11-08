@@ -2,6 +2,7 @@
     var $deployAction = $.connection.deployAction;
     $deployAction.client.onAction = onAction;
     $.connection.hub.start();
+    console.log("hi");
 });
 function onAction(currentState) {
     $("#startTime").text(currentState.StartTime);
