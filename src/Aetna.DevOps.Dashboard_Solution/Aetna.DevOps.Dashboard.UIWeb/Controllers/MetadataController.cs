@@ -21,12 +21,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class DeployAction : Hub
     {
         private static LiveDeploys currentState = new LiveDeploys();
-        private static Random rnd = new Random();
+        private static Random random = new Random();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
         [HubMethodName("onAction")]
         public void OnAction()
         {
+            currentState.BytesProcessed += random.Next(121, 23767);
+            currentState.RequestsProcessed += random.Next(0, 11);
 
+            // Fire the event on all of the clients
+            Clients.All.onAction(currentState);
         }
         public DeployAction() : base()
         {
