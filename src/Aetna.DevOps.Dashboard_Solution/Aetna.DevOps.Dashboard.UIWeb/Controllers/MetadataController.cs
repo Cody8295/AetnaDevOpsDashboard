@@ -16,6 +16,7 @@ using Owin;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
+    #region SignalR
     [HubName("deployHub")]
     public class DeployHub : Hub
     {
@@ -28,7 +29,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             currentState.RequestsProcessed += 3;
 
             // Fire the event on all of the clients
-            Clients.All.onAction(currentState);
+            Clients.All.onChange(currentState);
         }
         public DeployHub() : base()
         {
@@ -56,6 +57,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public Int32 RequestsProcessed { get; set; }
         public Int64 BytesProcessed { get; set; }
     }
+
+    #endregion
 
     #region "JSON API Classes"
     public class Machine
@@ -107,27 +110,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return name + ":" + machines.machines.Count;
         }
     }
-    /*
-    public class Environment
-    {
-        public string name;
-        public string id;
-        public string numMachines;
-
-        public Environment(string name, string id, string numMachines)
-        {
-            this.name = name;
-            this.id = id;
-            this.numMachines = numMachines;
-        }
-
-
-        public override string ToString()
-        {
-            return name + ":" + numMachines;
-        }
-    }
-    */
     public class EnvironmentList
     {
         public List<Environment> environments;
