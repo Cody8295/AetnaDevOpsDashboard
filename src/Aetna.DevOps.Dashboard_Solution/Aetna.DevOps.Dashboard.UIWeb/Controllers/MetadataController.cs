@@ -8,7 +8,6 @@ using Aetna.DevOps.Dashboard.UIWeb.Models;
 using Swashbuckle.Swagger.Annotations;
 using System.Text.RegularExpressions;
 using System.Net;
-using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.AspNet.SignalR;
@@ -21,13 +20,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class DeployAction : Hub
     {
         private static DataState currentState = new DataState();
-        private static Random random = new Random();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
         [HubMethodName("onAction")]
         public void OnAction()
         {
-            currentState.BytesProcessed += random.Next(121, 23767);
-            currentState.RequestsProcessed += random.Next(0, 11);
+            currentState.BytesProcessed += 4;
+            currentState.RequestsProcessed += 3;
 
             // Fire the event on all of the clients
             Clients.All.onAction(currentState);
