@@ -20,7 +20,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     [HubName("deployAction")]
     public class DeployAction : Hub
     {
-        private static LiveDeploys currentState = new LiveDeploys();
+        private static DataState currentState = new DataState();
         private static Random random = new Random();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
         [HubMethodName("onAction")]
@@ -52,7 +52,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
     }
 
-    public class LiveDeploys
+    public class DataState
     {
         public DateTime StartTime { get; set; }
         public Int32 RequestsProcessed { get; set; }
