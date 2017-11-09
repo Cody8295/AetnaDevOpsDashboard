@@ -25,8 +25,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         [HubMethodName("onChange")]
         public void OnChange()
         {
-            currentState.BytesProcessed += 4;
-            currentState.RequestsProcessed += 3;
+            currentState.ProjectGroups = 0;
+            currentState.Projects = 0;
+            currentState.Lifecycles = 0;
+            currentState.Environments = 0;
+            currentState.Deploys = 0;
 
             // Fire the event on all of the clients
             Clients.All.onChange(currentState);
@@ -54,8 +57,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class DataState
     {
         public DateTime StartTime { get; set; }
-        public Int32 RequestsProcessed { get; set; }
-        public Int64 BytesProcessed { get; set; }
+        public int ProjectGroups { get; set; }
+        public int Projects { get; set; }
+        public int Lifecycles { get; set; }
+        public int Environments { get; set; }
+        public int Deploys { get; set; }
     }
 
     #endregion
