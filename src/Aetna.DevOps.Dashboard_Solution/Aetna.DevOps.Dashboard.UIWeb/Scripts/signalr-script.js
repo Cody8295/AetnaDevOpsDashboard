@@ -1,8 +1,7 @@
 ﻿$().ready(function () {
-    var $deployAction = $.connection.deployAction;
-    $deployAction.client.onAction = onAction;
+    var $deployHub = $.connection.deployHub;
+    $deployHub.client.onChange = onChange;
     $.connection.hub.start();
-    console.log("hi");
 });
 function onAction(currentState) {
     $("#startTime").text(currentState.StartTime);

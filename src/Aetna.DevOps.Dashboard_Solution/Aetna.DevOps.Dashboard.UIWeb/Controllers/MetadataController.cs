@@ -16,13 +16,13 @@ using Owin;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
-    [HubName("deployAction")]
-    public class DeployAction : Hub
+    [HubName("deployHub")]
+    public class DeployHub : Hub
     {
         private static DataState currentState = new DataState();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
-        [HubMethodName("onAction")]
-        public void OnAction()
+        [HubMethodName("onChange")]
+        public void OnChange()
         {
             currentState.BytesProcessed += 4;
             currentState.RequestsProcessed += 3;
@@ -30,12 +30,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             // Fire the event on all of the clients
             Clients.All.onAction(currentState);
         }
-        public DeployAction() : base()
+        public DeployHub() : base()
         {
             currentState.StartTime = DateTime.Now;
             timer.Elapsed += (sender, e) =>
             {
-                OnAction();
+                OnChange();
             };
             timer.Enabled = true;
             timer.Start();
