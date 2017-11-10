@@ -1,24 +1,31 @@
 ﻿$().ready(function () {
     var $deployHub = $.connection.deployHub;
     $deployHub.client.onChange = onChange;
+    $.connection.hub.logging = true; //debugging
     $.connection.hub.start();
 });
 function onChange(currentState) {
-
-    if ($(".projectGroups>span:first").text() != currentState.ProjectGroups) {
-        $(".projectGroups").replaceWith("<span class=\"pull-right\">" + currentState.ProjectGroups + "</span>");
+    console.log("HEY! I'M DOING IT"); //debugging
+    if ($(".projectGroups").first().text() !== currentState.ProjectGroups) {
+        console.log($(".projectGroups").first().children().first().html()); //debugging
+        $(".projectGroups").replaceWith("<span class=\"pull-right\">Hi" + currentState.ProjectGroups + "</span>");
+        // Display an indicator
+    } else {
+        console.log($(".projectGroups").first().text().toString()); //debugging
+    }
+    if ($(".projects").innerHTML != currentState.Projects) {
+        console.log("Pj"); //debugging
+        $(".projects").replaceWith("<span class=\"pull-right\">" + currentState.Projects + "</span>");
         // Display an indicator
     }
-    if ($(".projects>span:first").text() != currentState.ProjectGroups) {
-        $(".projectGroups").replaceWith("<span class=\"pull-right\">" + currentState.Projects + "</span>");
+    if ($(".lifecycles").innerHTML != currentState.Lifecycles) {
+        console.log("Lf"); //debugging
+        $(".lifecycles").replaceWith("<span class=\"pull-right\">" + currentState.Lifecycles + "</span>");
         // Display an indicator
     }
-    if ($(".lifecycles>span:first").text() != currentState.ProjectGroups) {
-        $(".projectGroups").replaceWith("<span class=\"pull-right\">" + currentState.Lifecycles + "</span>");
-        // Display an indicator
-    }
-    if ($(".numEnvironments>span:first").text() != currentState.ProjectGroups) {
-        $(".projectGroups").replaceWith("<span class=\"pull-right\">" + currentState.Environments + "</span>");
+    if ($(".numEnvironments").innerHTML != currentState.Environments) {
+        console.log("nE"); //debugging
+        $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + currentState.Environments + "</span>");
         // Display an indicator
     }
 
