@@ -5,25 +5,23 @@
     $.connection.hub.start();
 });
 function onChange(currentState) {
-    console.log("HEY! I'M DOING IT"); //debugging
-    if ($(".projectGroups").first().text() !== currentState.ProjectGroups) {
-        console.log($(".projectGroups").first().children().first().html()); //debugging
+    console.log("UDPATING"); //debugging
+    if (currentState.isChanged["ProjectGroups"]) {
+        console.log("PG");
         $(".projectGroups").replaceWith("<span class=\"pull-right\">Hi" + currentState.ProjectGroups + "</span>");
         // Display an indicator
-    } else {
-        console.log($(".projectGroups").first().text().toString()); //debugging
     }
-    if ($(".projects").innerHTML != currentState.Projects) {
+    if (currentState.isChanged["Projects"]) {
         console.log("Pj"); //debugging
         $(".projects").replaceWith("<span class=\"pull-right\">" + currentState.Projects + "</span>");
         // Display an indicator
     }
-    if ($(".lifecycles").innerHTML != currentState.Lifecycles) {
+    if (currentState.isChanged["Lifecycles"]) {
         console.log("Lf"); //debugging
         $(".lifecycles").replaceWith("<span class=\"pull-right\">" + currentState.Lifecycles + "</span>");
         // Display an indicator
     }
-    if ($(".numEnvironments").innerHTML != currentState.Environments) {
+    if (currentState.isChanged["Envrionments"]) {
         console.log("nE"); //debugging
         $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + currentState.Environments + "</span>");
         // Display an indicator

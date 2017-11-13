@@ -22,24 +22,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     {
         private static DataState currentState = new DataState();
         private static System.Timers.Timer timer = new System.Timers.Timer(400);
-        [HubMethodName("onChange")]
-        public void OnChange()
-        {
-            currentState.ProjectGroups = 0;
-            currentState.Projects = 0;
-            currentState.Lifecycles = 0;
-            currentState.Environments = 0;
-            currentState.Deploys = 0;
-
-            // Fire the event on all of the clients
-            Clients.All.onChange(currentState);
-        }
         public DeployHub() : base()
         {
-            currentState.StartTime = DateTime.Now;
             timer.Elapsed += (sender, e) =>
             {
-                OnChange();
+                if (currentState.Update())
+                {
+                    Clients.All.onChange(currentState);
+                }
             };
             timer.Enabled = true;
             timer.Start();
@@ -56,12 +46,37 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class DataState
     {
-        public DateTime StartTime { get; set; }
         public int ProjectGroups { get; set; }
         public int Projects { get; set; }
         public int Lifecycles { get; set; }
         public int Environments { get; set; }
         public int Deploys { get; set; }
+
+        public Dictionary<String,Boolean> isChanged { get; set; }
+
+        public Boolean Update()
+        {
+            Boolean anyChange = false;
+
+            isChanged = new Dictionary<string, bool>(){
+                { "ProjectGroups", false },
+                { "Projects", true },
+                { "Lifecycles", false },
+                { "Environments", false },
+                { "Deploys", false }
+             };
+
+            //UPDATE VALUES
+            ProjectGroups = 0;
+            Projects = 0;
+            Lifecycles = 0;
+            Environments = 0;
+            Deploys = 0;
+
+            anyChange = true; //debugging
+
+            return anyChange;
+        }
     }
 
     #endregion
