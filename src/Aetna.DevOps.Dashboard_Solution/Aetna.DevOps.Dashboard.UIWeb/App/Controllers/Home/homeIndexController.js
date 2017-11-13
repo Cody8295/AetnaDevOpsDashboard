@@ -5,34 +5,33 @@
     var homeIndexController = function ($scope, $http) {
 
         $http.get("/api/Octo/projectGroups").then(function (response) {
-            $(".projectGroups").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
+            $(".projectGroups").text(response.data);
         });
         $http.get("/api/Octo/projects").then(function (response) {
-            $(".projects").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
+            $(".projects").text(response.data);
         });
         $http.get("/api/Octo/lifecycles").then(function (response) {
-            $(".lifecycles").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
+            $(".lifecycles").text(response.data);
         });
 
         $http.get("/api/Octo/environments").then(function (response) {
-            $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
+            $(".numEnvironments").text(response.data);
         });
 
         $http.get("/api/Octo/environmentList").then(function (response) {
-            var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\">";
+            var inside = "";
             response.data.forEach(function (d) {
-                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+                inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
             })
-            replace += "</div>";
-            $(".environments").replaceWith(replace);
+            $(".environments").html(inside);
         });
 
         $http.get("/api/Octo/ProjectList").then(function(response) {
-            var replace = "<div id=\"projectGroupList\" class=\"collapsible panel-collapse collapse\">";
+            var inside = "";
             response.data.forEach(function (d) {
-                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+                inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
             })
-            $(".projectGroupList").replaceWith(replace);
+            $(".projectGroupList").html(inside);
         });
         
         $http.get("/api/Octo/deploys").then(function (response) {

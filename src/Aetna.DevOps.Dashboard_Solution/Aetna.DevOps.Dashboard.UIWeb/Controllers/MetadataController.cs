@@ -59,11 +59,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Boolean anyChange = false;
 
             isChanged = new Dictionary<string, bool>(){
-                { "ProjectGroups", false },
+                { "ProjectGroups", true },
                 { "Projects", true },
-                { "Lifecycles", false },
-                { "Environments", false },
-                { "Deploys", false }
+                { "Lifecycles", true },
+                { "Environments", true },
+                { "Deploys", true }
              };
 
             //UPDATE VALUES

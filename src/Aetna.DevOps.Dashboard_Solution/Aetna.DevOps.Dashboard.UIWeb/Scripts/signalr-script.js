@@ -8,37 +8,36 @@ function onChange(currentState) {
     console.log("UDPATING"); //debugging
     if (currentState.isChanged["ProjectGroups"]) {
         console.log("PG");
-        $(".projectGroups").replaceWith("<span class=\"pull-right\">Hi" + currentState.ProjectGroups + "</span>");
+        $(".projectGroups").text(currentState.ProjectGroups);
         // Display an indicator
     }
     if (currentState.isChanged["Projects"]) {
         console.log("Pj"); //debugging
-        $(".projects").replaceWith("<span class=\"pull-right\">" + currentState.Projects + "</span>");
+        $(".projects").text(currentState.Projects);
         // Display an indicator
     }
     if (currentState.isChanged["Lifecycles"]) {
         console.log("Lf"); //debugging
-        $(".lifecycles").replaceWith("<span class=\"pull-right\">" + currentState.Lifecycles + "</span>");
+        $(".lifecycles").text(currentState.Lifecycles);
         // Display an indicator
     }
-    if (currentState.isChanged["Envrionments"]) {
+    if (currentState.isChanged["Environments"]) {
         console.log("nE"); //debugging
-        $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + currentState.Environments + "</span>");
+        $(".numEnvironments").text(currentState.Environments);
         // Display an indicator
     }
 
     /*
-    var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\">";
+    var inside = "";
     response.data.forEach(function (d) {
-        replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
     })
-    replace += "</div>";
-    $(".environments").replaceWith(replace);
+    $(".environments").html(inside);
 
-    var replace = "<div id=\"projectGroupList\" class=\"collapsible panel-collapse collapse\">";
+    var inside = "";
     response.data.forEach(function (d) {
-        replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
     })
-    $(".projectGroupList").replaceWith(replace);*/
+    $(".projectGroupList").html(inside);*/
     
 }
