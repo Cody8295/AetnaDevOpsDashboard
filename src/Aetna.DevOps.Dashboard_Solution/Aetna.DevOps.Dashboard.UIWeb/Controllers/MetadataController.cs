@@ -21,7 +21,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class DeployHub : Hub
     {
         private static DataState currentState = new DataState();
-        private static System.Timers.Timer timer = new System.Timers.Timer(400);
+        private static System.Timers.Timer timer = new System.Timers.Timer(5000); // Set Timer to run every 5 seconds
         public DeployHub() : base()
         {
             timer.Elapsed += (sender, e) =>
@@ -46,34 +46,49 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class DataState
     {
-        public int ProjectGroups { get; set; }
-        public int Projects { get; set; }
-        public int Lifecycles { get; set; }
-        public int Environments { get; set; }
-        public int Deploys { get; set; }
+        public int NumProjectGroups { get; set; }
+        public int NumProjects { get; set; }
+        public int NumLifecycles { get; set; }
+        public int NumEnvironments { get; set; }
+        public int NumDeploys { get; set; }
+        public List<ProjectGroup> ProjectGroups { get; set; }
+        public List<Environment> Environments { get; set; }
 
         public Dictionary<String,Boolean> isChanged { get; set; }
 
         public Boolean Update()
         {
-            Boolean anyChange = false;
+            Boolean anyChange = true; // debugging: should be false by default, set true on change
 
-            isChanged = new Dictionary<string, bool>(){
+            isChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
+                { "NumProjectGroups", true },
+                { "NumProjects", true },
+                { "NumLifecycles", true },
+                { "NumEnvironments", true },
+                { "NumDeploys", true },
                 { "ProjectGroups", true },
-                { "Projects", true },
-                { "Lifecycles", true },
-                { "Environments", true },
-                { "Deploys", true }
+                { "Environments", true }
              };
 
             //UPDATE VALUES
-            ProjectGroups = 0;
-            Projects = 0;
-            Lifecycles = 0;
-            Environments = 0;
-            Deploys = 0;
+            NumProjectGroups = 0;
 
-            anyChange = true; //debugging
+
+            NumProjects = 0;
+            NumLifecycles = 0;
+            NumEnvironments = 0;
+            NumDeploys = 0;
+            ProjectGroups = new List<ProjectGroup>()
+            {
+                new ProjectGroup("TestA","test_a"),
+                new ProjectGroup("TestB","test_b")
+            };
+            Environments = new List<Environment>()
+            {
+                new Environment("test_a","TestA","6",new MachineList()),
+                new Environment("test_b","TestB","5",new MachineList())
+            };
+
 
             return anyChange;
         }
@@ -637,7 +652,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
         }
         #endregion
-
+        
         #region "Aetna Provided"
         /// <summary>
         /// Gets information about the current user.

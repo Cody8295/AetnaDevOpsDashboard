@@ -6,38 +6,37 @@
 });
 function onChange(currentState) {
     console.log("UDPATING"); //debugging
-    if (currentState.isChanged["ProjectGroups"]) {
+    if (currentState.isChanged["NumProjectGroups"]) {
         console.log("PG");
-        $(".projectGroups").text(currentState.ProjectGroups);
+        $(".projectGroups").text(currentState.NumProjectGroups);
         // Display an indicator
     }
-    if (currentState.isChanged["Projects"]) {
+    if (currentState.isChanged["NumProjects"]) {
         console.log("Pj"); //debugging
-        $(".projects").text(currentState.Projects);
+        $(".projects").text(currentState.NumProjects);
         // Display an indicator
     }
-    if (currentState.isChanged["Lifecycles"]) {
+    if (currentState.isChanged["NumLifecycles"]) {
         console.log("Lf"); //debugging
-        $(".lifecycles").text(currentState.Lifecycles);
+        $(".lifecycles").text(currentState.NumLifecycles);
         // Display an indicator
     }
-    if (currentState.isChanged["Environments"]) {
+    if (currentState.isChanged["NumEnvironments"]) {
         console.log("nE"); //debugging
-        $(".numEnvironments").text(currentState.Environments);
+        $(".numEnvironments").text(currentState.NumEnvironments);
         // Display an indicator
     }
 
-    /*
     var inside = "";
-    response.data.forEach(function (d) {
-        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
-    })
+    for (var env in currentState.Environments) {
+        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + env.name + "<span class=\"pull-right\">" + env.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+    }
     $(".environments").html(inside);
 
-    var inside = "";
-    response.data.forEach(function (d) {
-        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
-    })
-    $(".projectGroupList").html(inside);*/
+    inside = "";
+    for (var pg in currentState.ProjectGroups) {
+        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + pg.groupName + "<span class=\"pull-right\">" + pg.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+    }
+    $(".projectGroupList").html(inside);
     
 }
