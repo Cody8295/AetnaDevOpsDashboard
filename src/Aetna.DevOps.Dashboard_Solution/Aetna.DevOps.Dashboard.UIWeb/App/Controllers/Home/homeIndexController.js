@@ -25,7 +25,7 @@
             })
             $(".environments").html(inside);
         });
-
+        
         $http.get("/api/Octo/ProjectList").then(function(response) {
             var inside = "";
             response.data.forEach(function (d) {

@@ -29,13 +29,15 @@ function onChange(currentState) {
 
     var inside = "";
     for (var env in currentState.Environments) {
-        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + env.name + "<span class=\"pull-right\">" + env.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+        var envb = currentState.Environments[env];
+        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + envb.name + "<span class=\"pull-right\">" + envb.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
     }
     $(".environments").html(inside);
 
     inside = "";
     for (var pg in currentState.ProjectGroups) {
-        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + pg.groupName + "<span class=\"pull-right\">" + pg.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+        var pgb = currentState.ProjectGroups[pg];
+        inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + pgb.groupName + "<span class=\"pull-right\">" + pgb.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
     }
     $(".projectGroupList").html(inside);
     

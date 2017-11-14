@@ -26,7 +26,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             timer.Elapsed += (sender, e) =>
             {
-                if (currentState.Update())
+                if (MetadataController.UpdateDataState(currentState))
                 {
                     Clients.All.onChange(currentState);
                 }
@@ -55,43 +55,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public List<Environment> Environments { get; set; }
 
         public Dictionary<String,Boolean> isChanged { get; set; }
-
-        public Boolean Update()
-        {
-            Boolean anyChange = true; // debugging: should be false by default, set true on change
-
-            isChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
-                { "NumProjectGroups", true },
-                { "NumProjects", true },
-                { "NumLifecycles", true },
-                { "NumEnvironments", true },
-                { "NumDeploys", true },
-                { "ProjectGroups", true },
-                { "Environments", true }
-             };
-
-            //UPDATE VALUES
-            NumProjectGroups = 0;
-
-
-            NumProjects = 0;
-            NumLifecycles = 0;
-            NumEnvironments = 0;
-            NumDeploys = 0;
-            ProjectGroups = new List<ProjectGroup>()
-            {
-                new ProjectGroup("TestA","test_a"),
-                new ProjectGroup("TestB","test_b")
-            };
-            Environments = new List<Environment>()
-            {
-                new Environment("test_a","TestA","6",new MachineList()),
-                new Environment("test_b","TestB","5",new MachineList())
-            };
-
-
-            return anyChange;
-        }
     }
 
     #endregion
@@ -333,7 +296,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return serverResponse;
         }
 
-        private Dictionary<string, string> getNumberEnviroments(string jsonTxt)
+        private static Dictionary<string, string> getNumberEnviroments(string jsonTxt)
         {
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             Dictionary<string, string> environments = new Dictionary<string, string>();
@@ -349,7 +312,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return environments;
         }
 
-        private Dictionary<string, int> getNumberMachines(string jsonTxt)
+        private static Dictionary<string, int> getNumberMachines(string jsonTxt)
         {
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             Dictionary<string, int> machines = new Dictionary<string, int>();
@@ -368,21 +331,21 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return machines;
         }
 
-        private EnvironmentList makeEnvironmentList()
+        private static EnvironmentList makeEnvironmentList()
         {
             EnvironmentList el = new EnvironmentList();
             Dictionary<string, int> numMachines = getNumberMachines(GetResponse(APIdatum.machines));
-            Dictionary<string, string> enviromnents = getNumberEnviroments(GetResponse(APIdatum.environments));
+            Dictionary<string, string> environments = getNumberEnviroments(GetResponse(APIdatum.environments));
 
-            foreach (string key in enviromnents.Keys)
+            foreach (string key in environments.Keys)
             {
-                el.add(new Environment(enviromnents[key], key, numMachines[enviromnents[key]].ToString(), getMachines(enviromnents[key])));
+                el.add(new Environment(environments[key], key, (numMachines.ContainsKey(environments[key]) ? numMachines[environments[key]].ToString() : "0"), getMachines(environments[key])));
             }
 
             return el;
         }
 
-        private List<Project> makeProjectList()
+        private static List<Project> makeProjectList()
         {
             List<Project> pl = new List<Project>();
             string jsonTxt = GetResponse(APIdatum.projects);
@@ -397,7 +360,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return pl;
         }
 
-        private List<ProjectGroup> sortProjectGroups()
+        private static List<ProjectGroup> sortProjectGroups()
         {
             List<ProjectGroup> pg;
             ProjectGroupDictionary pgd = new ProjectGroupDictionary();
@@ -473,7 +436,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        private MachineList getMachines(string envName)
+        private static MachineList getMachines(string envName)
         {
             string machineResponse = GetResponse(APIdatum.machines, envName);
             dynamic mach = JsonConvert.DeserializeObject(machineResponse);
@@ -499,6 +462,37 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             dynamic env = JsonConvert.DeserializeObject(environData);
             Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName));
             return e;
+        }
+        #endregion
+
+        #region "SignalR stuff"
+        public static Boolean UpdateDataState(DataState state)
+        {
+            Boolean anyChange = true; // debugging: should be false by default, set true on change
+
+            state.isChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
+                { "NumProjectGroups", true },
+                { "NumProjects", true },
+                { "NumLifecycles", true },
+                { "NumEnvironments", true },
+                { "NumDeploys", true },
+                { "ProjectGroups", true },
+                { "Environments", true }
+             };
+
+            //UPDATE VALUES
+            state.NumProjectGroups = 0;
+
+
+            state.NumProjects = 0;
+            state.NumLifecycles = 0;
+            state.NumEnvironments = 0;
+            state.NumDeploys = 0;
+            state.ProjectGroups = sortProjectGroups();
+            state.Environments = makeEnvironmentList().environments;
+
+
+            return anyChange;
         }
         #endregion
 
