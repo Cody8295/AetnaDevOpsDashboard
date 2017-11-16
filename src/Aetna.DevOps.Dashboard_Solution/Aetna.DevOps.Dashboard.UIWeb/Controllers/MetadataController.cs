@@ -46,13 +46,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class DataState
     {
-        public int NumProjectGroups { get; set; }
-        public int NumProjects { get; set; }
-        public int NumLifecycles { get; set; }
-        public int NumEnvironments { get; set; }
-        public int NumDeploys { get; set; }
         public List<ProjectGroup> ProjectGroups { get; set; }
+        public List<Project> Projects { get; set; }
+        public int Lifecycles { get; set; } //Temporary until we add Lifecycle object
         public List<Environment> Environments { get; set; }
+        public List<Deploy> Deploys { get; set; }
 
         public Dictionary<String,Boolean> isChanged { get; set; }
     }
@@ -387,7 +385,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
 
 
-        private string getFirstInt(string haystack) // credits to txt2re.com
+        private static string getFirstInt(string haystack) // credits to txt2re.com
         {
             string re1 = ".*?"; // Non-greedy match on filler
             string re2 = "(\\d+)";  // Integer Number 1
@@ -468,29 +466,60 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         #region "SignalR stuff"
         public static Boolean UpdateDataState(DataState state)
         {
-            Boolean anyChange = true; // debugging: should be false by default, set true on change
+            Boolean anyChange = false; // debugging: should be false by default, set true on change
 
+            // Used to notify user when data has changed
             state.isChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
-                { "NumProjectGroups", true },
-                { "NumProjects", true },
-                { "NumLifecycles", true },
-                { "NumEnvironments", true },
-                { "NumDeploys", true },
-                { "ProjectGroups", true },
-                { "Environments", true }
+                { "ProjectGroups", false },
+                { "Projects", false },
+                { "Lifecycles", false },
+                { "Environments", false },
+                { "Deploys", false }
              };
 
-            //UPDATE VALUES
-            state.NumProjectGroups = 0;
+            // Get New Data
 
+            List<ProjectGroup> pg = sortProjectGroups();
+            if (state.ProjectGroups == null || state.ProjectGroups != pg)
+            {
+                state.ProjectGroups = sortProjectGroups();
+                state.isChanged["ProjectGroups"] = true;
+                anyChange = true;
+            }
 
-            state.NumProjects = 0;
-            state.NumLifecycles = 0;
-            state.NumEnvironments = 0;
-            state.NumDeploys = 0;
-            state.ProjectGroups = sortProjectGroups();
-            state.Environments = makeEnvironmentList().environments;
+            List<Project> pl = makeProjectList();
+            if (state.Projects == null || state.Projects != pl)
+            {
+                state.Projects= pl;
+                state.isChanged["Projects"] = true;
+                anyChange = true;
+            }
 
+            // Temporary until Lifecycle object is added
+            int nlc = 0;
+            Int32.TryParse(getFirstInt(GetResponse(APIdatum.lifecycles)),out nlc);
+            if (state.Lifecycles != nlc)
+            {
+                state.Lifecycles = nlc;
+                state.isChanged["Lifecycles"] = true;
+                anyChange = true;
+            }
+
+            List<Environment> env = makeEnvironmentList().environments;
+            if (state.Environments == null || state.Environments != env)
+            {
+                state.Environments = env;
+                state.isChanged["Environments"] = true;
+                anyChange = true;
+            }
+
+            List<Deploy> dp = null; // Temporary
+            if (state.Deploys != dp)
+            {
+                state.Deploys = dp;
+                state.isChanged["Deploys"] = true;
+                anyChange = true;
+            }
 
             return anyChange;
         }
