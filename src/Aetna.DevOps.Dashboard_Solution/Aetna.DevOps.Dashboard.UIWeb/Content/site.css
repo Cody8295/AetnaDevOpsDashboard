@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * font-awesome-animation - v0.0.6
  * https://github.com/l-lin/font-awesome-animation
  * License: MIT
@@ -1212,8 +1212,8 @@
 
 
 .collapsible {
-    border: 1px solid #777777 !important;
-    border-radius: 5px;
+    border: 1px solid #ddd !important;
+    border-radius: 0px;
 }
 .collapse-trigger:hover {
     text-decoration: underline;

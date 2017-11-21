@@ -39,14 +39,6 @@
     });
     
     var homeIndexController = function ($scope, $http) {
-        /*
-        $http.get("/api/Octo/projectGroups").then(function (response) {
-            $(".projectGroups").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
-        });
-        $http.get("/api/Octo/projects").then(function (response) {
-            $(".projects").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
-        });
-        */
         function getReleases(projectName) {
             var releases = [];
             $http.get("/api/Octo/projectProgression?project=" + projectName).then(function (response) {
@@ -91,7 +83,7 @@
                     
                     createStoryJS({
                         width: '100%',
-                        height: '1000',
+                        height: '500',
                         source: dataObj,
                         embed_id: 'timeline-embed'
                     });
@@ -104,7 +96,7 @@
                 projects.push(p);
                 htmlProjects += "<a href=\"javascript:void(0)\" onclick=\"" +
                     "\" class=\"list-group-item list-group-item-info\" data-toggle=\"tooltip\" data-original-title=\"" + p.lifecycle +
-                    "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" +
+                    "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
                     "<h4 class=\"list-group-item-heading\">" + p.name + "</h4>" +
                     "<p class=\"list-group-item-text\">" + p.groupId + "</p></a> ";
             });
@@ -122,35 +114,6 @@
                 $('#projectModal').modal('show');
             });
         });
-
-        /*
-        $http.get("/api/Octo/lifecycles").then(function (response) {
-            $(".lifecycles").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
-        });
-
-        $http.get("/api/Octo/environments").then(function (response) {
-            $(".numEnvironments").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
-        });
-
-        $http.get("/api/Octo/environmentList").then(function (response) {
-            var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\"><ul class=\"list-group\">";
-            response.data.forEach(function (d) {
-                replace += "<li class=\"list-group-item\">" + d.name + "<span class=\"badge badge-default badge-pill\">" + d.description + "</span></li>";
-            })
-            replace += "</ul></div>";
-            $(".environments").replaceWith(replace);
-        });
-        */
-
-        /*
-        $http.get("/api/Octo/ProjectList").then(function(response) {
-            var replace = "<div id=\"projectGroupList\" class=\"collapsible panel-collapse collapse\"><ul class=\"list-group\">";
-            response.data.forEach(function (d) {
-                replace += "<li class=\"list-group-item\">" + d.groupName + "<span class=\"badge badge-default badge-pill\">" + d.projectList.count + "</span></li>";
-            })
-            replace += "</ul></div>";
-            $(".projectGroupList").replaceWith(replace);
-        }); */
         
         $http.get("/api/Octo/deploys").then(function (response) {
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working

@@ -8,42 +8,55 @@ using Aetna.DevOps.Dashboard.UIWeb.Models;
 using Swashbuckle.Swagger.Annotations;
 using System.Text.RegularExpressions;
 using System.Net;
-using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Owin;
+using Microsoft.AspNet.SignalR.Hubs;
 using Owin;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
-    #region "SignalR"
-    [Microsoft.AspNet.SignalR.Hubs.HubName("deployAction")]
-    public class DeployAction : Hub
+    #region SignalR
+    [HubName("deployHub")]
+    public class DeployHub : Hub
     {
-        private static LiveDeploys currentState = new LiveDeploys();
-        private static Random rnd = new Random();
-        private static System.Timers.Timer timer = new System.Timers.Timer(400);
-        [Microsoft.AspNet.SignalR.Hubs.HubMethodName("onAction")]
-        public void onAction()
+        private static DataState currentState = new DataState();
+        private static System.Timers.Timer timer = new System.Timers.Timer(5000); // Set Timer to run every 5 seconds
+        public DeployHub() : base()
         {
-
+            timer.Elapsed += (sender, e) =>
+            {
+                if (MetadataController.UpdateDataState(currentState))
+                {
+                    Clients.All.onChange(currentState);
+                }
+            };
+            timer.Enabled = true;
+            timer.Start();
         }
     }
 
     public class Startup
     {
-        public void Configuration(IAppBuilder app)
+        public static void Configuration(IAppBuilder app)
         {
             app.MapSignalR();
         }
     }
 
-    public class LiveDeploys
+    public class DataState
     {
+        public List<ProjectGroup> ProjectGroups { get; set; }
+        public List<Project> Projects { get; set; }
+        public int Lifecycles { get; set; } //Temporary until we add Lifecycle object
+        public List<Environment> Environments { get; set; }
+        public List<Deploy> Deploys { get; set; }
 
+        public Dictionary<String, Boolean> isChanged { get; set; }
     }
+
     #endregion
+    
 
     #region "JSON API Classes"
 
@@ -53,7 +66,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public string id;
         public string name;
         public string url;
-        public System.Collections.Generic.List<string> environs;
+        public List<string> environs;
         public string status;
         public string statusSummary;
         public string isInProcess;
@@ -71,8 +84,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class MachineList
     {
-        public System.Collections.Generic.List<Machine> machines;
-        public MachineList() { machines = new System.Collections.Generic.List<Machine>(); }
+        public List<Machine> machines;
+        public MachineList() { machines = new List<Machine>(); }
         
         public void add(Machine m) { machines.Add(m); }
     }
@@ -102,8 +115,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class EnvironmentList
     {
-        public System.Collections.Generic.List<Environment> environments;
-        public EnvironmentList() { environments = new System.Collections.Generic.List<Environment>(); }
+        public List<Environment> environments;
+        public EnvironmentList() { environments = new List<Environment>(); }
         public void add(Environment e) { environments.Add(e); }
     }
     #endregion
@@ -151,17 +164,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     {
         public string TimeAndDate;
         public string Message;
-        public System.Collections.Generic.List<string> RelatedDocs;
+        public List<string> RelatedDocs;
         public string Category;
-        public System.Collections.Generic.List<Environment> Environs;
+        public List<Environment> Environs;
 
-        public Deploy(string timeAndDate, string msg, System.Collections.Generic.List<string> related, string category)
+
+        public Deploy(string timeAndDate, string msg, List<string> related, string category)
         {
             TimeAndDate = timeAndDate;
             Message = msg;
             RelatedDocs = related;
             Category = category;
-            Environs = new System.Collections.Generic.List<Environment>();
+            Environs = new List<Environment>();
         }
         public override string ToString()
         {
@@ -171,8 +185,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
     public class DeployList
     {
-        public System.Collections.Generic.List<Deploy> deploys;
-        public DeployList() { deploys = new System.Collections.Generic.List<Deploy>(); }
+        public List<Deploy> deploys;
+        public DeployList() { deploys = new List<Deploy>(); }
         public void add(Deploy d) { deploys.Add(d); }
     }
     #endregion
@@ -252,6 +266,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     #endregion
 
     #endregion
+    
 
     public class MetadataController : ApiController
     {
@@ -353,11 +368,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             List<Project> projects = makeProjectList();
             string response = GetResponse(APIdatum.dashboard);
             dynamic jsonDeser = JsonConvert.DeserializeObject(response);
-            foreach(dynamic p in jsonDeser.Items)
+            foreach (dynamic p in jsonDeser.Items)
             {
-                if(p.EnvironmentId == envId) {
+                if (p.EnvironmentId == envId)
+                {
                     string projName = "";
-                    foreach(Project proj in projects) { if (proj.id == p.ProjectId.ToString()) { projName = proj.name; } }
+                    foreach (Project proj in projects) { if (proj.id == p.ProjectId.ToString()) { projName = proj.name; } }
                     projList.Add(new ActiveDeploy(p.Id.ToString(), p.ProjectId.ToString(),
                     p.ReleaseId.ToString(), p.TaskId.ToString(), p.ChannelId.ToString(), p.ReleaseVersion.ToString(),
                     p.Created.ToString(), p.QueueTime.ToString(), p.CompletedTime.ToString(), p.State.ToString(),
@@ -370,7 +386,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         #endregion
 
         #region "Get Number of Environments"
-        private Dictionary<string, string> getNumberEnviroments(string jsonTxt)
+        private static Dictionary<string, string> getNumberEnviroments(string jsonTxt)
         {
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             Dictionary<string, string> environments = new Dictionary<string, string>();
@@ -386,9 +402,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return environments;
         }
         #endregion
-
+    
         #region "Get Number of Machines"
-        private Dictionary<string, int> getNumberMachines(string jsonTxt)
+        private static Dictionary<string, int> getNumberMachines(string jsonTxt)
         {
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             Dictionary<string, int> machines = new Dictionary<string, int>();
@@ -407,23 +423,23 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return machines;
         }
         #endregion
-
+    
         #region "Make Environment List"
-        private EnvironmentList makeEnvironmentList()
+        private static EnvironmentList makeEnvironmentList()
         {
             EnvironmentList el = new EnvironmentList();
             Dictionary<string, int> numMachines = getNumberMachines(GetResponse(APIdatum.machines));
-            Dictionary<string, string> enviromnents = getNumberEnviroments(GetResponse(APIdatum.environments));
+            Dictionary<string, string> environments = getNumberEnviroments(GetResponse(APIdatum.environments));
 
-            foreach (string key in enviromnents.Keys)
+            foreach (string key in environments.Keys)
             {
-                el.add(new Environment(enviromnents[key], key, numMachines[enviromnents[key]].ToString(), getMachines(enviromnents[key])));
+                el.add(new Environment(environments[key], key, (numMachines.ContainsKey(environments[key]) ? numMachines[environments[key]].ToString() : "0"), getMachines(environments[key])));
             }
 
             return el;
         }
         #endregion
-
+    
         #region "Make Project List"
         private static List<Project> makeProjectList()
         {
@@ -437,9 +453,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return pl;
         }
         #endregion
-
+    
         #region "Sort Project List"
-        private List<ProjectGroup> sortProjectGroups()
+        private static List<ProjectGroup> sortProjectGroups()
         {
             List<ProjectGroup> pg;
             ProjectGroupDictionary pgd = new ProjectGroupDictionary();
@@ -479,9 +495,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return rl.releaseList;
         }
         #endregion
-
+    
         #region "Get First Int"
-        private string getFirstInt(string haystack) // credits to txt2re.com
+        private static string getFirstInt(string haystack) // credits to txt2re.com
         {
             string re1 = ".*?"; // Non-greedy match on filler
             string re2 = "(\\d+)";  // Integer Number 1
@@ -540,9 +556,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return dl;
         }
         #endregion
-
+    
         #region "Get Machines"
-        private MachineList getMachines(string envId)
+        private static MachineList getMachines(string envId)
         {
             string machineResponse = GetResponse(APIdatum.machines, envId);
             dynamic mach = JsonConvert.DeserializeObject(machineResponse);
@@ -573,6 +589,68 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
+        #endregion
+
+        #region "SignalR stuff"
+        public static Boolean UpdateDataState(DataState state)
+        {
+            Boolean anyChange = false; // debugging: should be false by default, set true on change
+
+            // Used to notify user when data has changed
+            state.isChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
+                { "ProjectGroups", false },
+                { "Projects", false },
+                { "Lifecycles", false },
+                { "Environments", false },
+                { "Deploys", false }
+             };
+
+            // Get New Data
+
+            List<ProjectGroup> pg = sortProjectGroups();
+            if (state.ProjectGroups == null || state.ProjectGroups != pg)
+            {
+                state.ProjectGroups = sortProjectGroups();
+                state.isChanged["ProjectGroups"] = true;
+                anyChange = true;
+            }
+
+            List<Project> pl = makeProjectList();
+            if (state.Projects == null || state.Projects != pl)
+            {
+                state.Projects= pl;
+                state.isChanged["Projects"] = true;
+                anyChange = true;
+            }
+
+            // Temporary until Lifecycle object is added
+            int nlc = 0;
+            Int32.TryParse(getFirstInt(GetResponse(APIdatum.lifecycles)),out nlc);
+            if (state.Lifecycles != nlc)
+            {
+                state.Lifecycles = nlc;
+                state.isChanged["Lifecycles"] = true;
+                anyChange = true;
+            }
+
+            List<Environment> env = makeEnvironmentList().environments;
+            if (state.Environments == null || state.Environments != env)
+            {
+                state.Environments = env;
+                state.isChanged["Environments"] = true;
+                anyChange = true;
+            }
+
+            List<Deploy> dp = null; // Temporary
+            if (state.Deploys != dp)
+            {
+                state.Deploys = dp;
+                state.isChanged["Deploys"] = true;
+                anyChange = true;
+            }
+
+            return anyChange;
+        }
         #endregion
 
         #region "API Calls"
