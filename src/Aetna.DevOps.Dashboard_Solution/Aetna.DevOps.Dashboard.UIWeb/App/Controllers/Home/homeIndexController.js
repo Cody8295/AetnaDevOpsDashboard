@@ -2,14 +2,128 @@
 
     var app = angular.module("app");
 
-    var homeIndexController = function ($scope, $http) {
+    app.controller('projectGroupListController', function ($scope, $http) {
+        $http.get("/api/Octo/ProjectList").then(function (response) {
+            $scope.projectGroupList = response.data;
+        });
+    });
 
+    app.controller('environmentListController', function ($scope, $http) {
+        $http.get("/api/Octo/environmentList").then(function (response) {
+            $scope.environmentList = response.data;
+        });
+    });
+
+    app.controller('projectController', function ($scope, $http) {
+        $http.get("/api/Octo/projects").then(function (response) {
+            $scope.projects = response.data;
+        });
+    });
+
+    app.controller('projectGroupController', function ($scope, $http) {
+        $http.get("/api/Octo/projectGroups").then(function (response) {
+            $scope.projectGroups = response.data;
+        });
+    });
+
+    app.controller('environmentController', function ($scope, $http) {
+        $http.get("/api/Octo/environments").then(function (response) {
+            $scope.environments = response.data;
+        });
+    });
+
+    app.controller('lifecyclesController', function ($scope, $http) {
+        $http.get("/api/Octo/lifecycles").then(function (response) {
+            $scope.lifecycles = response.data;
+        });
+    });
+    
+    var homeIndexController = function ($scope, $http) {
+        /*
         $http.get("/api/Octo/projectGroups").then(function (response) {
             $(".projectGroups").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
         });
         $http.get("/api/Octo/projects").then(function (response) {
             $(".projects").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
         });
+        */
+        function getReleases(projectName) {
+            var releases = [];
+            $http.get("/api/Octo/projectProgression?project=" + projectName).then(function (response) {
+                response.data.forEach(function (rel) {
+                    releases.push(rel);
+                });
+            });
+            return releases;
+        }
+
+        $http.get("/api/Octo/projectsInfo").then(function (response) {
+            function makeTimeLine(projects, pName) {
+                var proj;
+                projects.forEach(function (p) {
+                    if (p.name == pName) { proj = p; }
+                });
+                if (proj === undefined) { return; }
+                var releases = getReleases(proj.id);
+                var dates = [];
+                $("#tl").html("<div id='timeline-embed'></div>");
+                setTimeout(function() {
+                    for (var x = 0; x < releases.length; x++) {
+                        var r = releases[x];
+                        var date = {
+                            "startDate": r.assembled,
+                            "endDate": r.assembled,
+                            "headline": r.version,
+                            "text": (r.releasenotes === undefined ? "No description" : r.releasenotes)
+                        };
+                        dates.push(date);
+                    }
+                    var dataObj = {
+                        "timeline":
+                        {
+                            "headline": "Progression timeline for " + pName,
+                            "type": "default",
+                            "text": "<p>A brief history of the projects releases</p>",
+                            "date": dates
+                        }
+                    };
+                    
+                    
+                    createStoryJS({
+                        width: '100%',
+                        height: '1000',
+                        source: dataObj,
+                        embed_id: 'timeline-embed'
+                    });
+                }, 1000);   
+            }
+
+            var htmlProjects = "";
+            var projects = [];
+            response.data.forEach(function (p) {
+                projects.push(p);
+                htmlProjects += "<a href=\"javascript:void(0)\" onclick=\"" +
+                    "\" class=\"list-group-item list-group-item-info\" data-toggle=\"tooltip\" data-original-title=\"" + p.lifecycle +
+                    "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" +
+                    "<h4 class=\"list-group-item-heading\">" + p.name + "</h4>" +
+                    "<p class=\"list-group-item-text\">" + p.groupId + "</p></a> ";
+            });
+            $(".projectsInfo").replaceWith(htmlProjects);
+            $(".projectsInfo").show();
+            $('.list-group-item').on('click', function (e) {
+                //var previous = $(this).closest(".list-group").children(".active");
+                $(".projectsInfo").each(function (pr) {
+                    pr.removeClass('active');
+                });
+                $(e.target).addClass('active'); // activated list-item
+                var projName = $(this)[0].getElementsByTagName("h4")[0].innerHTML;
+                console.log(projName);
+                makeTimeLine(projects, projName);
+                $('#projectModal').modal('show');
+            });
+        });
+
+        /*
         $http.get("/api/Octo/lifecycles").then(function (response) {
             $(".lifecycles").replaceWith("<span class=\"pull-right\">" + response.data + "</span>");
         });
@@ -19,21 +133,24 @@
         });
 
         $http.get("/api/Octo/environmentList").then(function (response) {
-            var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\">";
+            var replace = "<div id=\"environments\" class=\"collapsible panel-collapse collapse\"><ul class=\"list-group\">";
             response.data.forEach(function (d) {
-                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.name + "<span class=\"pull-right\">" + d.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+                replace += "<li class=\"list-group-item\">" + d.name + "<span class=\"badge badge-default badge-pill\">" + d.description + "</span></li>";
             })
-            replace += "</div>";
+            replace += "</ul></div>";
             $(".environments").replaceWith(replace);
         });
+        */
 
+        /*
         $http.get("/api/Octo/ProjectList").then(function(response) {
-            var replace = "<div id=\"projectGroupList\" class=\"collapsible panel-collapse collapse\">";
+            var replace = "<div id=\"projectGroupList\" class=\"collapsible panel-collapse collapse\"><ul class=\"list-group\">";
             response.data.forEach(function (d) {
-                replace += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + d.groupName + "<span class=\"pull-right\">" + d.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+                replace += "<li class=\"list-group-item\">" + d.groupName + "<span class=\"badge badge-default badge-pill\">" + d.projectList.count + "</span></li>";
             })
+            replace += "</ul></div>";
             $(".projectGroupList").replaceWith(replace);
-        });
+        }); */
         
         $http.get("/api/Octo/deploys").then(function (response) {
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working
@@ -72,13 +189,18 @@
                 lastHour = s;
             }
 
+            function parseISOLocal(s) {
+                var b = s.split(/\D/);
+                return new Date(b[0], b[1] - 1, b[2], b[3], b[4], b[5]);
+            }
+
             response.data.forEach(function (d) {
-                console.log(d);
-                var timeString = new Date(0);
-                timeString.setUTCSeconds(d.timeAndDate);
-                var hour = timeString.getHours();
-                hour = hour + (23 - startTime);
-                //console.log(timeString + ",");
+                //console.log(d);
+                var timeString = moment(d.timeAndDate);
+                var rightNow = moment();
+                var hour = timeString.hour();
+                var timeDiff = timeString.diff(rightNow, 'hours');
+                hour = 23 - (timeDiff<0?timeDiff*-1:timeDiff);
                 allDeploys[hour] = (allDeploys[hour]===undefined?[]:allDeploys[hour]).concat({"message":d.message, "category":d.category, "dateTime":timeString, "environs":d.environs});
                 if (d.category === "DeploymentFailed") {
                     failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
@@ -256,12 +378,11 @@
             }
 
             function checkRadio() {
-                console.log($(".btn-group").find(".active").attr("id"));
+                //console.log($(".btn-group").find(".active").attr("id"));
             }
 
             function setupLineGraph() {
                 document.getElementById("canvas").onclick = function (e) {
-                    console.log("Line graph clicked");
                     var htmlDeploys = "";
                     var points = theLineGraph.getElementsAtEvent(e);
                     if (points[0] === undefined) { // user didn't click on a point
@@ -272,20 +393,41 @@
                     allDeploys[points[0]._index].forEach(function (d) {
                         var msg = d.message;
                         var cat = d.category;
-                        var dt = d.dateTime;
-                        console.log(msg + "," + cat);
-                        var environData = "";
-                        d.environs.forEach(function (e) {
-                            environData += msg + "<br>" + dt + "<br>" + e.id + "<br>" + e.name + (e.description === undefined ? "" : "(" + e.description + ")<br><br>");
-                            if (e.machines !== undefined) {
-                                environData += "Machines for " + e.name + ":<br>";
-                                e.machines.forEach(function (m) {
-                                    environData += m.id + "<br>" + m.name + "<br>" + m.url + "<br>" + m.status + "<br>" + m.statusSummary + "<br>Is running: " + m.isInProcess + "<br><br>";
-                                });
-                            }
+                        var dt = moment(d.dateTime);
+                        var timePassed = dt.fromNow();
 
+                        //console.log(msg + "," + timePassed);
+                        var environData = "";
+
+                        // Triply nested, double terminating quotations are really fun
+                        // -> onclick="element.html('\\"someText\\"')"
+                        
+
+                        d.environs.forEach(function (e) {
+                            function formatEnvironment(msg, dt, id, name, description) {
+                                var machineList = "";
+                                e.machines.machines.forEach(function (machine) {
+                                        var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
+                                        machineList += "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
+                                            machine.name + "<span class=\\'pull-right\\'>" + (machine.isInProcess==="true"?isInProcessStr:"") + "<small>" + machine.status + "</small></span></h4><p class=\\'list-group-item-text\\'>" +
+                                            machine.statusSummary + "</p></li>";
+                                });
+                                return "<div class=\\'card text-center\\'><div class=\\'card-header\\'>" + id +
+                                    "</div><div class=\\'card-block\\'><h4 class=\\'card-title\\'>" + name + "</h4>" +
+                                    "<p class=\\'card-text\\'>" + (description === undefined ? "No description" : description) + "</p></div>" +
+                                    "<ul class=\\'list-group list-group-flush\\' style=\\'overflow-y:auto;\\'>" +
+                                    machineList +
+                                    "</ul>" +
+                                    "<div class=\\'card-footer text-muted\\'>" + dt + "</div></div>";
+                            }
+                            environData += formatEnvironment(msg, timePassed, e.id, e.name, e.description);
                         });
-                        htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" + environData +"'); $('.deployData').show();\" class=\"list-group-item " + coloredListElement(cat) + "\" data-toggle=\"tooltip\" data-original-title=\"" + dt + "\" style=\"display:block;overflow: hidden; height:70px; padding: 3px 10px;\">" + msg + "</a>";
+                        htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
+                            environData + "'); $('.deployData').show();\" class=\"list-group-item " + coloredListElement(cat) +
+                            "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
+                            "<h4 class=\"list-group-item-heading\">" + d.environs[0].name +
+                            "<div class='pull-right'><small>" + timePassed + "</small></div></h4>" +
+                            "<p class=\"list-group-item-text\">"  + msg + "</p></a>";
                     });
                     if (htmlDeploys == "") { return; }
                     $("#octoModal").modal("show");

@@ -64,51 +64,69 @@
                 <div class="panel-body">
 
                     <div class="panel panel-default">
-                        
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList">
-                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups <div class="projectGroups"><span class="pull-right">0</span></div>
-                        </div>
-                        
-                        <div id="projectGroupList" class="collapsible collapse projectGroupList"><span class="pull-right">0</span></div>
-                        
-                        <div class="panel-footer">
-                            <i class="fa fa-product-hunt"></i>&nbsp;Projects <div class="projects"><span class="pull-right">0</span></div>
-                        </div>
-                        
-                        <div class="panel-footer">
-                            <i class="fa fa-heartbeat"></i>&nbsp;Lifecycles <div class="lifecycles"><span class="pull-right">0</span></div>
-                        </div>
-                        
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments">
-                            <i class="fa fa-photo"></i>&nbsp;Environments <div class="numEnvironments"></div>
-                        </div>
-                        
-                        <div id="environments" class="collapsible collapse environments"><span class="pull-right">0</span></div>
 
-                        
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#graph">
-
-                            <i class="fa fa-space-shuttle"></i>&nbsp;Deploys
+                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList" data-ng-controller="projectGroupController">
+                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill">{{projectGroups}}</span>
                         </div>
-                        
-                        <div id="graph" class="collapsible collapse graph">
-                            <div class="btn-group pull-right" id="dataRep" data-toggle="buttons">
-                                <label class="btn btn-primary active" id="opt1">
-                                    <input type="radio" name="options1" id="option1" value="line" autocomplete="off" checked><i class="fa fa-line-chart"></i>
-                                </label>
-                                <label class="btn btn-primary" id="opt2">
-                                    <input type="radio" name="options2" id="option2" value="pie" autocomplete="off"><i class="fa fa-pie-chart"></i>
-                                </label>
-                                <label class="btn btn-primary" id="opt3">
-                                    <input type="radio" name="options3" id="option3" value="bar" autocomplete="off"><i class="fa fa-bar-chart"></i>
-                                </label>
+
+                        <div id="projectGroupList" class="collapsible panel-collapse collapse" data-ng-controller="projectGroupListController">
+                            <ul class="list-group">
+                                <li data-ng-repeat="projectGroup in projectGroupList" class="list-group-item">
+                                    {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projectList.count}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectsList" data-ng-controller="projectController">
+                            <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill">{{projects}}</span>
+                        </div>
+
+                        <div id="projectsList" class="collapsible collapse projectsList">
+                            <div class="pre-scrollable" style="overflow-y:auto;overflow-x:auto;">
+                                <div class="list-group projectsInfo" style="position:absolute;display:none;overflow-y:auto;overflow-x:hidden;padding:25px;">
+                                </div>
                             </div>
-                            <span class="center-block"><br /><canvas id="canvas" style="width:100%;height:100%;"></canvas></span>
-
                         </div>
-                    </div>
 
-                </div>
+                        <div class="panel-footer" data-ng-controller="lifecyclesController">
+                            <i class="fa fa-heartbeat"></i>&nbsp;Lifecycles <span class="pull-right badge badge-default badge-pill">{{lifecycles}}</span>
+                        </div>
+
+                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments" data-ng-controller="environmentController">
+                            <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill">{{environments}}</span>
+                        </div>
+
+                        <div id="environments" class="collapsible panel-collapse collapse" data-ng-controller="environmentListController">
+                            <ul class="list-group">
+                                <li data-ng-repeat="environment in environmentList" class="list-group-item">
+                                    {{environment.name}} <span class="badge badge-default badge-pill"> {{environment.description}} </span>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                                <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#graph">
+
+                                    <i class="fa fa-space-shuttle"></i>&nbsp;Deploys
+                                </div>
+
+                                <div id="graph" class="collapsible collapse graph">
+                                    <div class="btn-group pull-right" id="dataRep" data-toggle="buttons">
+                                        <label class="btn btn-primary active" id="opt1">
+                                            <input type="radio" name="options1" id="option1" value="line" autocomplete="off" checked><i class="fa fa-line-chart"></i>
+                                        </label>
+                                        <label class="btn btn-primary" id="opt2">
+                                            <input type="radio" name="options2" id="option2" value="pie" autocomplete="off"><i class="fa fa-pie-chart"></i>
+                                        </label>
+                                        <label class="btn btn-primary" id="opt3">
+                                            <input type="radio" name="options3" id="option3" value="bar" autocomplete="off"><i class="fa fa-bar-chart"></i>
+                                        </label>
+                                    </div>
+                                    <span class="center-block"><br /><canvas id="canvas" style="width:100%;height:100%;"></canvas></span>
+
+                                </div>
+                        </div>
+
+                    </div>
                 <div class="panel-footer"><a href="https://octodeploy.aetna.com" target="_blank"><i class="fa fa-link"></i>&nbsp;Go to website...</a></div>
             </div>
         </div>
@@ -122,10 +140,27 @@
                     <div class="modal-body" style="max-height:90%;overflow-y:auto;">
                         <div class="row">
                             <div class="col-md-6 pre-scrollable" style="overflow-y:auto;overflow-x:auto;"><div class="list-group" style="position:absolute;display:none;overflow-y:auto;"></div></div>
-                            <div class="col-md-6"><p class="deployData" style="display:none;overflow:hidden;white-space:pre-wrap"></p></div>
+                            <div class="col-md-6"><div class="deployData" style="display:none;overflow:hidden;white-space:pre-wrap"></div></div>
                         </div>
                         
                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="projectModal" class="modal fade" role="dialog" style="max-height:90%;height:90%;overflow-y:auto">
+            <div class="modal-dialog" style="max-height:90%;overflow-y:auto;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"> <i class="fa fa-times-circle"></i></button>
+                        <h4 class="modal-title">Progression Timeline</h4>
+                    </div>
+                    <div class="modal-body" style="max-height:90%;overflow-y:auto;">
+                        <div id="tl">
+                            <div id="timeline-embed">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
