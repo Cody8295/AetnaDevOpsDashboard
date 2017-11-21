@@ -394,8 +394,8 @@
                     });
                     if (htmlDeploys == "") { return; }
                     $("#octoModal").modal("show");
-                    $(".list-group").replaceWith(htmlDeploys);
-                    $(".list-group").show();
+                    $(".envList").replaceWith(htmlDeploys);
+                    $(".envList").show();
                 };
             }
 
