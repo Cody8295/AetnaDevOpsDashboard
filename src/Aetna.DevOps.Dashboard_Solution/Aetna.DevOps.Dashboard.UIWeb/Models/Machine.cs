@@ -4,7 +4,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class Machine
     {
-        public string id;
+        public string Id;
         public string name;
         public string url;
         public List<string> environs;
@@ -13,7 +13,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public string isInProcess;
         public Machine(string Id, string Name, string Url, System.Collections.Generic.List<string> Environs, string Status, string StatusSummary, string IsInProcess)
         {
-            id = Id;
+            this.Id = Id;
             name = Name;
             url = Url;
             environs = Environs;

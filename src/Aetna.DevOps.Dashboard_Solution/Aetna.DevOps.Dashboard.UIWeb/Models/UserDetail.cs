@@ -9,7 +9,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
     public class UserDetail
     {
         /// <summary>
-        /// Gets or sets the Aetna user id.
+        /// Gets or sets the Aetna user Id.
         /// </summary>
         public String AetnaUserId { get; set; }
 
