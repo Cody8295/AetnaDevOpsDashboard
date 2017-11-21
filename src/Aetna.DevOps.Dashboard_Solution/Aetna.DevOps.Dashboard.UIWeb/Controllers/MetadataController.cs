@@ -52,12 +52,15 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public List<Environment> Environments { get; set; }
         public List<Deploy> Deploys { get; set; }
 
-        public Dictionary<String,Boolean> isChanged { get; set; }
+        public Dictionary<String, Boolean> isChanged { get; set; }
     }
 
     #endregion
+    
 
     #region "JSON API Classes"
+
+    #region "Machine and list"
     public class Machine
     {
         public string id;
@@ -86,7 +89,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         
         public void add(Machine m) { machines.Add(m); }
     }
+    #endregion
 
+    #region "Environment and list"
     public class Environment
     {
         public string id;
@@ -107,22 +112,64 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return name + ":" + machines.machines.Count;
         }
     }
+
     public class EnvironmentList
     {
         public List<Environment> environments;
         public EnvironmentList() { environments = new List<Environment>(); }
         public void add(Environment e) { environments.Add(e); }
     }
+    #endregion
+
+    #region "Release and list"
+    public class Release
+    {
+        public string id, version, projectid, channelid, assembled, releasenotes;
+        public Release(string Id, string Version, string ProjectId, string ChannelId, string Assembled, string ReleaseNotes)
+        {
+            id = Id;
+            version = Version;
+            projectid = ProjectId;
+            channelid = ChannelId;
+            assembled = Assembled;
+            releasenotes = ReleaseNotes;
+        }
+    }
+
+    public class ReleaseList
+    {
+        public List<Release> releaseList;
+        public ReleaseList() { releaseList = new List<Release>(); }
+        public void add(Release r) { releaseList.Add(r); }
+    }
+    #endregion
+
+    #region "(Active) Deploy and list"
+    public class ActiveDeploy
+    {
+        public string Id, ProjectId, ProjectName, ReleaseId, TaskId, ChannelId, ReleaseVersion, Created, QueueTime, CompletedTime, State,
+            HasWarningsOrErrors, ErrorMessage, Duration, IsCurrent, IsCompleted;
+
+        public ActiveDeploy(string id, string projectId, string releaseId, string taskId, string channelId, string releaseVersion,
+            string created, string queueTime, string completedTime, string state, string hasWarningsOrErrors, string errorMessage,
+            string duration, string isCurrent, string isCompleted, string projectName)
+        {
+            Id = id; ProjectId = projectId; TaskId = taskId; ReleaseId = releaseId; ChannelId = channelId; ReleaseVersion = releaseVersion;
+            Created = created; QueueTime = queueTime; CompletedTime = completedTime; State = state; HasWarningsOrErrors = hasWarningsOrErrors;
+            ErrorMessage = errorMessage; Duration = duration; IsCurrent = isCurrent; IsCompleted = isCompleted; ProjectName = projectName;
+        }
+    }
 
     public class Deploy
     {
-        public long TimeAndDate;
+        public string TimeAndDate;
         public string Message;
         public List<string> RelatedDocs;
         public string Category;
         public List<Environment> Environs;
 
-        public Deploy(long timeAndDate, string msg, List<string> related, string category)
+
+        public Deploy(string timeAndDate, string msg, List<string> related, string category)
         {
             TimeAndDate = timeAndDate;
             Message = msg;
@@ -142,7 +189,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public DeployList() { deploys = new List<Deploy>(); }
         public void add(Deploy d) { deploys.Add(d); }
     }
+    #endregion
 
+    #region "Project and list"
     public class Project
     {
         public string groupId;
@@ -150,9 +199,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         public string lifecycle;
         public string deploymentProcess;
         public List<string> relatedDocs;
+        public string id;
 
-        public Project(string groupId, string name, string lifecycle, string deploymentProcess)
+        public Project(string id, string groupId, string name, string lifecycle, string deploymentProcess)
         {
+            this.id = id;
             this.groupId = groupId;
             this.name = name;
             this.lifecycle = lifecycle;
@@ -165,13 +216,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     {
         public int count;
         public List<Project> projects;
-
-
         public ProjectList() { projects = new List<Project>(); count = 0; }
-
         public void Add(Project p) { projects.Add(p); count++; }
     }
+    #endregion
 
+    #region "ProjectGroup and dictionary"
     public class ProjectGroup
     {
         public string groupName;
@@ -194,12 +244,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class ProjectGroupDictionary
     {
         public Dictionary<string, ProjectGroup> pGroupDictionary;
-
         public ProjectGroupDictionary()
         {
             pGroupDictionary = new Dictionary<string, ProjectGroup>();
         }
-
         public void AddProjectGroup (string groupId, ProjectGroup pGroup)
         {
             pGroupDictionary.Add(groupId, pGroup);
@@ -216,6 +264,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
     }
     #endregion
+
+    #endregion
+    
 
     public class MetadataController : ApiController
     {
@@ -236,10 +287,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         #endregion
 
         #region "API Setup"
+
+        #region "Constants"
         private const string API_URL = "http://ec2-18-220-206-192.us-east-2.compute.amazonaws.com:81/api/";
         private const String API_KEY = "API-A5I5VUHAOV0VJJN6LQ6MXCPSMS";
         private readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        #endregion
 
+        #region "API Datum Enum"
         private enum APIdatum
         {
             projectGroups = 0,
@@ -247,9 +302,13 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             lifecycles = 2,
             environments = 3,
             deploys = 4,
-            machines = 5
+            machines = 5,
+            projectProgression = 6,
+            dashboard = 7
         }
+        #endregion
 
+        #region "HTTP Request Constructor"
         private static string GetResponse(APIdatum apid, string param="")
         {
             WebRequest request;
@@ -281,6 +340,13 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                         reqString = "environments/" + param + "/machines?";
                     }
                     break;
+                case APIdatum.projectProgression:
+                    if (param == String.Empty) { return ""; } // can't find progression of project without it's name
+                    reqString = "progression/" + param + "?";
+                    break;
+                case APIdatum.dashboard:
+                    reqString = "dashboard?";
+                    break;
                 default: break;
             }
             request = WebRequest.Create(API_URL + reqString + "apikey=" + API_KEY);
@@ -293,7 +359,33 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             response.Close();
             return serverResponse;
         }
+        #endregion
 
+        #region "Get Active Projects by Environment"
+        private static List<ActiveDeploy> getEnvProjects(string envId)
+        {
+            List<ActiveDeploy> projList = new List<ActiveDeploy>();
+            List<Project> projects = makeProjectList();
+            string response = GetResponse(APIdatum.dashboard);
+            dynamic jsonDeser = JsonConvert.DeserializeObject(response);
+            foreach (dynamic p in jsonDeser.Items)
+            {
+                if (p.EnvironmentId == envId)
+                {
+                    string projName = "";
+                    foreach (Project proj in projects) { if (proj.id == p.ProjectId.ToString()) { projName = proj.name; } }
+                    projList.Add(new ActiveDeploy(p.Id.ToString(), p.ProjectId.ToString(),
+                    p.ReleaseId.ToString(), p.TaskId.ToString(), p.ChannelId.ToString(), p.ReleaseVersion.ToString(),
+                    p.Created.ToString(), p.QueueTime.ToString(), p.CompletedTime.ToString(), p.State.ToString(),
+                    p.HasWarningsOrErrors.ToString(), p.ErrorMessage.ToString(), p.Duration.ToString(), p.IsCurrent.ToString(),
+                    p.IsCompleted.ToString(), projName));
+                }
+            }
+            return projList;
+        }
+        #endregion
+
+        #region "Get Number of Environments"
         private static Dictionary<string, string> getNumberEnviroments(string jsonTxt)
         {
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
@@ -309,7 +401,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
             return environments;
         }
-
+        #endregion
+    
+        #region "Get Number of Machines"
         private static Dictionary<string, int> getNumberMachines(string jsonTxt)
         {
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
@@ -328,7 +422,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             return machines;
         }
-
+        #endregion
+    
+        #region "Make Environment List"
         private static EnvironmentList makeEnvironmentList()
         {
             EnvironmentList el = new EnvironmentList();
@@ -342,22 +438,23 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             return el;
         }
-
+        #endregion
+    
+        #region "Make Project List"
         private static List<Project> makeProjectList()
         {
             List<Project> pl = new List<Project>();
             string jsonTxt = GetResponse(APIdatum.projects);
-
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
-
             foreach (dynamic o in jsonDeser.Items)
             {
-                pl.Add(new Project(o.ProjectGroupId.ToString(), o.Name.ToString(), o.LifecycleId.ToString(), o.DeploymentProcessId.ToString()));
+                pl.Add(new Project(o.Id.ToString(), o.ProjectGroupId.ToString(), o.Name.ToString(), o.LifecycleId.ToString(), o.DeploymentProcessId.ToString()));
             }
-
             return pl;
         }
-
+        #endregion
+    
+        #region "Sort Project List"
         private static List<ProjectGroup> sortProjectGroups()
         {
             List<ProjectGroup> pg;
@@ -381,10 +478,25 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             pg = pgd.getProjectGroups();
             return pg;
-        } 
+        }
+        #endregion
 
-
-
+        #region "Get Release List"
+        private List<Release> getReleaseList(string response)
+        {
+            dynamic releases = JsonConvert.DeserializeObject(response);
+            ReleaseList rl = new ReleaseList();
+            foreach (dynamic r in releases.Releases)
+            {
+                Release re = new Release(r.Release.Id.ToString(), r.Release.Version.ToString(), r.Release.ProjectId.ToString(),
+                    r.Release.ChannelId.ToString(), isoToDateTime(r.Release.Assembled.ToString()), r.Release.ReleaseNotes.ToString());
+                rl.add(re);
+            }
+            return rl.releaseList;
+        }
+        #endregion
+    
+        #region "Get First Int"
         private static string getFirstInt(string haystack) // credits to txt2re.com
         {
             string re1 = ".*?"; // Non-greedy match on filler
@@ -398,8 +510,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
             return "API error";
         }
+        #endregion
 
         #region "Datetime functions"
+
+        #region "ISO to Datetime"
+        private string isoToDateTime(string iso)
+        {
+            DateTime dateTime = DateTime.Parse(iso).ToLocalTime();
+            return dateTime.ToString();
+        }
+        #endregion
+
         private DateTime dateTimeFromEpoch(long time)
         {
             return epoch.AddSeconds(time);
@@ -419,10 +541,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach(dynamic o in jsonDeser.Items)
             {
-                DateTime parsedDt = Convert.ToDateTime(o.Occurred.ToString());
-                long occur = epochFromDateTime(parsedDt);
-                if(DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
-                Deploy d = new Deploy(occur, o.Message.ToString(),
+                string occured = o.Occurred.ToString(); //isoToDateTime(o.Occurred.ToString());
+                DateTime parsedDt = Convert.ToDateTime(occured);
+                string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
+                if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
+                Deploy d = new Deploy(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
                     o.Category.ToString());
                 if (o.Category == "DeploymentStarted") { dl.add(d); }
@@ -433,10 +556,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return dl;
         }
         #endregion
-
-        private static MachineList getMachines(string envName)
+    
+        #region "Get Machines"
+        private static MachineList getMachines(string envId)
         {
-            string machineResponse = GetResponse(APIdatum.machines, envName);
+            string machineResponse = GetResponse(APIdatum.machines, envId);
             dynamic mach = JsonConvert.DeserializeObject(machineResponse);
             MachineList m = new MachineList();
             foreach(dynamic mac in mach.Items)
@@ -453,7 +577,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
             return m;
         }
+        #endregion
 
+        #region "Get Environment"
         private Environment getEnviron(string envName)
         {
             string environData = GetResponse(APIdatum.environments, envName);
@@ -461,6 +587,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), getMachines(envName));
             return e;
         }
+        #endregion
+
         #endregion
 
         #region "SignalR stuff"
@@ -526,6 +654,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         #endregion
 
         #region "API Calls"
+
+        #region "Project Groups"
         /// <summary>
         /// Pulls information about how many project groups there are
         /// </summary>
@@ -544,7 +674,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return InternalServerError(exception);
             }
         }
+        #endregion
 
+        #region "Lifecycles"
         /// <summary>
         /// Pulls information about how many lifecycles there are
         /// </summary>
@@ -563,7 +695,51 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return InternalServerError(exception);
             }
         }
+        #endregion
 
+        #region "Projects Info"
+        /// <summary>
+        /// Pulls information about projects
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/projectsInfo")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetProjectsInfo()
+        {
+            try
+            {
+                return Ok<List<Project>>(makeProjectList());
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+        #endregion
+
+        #region "Projects by Environment"
+        /// <summary>
+        /// Pulls information about projects by environment
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/environmentProjects")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetEnvProjects(string envId)
+        {
+            try
+            {
+                return Ok<List<ActiveDeploy>>(getEnvProjects(envId));
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+        #endregion
+
+        #region "Project Count"
         /// <summary>
         /// Pulls information about how many projects there are
         /// </summary>
@@ -582,7 +758,51 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return InternalServerError(exception);
             }
         }
+        #endregion
 
+        #region "Project Releases"
+        /// <summary>
+        /// Pulls information about how a project has progressed in respect to releases
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/projectProgression")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetProjectProgression(string project)
+        {
+            try
+            {
+                return Ok<List<Release>>(getReleaseList(GetResponse(APIdatum.projectProgression, project)));
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+        #endregion
+
+        #region "Machines by Environment"
+        /// <summary>
+        /// Pulls information about how each machine for a specified environment
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/environmentMachines")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        public IHttpActionResult GetEnvironmentMachines(string envId)
+        {
+            try
+            {
+                return Ok<List<Machine>>(getMachines(envId).machines);
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+        #endregion
+
+        #region "Environments"
         /// <summary>
         /// Pulls information about how many enviornments there are
         /// </summary>
@@ -594,14 +814,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                return Ok (getFirstInt(GetResponse(APIdatum.environments)));
+                return Ok(getFirstInt(GetResponse(APIdatum.environments)));
             }
             catch (Exception exception)
             {
                 return InternalServerError(exception);
             }
         }
+        #endregion
 
+        #region "Environment List"
         /// <summary>
         /// Pulls information about how many enviornments there are
         /// </summary>
@@ -621,7 +843,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return InternalServerError(exception);
             }
         }
+        #endregion
 
+        #region "Project List"
         /// <summary>
         /// Pulls information about how many enviornments there are
         /// </summary>
@@ -641,12 +865,13 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 return InternalServerError(exception);
             }
         }
+        #endregion
 
+        #region "Deploys"
         /// <summary>
         /// Pulls information about how many deploys there are over the past 24 hours and information about each one
         /// </summary>
         /// <returns></returns>
-
         [Route("api/Octo/deploys")]
         [ResponseType(typeof(int))]
         [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
@@ -675,7 +900,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
         }
         #endregion
-        
+
+        #endregion
+
         #region "Aetna Provided"
         /// <summary>
         /// Gets information about the current user.
