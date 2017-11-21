@@ -1089,8 +1089,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\OperatingEnvironment.cs" />
-    <Compile Include="Models\UserDetail.cs" />
-    <Compile Include="Models\UserDetailHelper.cs" />
+    <Compile Include="Controllers\UserDetail.cs" />
+    <Compile Include="Controllers\UserDetailHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
