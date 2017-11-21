@@ -95,7 +95,7 @@
             response.data.forEach(function (p) {
                 projects.push(p);
                 htmlProjects += "<a href=\"javascript:void(0)\" onclick=\"" +
-                    "\" class=\"list-group-item list-group-item-info\" data-toggle=\"tooltip\" data-original-title=\"" + p.lifecycle +
+                    "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + p.lifecycle +
                     "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
                     "<h4 class=\"list-group-item-heading\">" + p.name + "</h4>" +
                     "<p class=\"list-group-item-text\">" + p.groupId + "</p></a> ";
