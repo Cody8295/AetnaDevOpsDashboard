@@ -203,8 +203,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         #region "Sort Project List"
         private static List<ProjectGroup> SortProjectGroups()
         {
-            List<ProjectGroup> pg;
-            ProjectGroupDictionary pgd = new ProjectGroupDictionary();
+            List<ProjectGroup> projectGroupList;
+            ProjectGroupDictionary projectGroupDictionary = new ProjectGroupDictionary();
 
             string jsonTxt = GetResponse(APIdatum.projectGroups);
 
@@ -212,18 +212,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (dynamic o in jsonDeser.Items)
             {
-                pgd.AddProjectGroup(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
+                projectGroupDictionary.AddProjectGroup(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
             }
 
             List<Project> projects = MakeProjectList();
 
             foreach(Project p in projects)
             {
-                pgd.addProject(p.getGroupId(), p);
+                projectGroupDictionary.addProject(p.getGroupId(), p);
             }
 
-            pg = pgd.getProjectGroups();
-            return pg;
+            projectGroupList = projectGroupDictionary.getProjectGroups();
+            return projectGroupList;
         }
         #endregion
 
@@ -231,7 +231,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private List<Release> GetReleaseList(string response)
         {
             dynamic releases = JsonConvert.DeserializeObject(response);
-            ReleaseList rl = new ReleaseList();
+            ReleaseList releaseList = new ReleaseList();
             foreach (dynamic r in releases.Releases)
             {
                 List<ActiveDeploy> releaseDeploys = new List<ActiveDeploy>();
@@ -254,11 +254,13 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 dynamic releaseLinks = JsonConvert.DeserializeObject(r.Release.Links.ToString());
                 string webUrl = releaseLinks.Web.ToString();
                 Release re = new Release(r.Release.Id.ToString(), r.Release.Version.ToString(), r.Release.ProjectId.ToString(),
+
                     r.Release.ChannelId.ToString(), isoToDateTime(r.Release.Assembled.ToString()), r.Release.ReleaseNotes.ToString(),
                     releaseDeploys, API_URL.TrimEnd("/api/".ToCharArray()) + webUrl);
-                rl.add(re);
+                    releaseList.add(re);
+
             }
-            return rl.releaseList;
+            return releaseList.releaseList;
         }
         #endregion
     
@@ -303,23 +305,23 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         #region "Format deploys for graphing"
         private DeployList GraphDeployments(string jsonTxt)
         {
-            DeployList dl = new DeployList();
-            dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
-            foreach(dynamic o in jsonDeser.Items)
+            DeployList deployList = new DeployList();
+            dynamic jsonDeserialize = JsonConvert.DeserializeObject(jsonTxt);
+            foreach(dynamic o in jsonDeserialize.Items)
             {
                 string occured = o.Occurred.ToString(); //isoToDateTime(o.Occurred.ToString());
-                DateTime parsedDt = Convert.ToDateTime(occured);
-                string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
-                if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
-                Deploy d = new Deploy(occuredISO, o.Message.ToString(),
+                DateTime parsedDateTime = Convert.ToDateTime(occured);
+                string occuredISO = parsedDateTime.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
+                if (DateTime.Now.AddDays(-1) > parsedDateTime) { continue; } // ignore events that took place more than 1 day ago
+                Deploy newDeploy = new Deploy(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
                     o.Category.ToString());
-                if (o.Category == "DeploymentStarted") { dl.add(d); }
-                if (o.Category == "DeploymentQueued") { dl.add(d); }
-                if (o.Category == "DeploymentSucceeded") { dl.add(d); }
-                if (o.Category == "DeploymentFailed") { dl.add(d); }
+                if (o.Category == "DeploymentStarted") { deployList.add(newDeploy); }
+                if (o.Category == "DeploymentQueued") { deployList.add(newDeploy); }
+                if (o.Category == "DeploymentSucceeded") { deployList.add(newDeploy); }
+                if (o.Category == "DeploymentFailed") { deployList.add(newDeploy); }
             }
-            return dl;
+            return deployList;
         }
         #endregion
     
@@ -328,7 +330,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             string machineResponse = GetResponse(APIdatum.machines, envId);
             dynamic mach = JsonConvert.DeserializeObject(machineResponse);
-            MachineList m = new MachineList();
+            MachineList machineList = new MachineList();
             foreach(dynamic mac in mach.Items)
             {
                 System.Collections.Generic.List<string> el = new System.Collections.Generic.List<string>();
@@ -339,17 +341,17 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 }
                 //Machine m = new Machine()
                 Machine machine = new Machine(mac.Id.ToString(), mac.Name.ToString(), mac.Uri.ToString(), el, mac.Status.ToString(), mac.StatusSummary.ToString(), mac.IsInProcess.ToString());
-                m.add(machine);
+                machineList.add(machine);
             }
-            return m;
+            return machineList;
         }
         #endregion
 
         #region "Get Environment"
-        private Environment GetEnviron(string envName)
+        private Environment GetEnvironment(string envName)
         {
-            string environData = GetResponse(APIdatum.environments, envName);
-            dynamic env = JsonConvert.DeserializeObject(environData);
+            string environmentData = GetResponse(APIdatum.environments, envName);
+            dynamic env = JsonConvert.DeserializeObject(environmentData);
             Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), GetMachines(envName));
             return e;
         }
@@ -373,18 +375,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             // Get New Data
 
-            List<ProjectGroup> pg = SortProjectGroups();
-            if (state.ProjectGroups == null || state.ProjectGroups != pg)
+            List<ProjectGroup> projectGroupList = SortProjectGroups();
+            if (state.ProjectGroups == null || state.ProjectGroups != projectGroupList)
             {
                 state.ProjectGroups = SortProjectGroups();
                 state.isChanged["ProjectGroups"] = true;
                 anyChange = true;
             }
 
-            List<Project> pl = MakeProjectList();
-            if (state.Projects == null || state.Projects != pl)
+            List<Project> projectList = MakeProjectList();
+            if (state.Projects == null || state.Projects != projectList)
             {
-                state.Projects= pl;
+                state.Projects= projectList;
                 state.isChanged["Projects"] = true;
                 anyChange = true;
             }
@@ -399,18 +401,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Environment> env = MakeEnvironmentList().environments;
-            if (state.Environments == null || state.Environments != env)
+            List<Environment> environmentList = MakeEnvironmentList().environments;
+            if (state.Environments == null || state.Environments != environmentList)
             {
-                state.Environments = env;
+                state.Environments = environmentList;
                 state.isChanged["Environments"] = true;
                 anyChange = true;
             }
 
-            List<Deploy> dp = null; // Temporary
-            if (state.Deploys != dp)
+            List<Deploy> deployList = null; // Temporary
+            if (state.Deploys != deployList)
             {
-                state.Deploys = dp;
+                state.Deploys = deployList;
                 state.isChanged["Deploys"] = true;
                 anyChange = true;
             }
@@ -653,7 +655,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                         foreach(string docID in dl.deploys[x].RelatedDocs){
                             if (docID.Contains("Environments"))
                             {
-                                dl.deploys[x].Environs.Add(GetEnviron(docID));
+                                dl.deploys[x].Environs.Add(GetEnvironment(docID));
                             }
                         }
                     }
