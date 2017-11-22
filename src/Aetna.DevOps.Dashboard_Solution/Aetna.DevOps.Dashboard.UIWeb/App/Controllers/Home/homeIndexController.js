@@ -62,11 +62,24 @@
                 setTimeout(function() {
                     for (var x = 0; x < releases.length; x++) {
                         var r = releases[x];
+                        var releaseDeployHtml = "<br/><a href='"+r.webUrl+"'>Open in Octopus</a><div class=\"list-group\">";
+
+                        //console.log(r.releaseDeploys);
+                        for (var deplo in r.releaseDeploys) {
+                            var depl = r.releaseDeploys[deplo];
+                            
+                            releaseDeployHtml += "<a href=\"javascript:void(0)\" onclick=\"" +
+                                "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + moment(depl.created).fromNow() +
+                                "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
+                                "<h4 class=\"list-group-item-heading\">" + depl.id + "</h4>" +
+                                "<p class=\"list-group-item-text\">Duration: " + depl.duration + "</p></a>";
+                        }
+                        releaseDeployHtml += "</div>";
                         var date = {
                             "startDate": r.assembled,
                             "endDate": r.assembled,
                             "headline": r.version,
-                            "text": (r.releasenotes === undefined ? "No description" : r.releasenotes)
+                            "text": (r.releasenotes === undefined || r.releasenotes === "" ? "No description" + releaseDeployHtml : r.releasenotes + releaseDeployHtml)
                         };
                         dates.push(date);
                     }

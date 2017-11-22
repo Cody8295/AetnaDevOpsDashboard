@@ -234,8 +234,28 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             ReleaseList rl = new ReleaseList();
             foreach (dynamic r in releases.Releases)
             {
+                List<ActiveDeploy> releaseDeploys = new List<ActiveDeploy>();
+                foreach(dynamic env in r.Deployments)
+                {
+                    foreach (dynamic de in env)
+                    {
+                        foreach (dynamic d in de)
+                        {
+                            ActiveDeploy ad = new ActiveDeploy(d.Id.ToString(), d.ProjectId.ToString(), d.ReleaseId.ToString(),
+                                d.TaskId.ToString(), d.ChannelId.ToString(), d.ReleaseVersion.ToString(),
+                                d.Created.ToString(), d.QueueTime.ToString(), d.CompletedTime.ToString(),
+                                d.State.ToString(), d.HasWarningsOrErrors.ToString(), d.ErrorMessage.ToString(),
+                                d.Duration.ToString(), d.IsCurrent.ToString(), d.IsCompleted.ToString(), "");
+                            releaseDeploys.Add(ad);
+                        }
+                    }
+                }
+                
+                dynamic releaseLinks = JsonConvert.DeserializeObject(r.Release.Links.ToString());
+                string webUrl = releaseLinks.Web.ToString();
                 Release re = new Release(r.Release.Id.ToString(), r.Release.Version.ToString(), r.Release.ProjectId.ToString(),
-                    r.Release.ChannelId.ToString(), isoToDateTime(r.Release.Assembled.ToString()), r.Release.ReleaseNotes.ToString());
+                    r.Release.ChannelId.ToString(), isoToDateTime(r.Release.Assembled.ToString()), r.Release.ReleaseNotes.ToString(),
+                    releaseDeploys, API_URL.TrimEnd("/api/".ToCharArray()) + webUrl);
                 rl.add(re);
             }
             return rl.releaseList;
