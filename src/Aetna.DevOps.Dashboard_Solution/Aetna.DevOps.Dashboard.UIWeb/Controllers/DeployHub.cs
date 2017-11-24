@@ -13,7 +13,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             timer.Elapsed += (sender, e) =>
             {
-                if (MetadataController.UpdateDataState(currentState))
+                if (OctopusController.UpdateDataState(currentState))
                 {
                     Clients.All.onChange(currentState);
                 }

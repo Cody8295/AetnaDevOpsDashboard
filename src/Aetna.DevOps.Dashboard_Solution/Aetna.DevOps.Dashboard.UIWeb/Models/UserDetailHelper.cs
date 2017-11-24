@@ -4,7 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 
-namespace Aetna.DevOps.Dashboard.UIWeb
+namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class UserDetailHelper
     {

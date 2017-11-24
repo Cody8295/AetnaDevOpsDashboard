@@ -62,7 +62,9 @@
                 setTimeout(function() {
                     for (var x = 0; x < releases.length; x++) {
                         var r = releases[x];
-                        var releaseDeployHtml = "<br/><a href='"+r.webUrl+"'>Open in Octopus</a><div class=\"list-group\">";
+                        var releaseURL = "\"" + r.webUrl.toString() + "\"";
+
+                        var releaseDeployHtml = "<br/><a class=\""+r.id+"-link\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
 
                         //console.log(r.releaseDeploys);
                         for (var deplo in r.releaseDeploys) {
@@ -100,6 +102,14 @@
                         source: dataObj,
                         embed_id: 'timeline-embed'
                     });
+                    setTimeout(function () {
+                        for (var z = 0; z < releases.length; z++) {
+                            var r = releases[z];
+                            $("." + r.id + "-link").attr("href",r.webUrl);
+                            $("." + r.id + "-link").attr("target","_blank");
+                        }
+                    }, 3000);
+                    
                 }, 1000);   
             }
 
