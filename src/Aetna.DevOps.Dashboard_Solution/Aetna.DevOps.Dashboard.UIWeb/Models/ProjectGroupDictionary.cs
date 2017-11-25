@@ -4,24 +4,24 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class ProjectGroupDictionary
     {
-        public Dictionary<string, ProjectGroup> pGroupDictionary;
+        public Dictionary<string, ProjectGroup> ProjectGroups;
         public ProjectGroupDictionary()
         {
-            pGroupDictionary = new Dictionary<string, ProjectGroup>();
+            ProjectGroups = new Dictionary<string, ProjectGroup>();
         }
         public void AddProjectGroup (string groupId, ProjectGroup pGroup)
         {
-            pGroupDictionary.Add(groupId, pGroup);
+            ProjectGroups.Add(groupId, pGroup);
         }
 
         public void addProject (string groupId, Project project)
         {
-            pGroupDictionary[groupId].AddProject(project);
+            ProjectGroups[groupId].AddProject(project);
         }
 
         public List<ProjectGroup> getProjectGroups()
         {
-            return new List<ProjectGroup>(pGroupDictionary.Values);
+            return new List<ProjectGroup>(ProjectGroups.Values);
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class EnvironmentList
     {
-        public List<Environment> environments;
-        public EnvironmentList() { environments = new List<Environment>(); }
-        public void add(Environment e) { environments.Add(e); }
+        public List<Environment> Environments;
+        public EnvironmentList() { Environments = new List<Environment>(); }
+        public void Add(Environment newEnvironment) { Environments.Add(newEnvironment); }
     }
 }

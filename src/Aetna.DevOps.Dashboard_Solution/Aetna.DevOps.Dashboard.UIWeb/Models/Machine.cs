@@ -5,21 +5,21 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
     public class Machine
     {
         public string Id;
-        public string name;
-        public string url;
-        public List<string> environs;
-        public string status;
-        public string statusSummary;
-        public string isInProcess;
-        public Machine(string Id, string Name, string Url, System.Collections.Generic.List<string> Environs, string Status, string StatusSummary, string IsInProcess)
+        public string Name;
+        public string Url;
+        public List<string> Environments;
+        public string Status;
+        public string StatusSummary;
+        public string IsInProcess;
+        public Machine(string id, string name, string url, System.Collections.Generic.List<string> environments, string status, string statusSummary, string isInProcess)
         {
-            this.Id = Id;
-            name = Name;
-            url = Url;
-            environs = Environs;
-            status = Status;
-            statusSummary = StatusSummary;
-            isInProcess = IsInProcess;
+            Id = id;
+            Name = name;
+            Url = url;
+            Environments = environments;
+            Status = status;
+            StatusSummary = statusSummary;
+            IsInProcess = isInProcess;
         }
     }
 }

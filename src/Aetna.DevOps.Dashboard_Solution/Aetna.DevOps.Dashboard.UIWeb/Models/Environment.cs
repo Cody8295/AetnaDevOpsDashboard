@@ -2,22 +2,22 @@
 {
     public class Environment
     {
-        public string id;
-        public string name;
-        public string description;
-        public MachineList machines;
+        public string Id;
+        public string Name;
+        public string Description;
+        public MachineList Machines;
 
-        public Environment(string Id, string Name, string Description, MachineList Machines)
+        public Environment(string id, string name, string description, MachineList machines)
         {
-            id = Id;
-            name = Name;
-            description = Description;
-            machines = Machines;
+            Id = id;
+            Name = name;
+            Description = description;
+            Machines = machines;
         }
 
         public override string ToString()
         {
-            return name + ":" + machines.machines.Count;
+            return Name + ":" + Machines.machines.Count;
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class ReleaseList
     {
-        public List<Release> releaseList;
-        public ReleaseList() { releaseList = new List<Release>(); }
-        public void add(Release r) { releaseList.Add(r); }
+        public List<Release> Releases;
+        public ReleaseList() { Releases = new List<Release>(); }
+        public void Add(Release r) { Releases.Add(r); }
     }
 }

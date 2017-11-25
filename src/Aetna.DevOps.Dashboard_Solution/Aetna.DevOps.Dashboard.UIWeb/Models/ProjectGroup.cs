@@ -2,20 +2,20 @@
 {
     public class ProjectGroup
     {
-        public string groupName;
-        public string groupId;
-        public ProjectList projectList;
+        public string GroupName;
+        public string GroupId;
+        public ProjectList ProjectList;
 
         public ProjectGroup (string groupName, string groupId)
         {
-            this.groupName = groupName;
-            this.groupId = groupId;
-            projectList = new ProjectList();
+            GroupName = groupName;
+            GroupId = groupId;
+            ProjectList = new ProjectList();
         }
 
         public void AddProject(Project project)
         {
-            projectList.Add(project);
+            ProjectList.Add(project);
         }
     }
 }

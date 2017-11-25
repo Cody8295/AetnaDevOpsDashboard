@@ -4,9 +4,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class MachineList
     {
-        public List<Machine> machines;
-        public MachineList() { machines = new List<Machine>(); }
+        public List<Machine> Machines;
+        public MachineList() { Machines = new List<Machine>(); }
         
-        public void add(Machine m) { machines.Add(m); }
+        public void Add(Machine m) { Machines.Add(m); }
     }
 }
