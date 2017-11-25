@@ -17,7 +17,7 @@
 
         public override string ToString()
         {
-            return Name + ":" + Machines.machines.Count;
+            return Name + ":" + Machines.Machines.Count;
         }
     }
 }

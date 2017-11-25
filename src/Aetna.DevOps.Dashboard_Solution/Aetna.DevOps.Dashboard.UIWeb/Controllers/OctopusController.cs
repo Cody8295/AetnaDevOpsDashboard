@@ -86,7 +86,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 response = request.GetResponse();
-            }catch(WebException we)
+            }catch(WebException)
             {
                 return ""; // server didnt respond, send blank response
             }
@@ -113,7 +113,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 if (p.EnvironmentId == envId)
                 {
                     string projName = "";
-                    foreach (Project proj in projects) { if (proj.id == p.ProjectId.ToString()) { projName = proj.name; } }
+                    foreach (Project proj in projects) { if (proj.Id == p.ProjectId.ToString()) { projName = proj.Name; } }
                     projList.Add(new ActiveDeploy(p.Id.ToString(), p.ProjectId.ToString(),
                     p.ReleaseId.ToString(), p.TaskId.ToString(), p.ChannelId.ToString(), p.ReleaseVersion.ToString(),
                     p.Created.ToString(), p.QueueTime.ToString(), p.CompletedTime.ToString(), p.State.ToString(),
@@ -175,7 +175,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (string key in environments.Keys)
             {
-                el.add(new Environment(environments[key], key, (numMachines.ContainsKey(environments[key]) ? numMachines[environments[key]].ToString() : "0"), GetMachines(environments[key])));
+                el.Add(new Environment(environments[key], key, (numMachines.ContainsKey(environments[key]) ? numMachines[environments[key]].ToString() : "0"), GetMachines(environments[key])));
             }
 
             return el;
@@ -217,7 +217,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (Project p in projects)
             {
-                pgd.addProject(p.getGroupId(), p);
+                pgd.addProject(p.GetGroupId(), p);
             }
 
             pg = pgd.getProjectGroups();
@@ -230,7 +230,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             dynamic releases = JsonConvert.DeserializeObject(response);
             ReleaseList rl = new ReleaseList();
-            if (String.IsNullOrEmpty(response)) { return rl.releaseList; } // if response is empty, do not proceed
+            if (String.IsNullOrEmpty(response)) { return rl.Releases; } // if response is empty, do not proceed
 
             foreach (dynamic r in releases.Releases)
             {
@@ -256,9 +256,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 Release re = new Release(r.Release.Id.ToString(), r.Release.Version.ToString(), r.Release.ProjectId.ToString(),
                     r.Release.ChannelId.ToString(), isoToDateTime(r.Release.Assembled.ToString()), r.Release.ReleaseNotes.ToString(),
                     releaseDeploys, API_URL.TrimEnd("/api/".ToCharArray()) + webUrl);
-                rl.add(re);
+                rl.Add(re);
             }
-            return rl.releaseList;
+            return rl.Releases;
         }
         #endregion
 
@@ -315,10 +315,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 Deploy d = new Deploy(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
                     o.Category.ToString());
-                if (o.Category == "DeploymentStarted") { dl.add(d); }
-                if (o.Category == "DeploymentQueued") { dl.add(d); }
-                if (o.Category == "DeploymentSucceeded") { dl.add(d); }
-                if (o.Category == "DeploymentFailed") { dl.add(d); }
+                if (o.Category == "DeploymentStarted") { dl.Add(d); }
+                if (o.Category == "DeploymentQueued") { dl.Add(d); }
+                if (o.Category == "DeploymentSucceeded") { dl.Add(d); }
+                if (o.Category == "DeploymentFailed") { dl.Add(d); }
             }
             return dl;
         }
@@ -341,7 +341,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 }
                 //Machine m = new Machine()
                 Machine machine = new Machine(mac.Id.ToString(), mac.Name.ToString(), mac.Uri.ToString(), el, mac.Status.ToString(), mac.StatusSummary.ToString(), mac.IsInProcess.ToString());
-                m.add(machine);
+                m.Add(machine);
             }
             return m;
         }
@@ -366,7 +366,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Boolean anyChange = false; // debugging: should be false by default, set true on change
 
             // Used to notify user when data has changed
-            state.isChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
+            state.IsChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
                 { "ProjectGroups", false },
                 { "Projects", false },
                 { "Lifecycles", false },
@@ -380,7 +380,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             if (state.ProjectGroups == null || state.ProjectGroups != pg)
             {
                 state.ProjectGroups = SortProjectGroups();
-                state.isChanged["ProjectGroups"] = true;
+                state.IsChanged["ProjectGroups"] = true;
                 anyChange = true;
             }
 
@@ -388,7 +388,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             if (state.Projects == null || state.Projects != pl)
             {
                 state.Projects = pl;
-                state.isChanged["Projects"] = true;
+                state.IsChanged["Projects"] = true;
                 anyChange = true;
             }
 
@@ -398,15 +398,15 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             if (state.Lifecycles != nlc)
             {
                 state.Lifecycles = nlc;
-                state.isChanged["Lifecycles"] = true;
+                state.IsChanged["Lifecycles"] = true;
                 anyChange = true;
             }
 
-            List<Environment> env = MakeEnvironmentList().environments;
+            List<Environment> env = MakeEnvironmentList().Environments;
             if (state.Environments == null || state.Environments != env)
             {
                 state.Environments = env;
-                state.isChanged["Environments"] = true;
+                state.IsChanged["Environments"] = true;
                 anyChange = true;
             }
 
@@ -414,7 +414,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             if (state.Deploys != dp)
             {
                 state.Deploys = dp;
-                state.isChanged["Deploys"] = true;
+                state.IsChanged["Deploys"] = true;
                 anyChange = true;
             }
 
@@ -562,7 +562,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                return Ok<List<Machine>>(GetMachines(envId).machines);
+                return Ok<List<Machine>>(GetMachines(envId).Machines);
             }
             catch (Exception exception)
             {
@@ -605,7 +605,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 EnvironmentList el = MakeEnvironmentList();
-                return Ok<List<Environment>>(el.environments);
+                return Ok<List<Environment>>(el.Environments);
             }
             catch (Exception exception)
             {
@@ -649,20 +649,20 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 DeployList dl = GraphDeployments(GetResponse(APIdatum.deploys));
-                for (int x = 0; x < dl.deploys.Count; x++)
+                for (int x = 0; x < dl.Deploys.Count; x++)
                 {
-                    if (dl.deploys[x].RelatedDocs.Count > 0)
+                    if (dl.Deploys[x].RelatedDocs.Count > 0)
                     {
-                        foreach (string docID in dl.deploys[x].RelatedDocs)
+                        foreach (string docID in dl.Deploys[x].RelatedDocs)
                         {
                             if (docID.Contains("Environments"))
                             {
-                                dl.deploys[x].Environs.Add(GetEnviron(docID));
+                                dl.Deploys[x].Environs.Add(GetEnviron(docID));
                             }
                         }
                     }
                 }
-                return Ok<System.Collections.Generic.List<Deploy>>(dl.deploys);
+                return Ok<System.Collections.Generic.List<Deploy>>(dl.Deploys);
             }
             catch (Exception exception)
             {
