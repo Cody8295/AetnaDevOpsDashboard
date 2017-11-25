@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Aetna.DevOps.Dashboard.UIWeb
+namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
     /// <summary>
     /// Data structure to hold the details of an end-user.
