@@ -8,43 +8,43 @@ function onChange(currentState) {
 
     console.log("UDPATING"); //debugging
 
-    if (currentState.isChanged["ProjectGroups"]) {
+    if (currentState.IsChanged["ProjectGroups"]) {
         console.log(currentState.ProjectGroups.length);
         $(".projectGroups").text(currentState.ProjectGroups.length);
-        inside = "";
-        for (var pg in currentState.ProjectGroups) {
-            var pgb = currentState.ProjectGroups[pg];
-            inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + pgb.groupName + "<span class=\"pull-right\">" + pgb.projectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+        var pgInside = "";
+        for (var pgIndex in currentState.ProjectGroups) {
+            var pg = currentState.ProjectGroups[pgIndex];
+            pgInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + pg.GroupName + "<span class=\"pull-right\">" + pg.ProjectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
         }
-        $(".projectGroupList").html(inside);
+        $(".projectGroupList").html(pgInside);
         // Display an indicator
     }
 
-    if (currentState.isChanged["Projects"]) {
+    if (currentState.IsChanged["Projects"]) {
         console.log("Pj"); //debugging
         $(".projects").text(currentState.Projects.length);
         // Display an indicator
     }
 
-    if (currentState.isChanged["Lifecycles"]) {
+    if (currentState.IsChanged["Lifecycles"]) {
         console.log("Lf"); //debugging
         $(".lifecycles").text(currentState.Lifecycles); // .Count once Lifecycles object is added
         // Display an indicator
     }
 
-    if (currentState.isChanged["Environments"]) {
+    if (currentState.IsChanged["Environments"]) {
         console.log("nE"); //debugging
         $(".numEnvironments").text(currentState.Environments.length);
-        var inside = "";
-        for (var env in currentState.Environments) {
-            var envb = currentState.Environments[env];
-            inside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + envb.name + "<span class=\"pull-right\">" + envb.description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+        var envInside = "";
+        for (var envIndex in currentState.Environments) {
+            var env = currentState.Environments[envIndex];
+            envInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + env.Name + "<span class=\"pull-right\">" + env.Description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
         }
-        $(".environments").html(inside);
+        $(".environments").html(envInside);
         // Display an indicator
     }
 
-    if (currentState.isChanged["Deploys"]) {
+    if (currentState.IsChanged["Deploys"]) {
         console.log("dp"); //debugging
         //Update Deploys
         //Display an indicator
