@@ -3,37 +3,37 @@
     var app = angular.module("app");
 
     app.controller('projectGroupListController', function ($scope, $http) {
-        $http.get("/api/Octo/ProjectList").then(function (response) {
+        $http.get("api/Octo/ProjectList").then(function (response) {
             $scope.projectGroupList = response.data;
         });
     });
 
     app.controller('environmentListController', function ($scope, $http) {
-        $http.get("/api/Octo/environmentList").then(function (response) {
+        $http.get("api/Octo/environmentList").then(function (response) {
             $scope.environmentList = response.data;
         });
     });
 
     app.controller('projectController', function ($scope, $http) {
-        $http.get("/api/Octo/projects").then(function (response) {
+        $http.get("api/Octo/projects").then(function (response) {
             $scope.projects = response.data;
         });
     });
 
     app.controller('projectGroupController', function ($scope, $http) {
-        $http.get("/api/Octo/projectGroups").then(function (response) {
+        $http.get("api/Octo/projectGroups").then(function (response) {
             $scope.projectGroups = response.data;
         });
     });
 
     app.controller('environmentController', function ($scope, $http) {
-        $http.get("/api/Octo/environments").then(function (response) {
+        $http.get("api/Octo/environments").then(function (response) {
             $scope.environments = response.data;
         });
     });
 
     app.controller('lifecyclesController', function ($scope, $http) {
-        $http.get("/api/Octo/lifecycles").then(function (response) {
+        $http.get("api/Octo/lifecycles").then(function (response) {
             $scope.lifecycles = response.data;
         });
     });
@@ -41,7 +41,7 @@
     var homeIndexController = function ($scope, $http) {
         function getReleases(projectName) {
             var releases = [];
-            $http.get("/api/Octo/projectProgression?project=" + projectName).then(function (response) {
+            $http.get("api/Octo/projectProgression?project=" + projectName).then(function (response) {
                 response.data.forEach(function (rel) {
                     releases.push(rel);
                 });
@@ -49,7 +49,7 @@
             return releases;
         }
 
-        $http.get("/api/Octo/projectsInfo").then(function (response) {
+        $http.get("api/Octo/projectsInfo").then(function (response) {
             function makeTimeLine(projects, pName) {
                 var proj;
                 projects.forEach(function (p) {
@@ -138,7 +138,7 @@
             });
         });
         
-        $http.get("/api/Octo/deploys").then(function (response) {
+        $http.get("api/Octo/deploys").then(function (response) {
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working
                 $("body").tooltip({ selector: '[data-toggle=tooltip]' });
             }); // tooltip fix
