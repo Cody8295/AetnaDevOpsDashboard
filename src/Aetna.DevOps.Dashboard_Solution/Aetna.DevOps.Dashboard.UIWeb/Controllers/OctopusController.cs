@@ -312,9 +312,17 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 DateTime parsedDt = Convert.ToDateTime(occured);
                 string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
                 if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
+
+                dynamic deployLinks = JsonConvert.DeserializeObject(o.RelatedDocumentIds.ToString());
+                string webUrl = "";
+                foreach(string str in deployLinks)
+                {
+                    if (str.StartsWith("Deployments-")) { webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str; break; }
+                }
+
                 Deploy d = new Deploy(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
-                    o.Category.ToString());
+                    o.Category.ToString(), webUrl);
                 if (o.Category == "DeploymentStarted") { dl.Add(d); }
                 if (o.Category == "DeploymentQueued") { dl.Add(d); }
                 if (o.Category == "DeploymentSucceeded") { dl.Add(d); }
@@ -360,7 +368,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
         #endregion
 
-        #region "SignalR stuff"
+        #region "SignalR UpdateDataState"
         public static Boolean UpdateDataState(DataState state)
         {
             Boolean anyChange = false; // debugging: should be false by default, set true on change

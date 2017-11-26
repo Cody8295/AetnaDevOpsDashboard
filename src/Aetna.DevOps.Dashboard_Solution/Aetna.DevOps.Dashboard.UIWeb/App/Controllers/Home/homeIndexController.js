@@ -187,7 +187,9 @@
                 var hour = timeString.hour();
                 var timeDiff = timeString.diff(rightNow, 'hours');
                 hour = 23 - (timeDiff<0?timeDiff*-1:timeDiff);
-                allDeploys[hour] = (allDeploys[hour]===undefined?[]:allDeploys[hour]).concat({"message":d.message, "category":d.category, "dateTime":timeString, "environs":d.environs});
+                allDeploys[hour] = (allDeploys[hour] === undefined ? [] : allDeploys[hour]).concat(
+                    { "message": d.message, "category": d.category, "dateTime": timeString, "environs": d.environs, "webUrl":d.webUrl }
+                );
                 if (d.category === "DeploymentFailed") {
                     failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
                     failedCount++;
@@ -372,10 +374,11 @@
                     var htmlDeploys = "";
                     var points = theLineGraph.getElementsAtEvent(e);
                     if (points[0] === undefined) { // user didn't click on a point
-                        $(".list-group").replaceWith("");
-                        //$(".list-group").hide();
+                        $(".deployData").html("");
+                        $(".octoModal").hide();
                         return;
                     }
+                    var deployCount = 0; // used to tag button links for later usage
                     allDeploys[points[0]._index].forEach(function (d) {
                         var msg = d.message;
                         var cat = d.category;
@@ -383,12 +386,10 @@
                         var timePassed = dt.fromNow();
 
                         //console.log(msg + "," + timePassed);
-                        var environData = "";
-
+                        var environData = "<a href=\\'#\\' style=\\'width:100%\\' id=\\'deploy-" + deployCount + "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a>";
+                        
                         // Triply nested, double terminating quotations are really fun
                         // -> onclick="element.html('\\"someText\\"')"
-                        
-
                         d.environs.forEach(function (e) {
                             function formatEnvironment(msg, dt, id, name, description) {
                                 var machineList = "";
@@ -408,13 +409,17 @@
                             }
                             environData += formatEnvironment(msg, timePassed, e.id, e.name, e.description);
                         });
+                        console.log(d);
                         htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
-                            environData + "'); $('.deployData').show();\" class=\"list-group-item " + coloredListElement(cat) +
+                            environData + "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" + deployCount + "').attr('href', '" + d.webUrl + "')}, 1000);\" class=\"list-group-item " + coloredListElement(cat) +
                             "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
                             "<h4 class=\"list-group-item-heading\">" + d.environs[0].name +
                             "<div class='pull-right'><small>" + timePassed + "</small></div></h4>" +
-                            "<p class=\"list-group-item-text\">"  + msg + "</p></a>";
+                            "<p class=\"list-group-item-text\">" + msg + "</p></a>";
+                        deployCount += 1;
                     });
+                    
+                    
                     if (htmlDeploys == "") { return; }
                     $("#octoModal").modal("show");
                     $(".envList").replaceWith(htmlDeploys);
