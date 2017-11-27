@@ -37,8 +37,8 @@
             $scope.lifecycles = response.data;
         });
     });
-    
-    var homeIndexController = function ($scope, $http) {
+
+    app.controller('projectListController', function ($scope, $http) {
         function getReleases(projectName) {
             var releases = [];
             $http.get("api/Octo/projectProgression?project=" + projectName).then(function (response) {
@@ -47,9 +47,10 @@
                 });
             });
             return releases;
-        }
+        };
 
         $http.get("api/Octo/projectsInfo").then(function (response) {
+            $scope.projectList = response.data;
             function makeTimeLine(projects, pName) {
                 var proj;
                 projects.forEach(function (p) {
@@ -59,17 +60,17 @@
                 var releases = getReleases(proj.id);
                 var dates = [];
                 $("#tl").html("<div id='timeline-embed'></div>");
-                setTimeout(function() {
+                setTimeout(function () {
                     for (var x = 0; x < releases.length; x++) {
                         var r = releases[x];
                         var releaseURL = "\"" + r.webUrl.toString() + "\"";
 
-                        var releaseDeployHtml = "<br/><a class=\""+r.id+"-link\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
+                        var releaseDeployHtml = "<br/><a class=\"" + r.id + "-link\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
 
                         //console.log(r.releaseDeploys);
                         for (var deplo in r.releaseDeploys) {
                             var depl = r.releaseDeploys[deplo];
-                            
+
                             releaseDeployHtml += "<a href=\"javascript:void(0)\" onclick=\"" +
                                 "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + moment(depl.created).fromNow() +
                                 "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
@@ -94,8 +95,8 @@
                             "date": dates
                         }
                     };
-                    
-                    
+
+
                     createStoryJS({
                         width: '100%',
                         height: '500',
@@ -105,26 +106,19 @@
                     setTimeout(function () {
                         for (var z = 0; z < releases.length; z++) {
                             var r = releases[z];
-                            $("." + r.id + "-link").attr("href",r.webUrl);
-                            $("." + r.id + "-link").attr("target","_blank");
+                            $("." + r.id + "-link").attr("href", r.webUrl);
+                            $("." + r.id + "-link").attr("target", "_blank");
                         }
                     }, 3000);
-                    
-                }, 1000);   
+
+                }, 1000);
             }
 
             var htmlProjects = "";
             var projects = [];
             response.data.forEach(function (p) {
                 projects.push(p);
-                htmlProjects += "<a href=\"javascript:void(0)\" onclick=\"" +
-                    "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + p.lifecycle +
-                    "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
-                    "<h4 class=\"list-group-item-heading\">" + p.name + "</h4>" +
-                    "<p class=\"list-group-item-text\">" + p.groupId + "</p></a> ";
             });
-            $(".projectsInfo").replaceWith(htmlProjects);
-            $(".projectsInfo").show();
             $('.list-group-item').on('click', function (e) {
                 //var previous = $(this).closest(".list-group").children(".active");
                 $(".projectsInfo").each(function (pr) {
@@ -137,7 +131,9 @@
                 $('#projectModal').modal('show');
             });
         });
-        
+    });
+    
+    var homeIndexController = function ($scope, $http) {
         $http.get("api/Octo/deploys").then(function (response) {
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working
                 $("body").tooltip({ selector: '[data-toggle=tooltip]' });
