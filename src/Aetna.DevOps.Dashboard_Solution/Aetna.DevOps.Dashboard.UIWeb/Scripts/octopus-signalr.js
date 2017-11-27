@@ -6,10 +6,10 @@
 });
 function onChange(currentState) {
 
-    console.log("UDPATING"); //debugging
+    //console.log("UDPATING"); //debugging
 
     if (currentState.IsChanged["ProjectGroups"]) {
-        console.log(currentState.ProjectGroups.length);
+        //console.log(currentState.ProjectGroups.length);
         $(".projectGroups").text(currentState.ProjectGroups.length);
         var pgInside = "";
         for (var pgIndex in currentState.ProjectGroups) {
@@ -21,19 +21,19 @@ function onChange(currentState) {
     }
 
     if (currentState.IsChanged["Projects"]) {
-        console.log("Pj"); //debugging
+        //console.log("Pj"); //debugging
         $(".projects").text(currentState.Projects.length);
         // Display an indicator
     }
 
     if (currentState.IsChanged["Lifecycles"]) {
-        console.log("Lf"); //debugging
+        //console.log("Lf"); //debugging
         $(".lifecycles").text(currentState.Lifecycles); // .Count once Lifecycles object is added
         // Display an indicator
     }
 
     if (currentState.IsChanged["Environments"]) {
-        console.log("nE"); //debugging
+        //console.log("nE"); //debugging
         $(".numEnvironments").text(currentState.Environments.length);
         var envInside = "";
         for (var envIndex in currentState.Environments) {
@@ -45,7 +45,7 @@ function onChange(currentState) {
     }
 
     if (currentState.IsChanged["Deploys"]) {
-        console.log("dp"); //debugging
+        //console.log("dp"); //debugging
         //Update Deploys
         //Display an indicator
     }
