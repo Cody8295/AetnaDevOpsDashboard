@@ -7,7 +7,8 @@
         $routeProvider
             .when("/", {
                 templateUrl: "App/Views/Home/index.html",
-                controller: "homeIndexController"
+                controller: "homeIndexController",
+                controller: "octopusController"
             })
             .when("/AboutUs/", {
                 templateUrl: "App/Views/Home/aboutUs.html",

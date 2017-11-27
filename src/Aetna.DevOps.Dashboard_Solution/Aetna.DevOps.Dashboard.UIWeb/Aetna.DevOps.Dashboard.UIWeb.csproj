@@ -130,6 +130,7 @@
     <Content Include="App\Controllers\Home\homeContactUsController.js" />
     <Content Include="App\Controllers\Home\homeAboutUsController.js" />
     <Content Include="App\Controllers\Home\homeIndexController.js" />
+    <Content Include="App\Controllers\Home\octopusController.js" />
     <Content Include="App\Filters\escapeFilter.js" />
     <Content Include="App\Services\restService.js" />
     <Content Include="App\Views\Home\contactUs.html" />

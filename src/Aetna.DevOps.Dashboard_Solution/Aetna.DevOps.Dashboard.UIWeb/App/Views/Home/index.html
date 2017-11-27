@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 octopus-column" ng-controller="octopusController">
             <div class="panel panel-primary">
                 
                 <div class="panel-heading">
@@ -64,22 +64,22 @@
                 <div class="panel-body">
 
                     <div class="panel panel-default">
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList" data-ng-controller="projectGroupController">
+                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList">
                             <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups}}</span>
                         </div>
 
-                        <div id="projectGroupList" class="collapsible panel-collapse collapse" data-ng-controller="projectGroupListController">
+                        <div id="projectGroupList" class="collapsible panel-collapse collapse">
                             <ul class="list-group">
                                 <li data-ng-repeat="projectGroup in projectGroupList" class="list-group-item">
                                     {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projectList.count}}</span>
                                 </li>
                             </ul>
                         </div>
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectsList" data-ng-controller="projectController">
+                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectsList">
                             <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill projects">{{projects}}</span>
                         </div>
 
-                        <div id="projectsList" class="collapsible collapse projectsList" data-ng-controller="projectListController">
+                        <div id="projectsList" class="collapsible collapse projectsList">
                             <div class="pre-scrollable" style="overflow-y:auto;overflow-x:auto;">
                                 <a data-ng-repeat="project in projectList" href="javascript:void(0)" onclick="" class="list-group-item" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
                                     <h4 class="list-group-item-heading">{{project.name}}</h4>
@@ -88,15 +88,15 @@
                             </div>
                         </div>
 
-                        <div class="panel-footer" data-ng-controller="lifecyclesController">
+                        <div class="panel-footer">
                             <i class="fa fa-heartbeat"></i>&nbsp;Lifecycles <span class="pull-right badge badge-default badge-pill lifecycles">{{lifecycles}}</span>
                         </div>
 
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments" data-ng-controller="environmentController">
+                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments">
                             <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill numEnvironments">{{environments}}</span>
                         </div>
 
-                        <div id="environments" class="collapsible panel-collapse collapse" data-ng-controller="environmentListController">
+                        <div id="environments" class="collapsible panel-collapse collapse">
                             <ul class="list-group">
                                 <li data-ng-repeat="environment in environmentList" class="list-group-item">
                                     {{environment.name}} <span class="badge badge-default badge-pill"> {{environment.description}} </span>
@@ -150,7 +150,7 @@
             </div>
         </div>
 
-        <div id="projectModal" class="modal fade" role="dialog" style="max-height:90%;height:90%;overflow-y:auto" data-ng-controller="projectListController">
+        <div id="projectModal" class="modal fade" role="dialog" style="max-height:90%;height:90%;overflow-y:auto">
             <div class="modal-dialog" style="max-height:90%;overflow-y:auto;">
                 <div class="modal-content">
                     <div class="modal-header">
