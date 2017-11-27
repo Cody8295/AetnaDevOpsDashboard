@@ -6,15 +6,23 @@
 });
 function onChange(currentState) {
 
+    var scope = angular.element($('.homeIndexSection')).scope();
+
+
     console.log("UDPATING"); //debugging
 
     if (currentState.IsChanged["ProjectGroups"]) {
         console.log(currentState.ProjectGroups.length);
-        $(".projectGroups").text(currentState.ProjectGroups.length);
+        console.log(scope.projectGroups);
+        scope.projectGroups = currentState.ProjectGroups.length;
         var pgInside = "";
         for (var pgIndex in currentState.ProjectGroups) {
             var pg = currentState.ProjectGroups[pgIndex];
-            pgInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + pg.GroupName + "<span class=\"pull-right\">" + pg.ProjectList.count + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+            pgInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" +
+                pg.GroupName +
+                "<span class=\"pull-right\">" +
+                pg.ProjectList.count +
+                "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
         }
         $(".projectGroupList").html(pgInside);
         // Display an indicator
@@ -38,7 +46,11 @@ function onChange(currentState) {
         var envInside = "";
         for (var envIndex in currentState.Environments) {
             var env = currentState.Environments[envIndex];
-            envInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" + env.Name + "<span class=\"pull-right\">" + env.Description + "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
+            envInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" +
+                env.Name +
+                "<span class=\"pull-right\">" +
+                env.Description +
+                "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
         }
         $(".environments").html(envInside);
         // Display an indicator
@@ -49,6 +61,6 @@ function onChange(currentState) {
         //Update Deploys
         //Display an indicator
     }
-   
-    
+
+    scope.$apply();
 }
