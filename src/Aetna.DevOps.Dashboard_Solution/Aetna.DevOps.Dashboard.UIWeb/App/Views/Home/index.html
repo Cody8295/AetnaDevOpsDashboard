@@ -1,5 +1,5 @@
 ﻿
-<section ng-controller="homeIndexController" class="homeIndexSection">
+<section>
 
     <div class="row">
         <div class="col-md-4">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 octopus-column" ng-controller="octopusController">
             <div class="panel panel-primary">
                 
                 <div class="panel-heading">
@@ -65,7 +65,7 @@
 
                     <div class="panel panel-default">
                         <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList">
-                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups"><span ng-bind="projectGroups"></span></span>
+                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups}}</span>
                         </div>
 
                         <div id="projectGroupList" class="collapsible panel-collapse collapse">

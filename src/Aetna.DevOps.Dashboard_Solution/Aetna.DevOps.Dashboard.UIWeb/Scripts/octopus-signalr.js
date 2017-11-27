@@ -6,7 +6,7 @@
 });
 function onChange(currentState) {
 
-    var scope = angular.element($('.homeIndexSection')).scope();
+    var scope = angular.element($('.octopus-column')).scope();
 
 
     console.log("UDPATING"); //debugging
