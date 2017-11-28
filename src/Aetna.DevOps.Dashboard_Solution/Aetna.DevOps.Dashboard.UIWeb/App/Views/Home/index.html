@@ -80,8 +80,14 @@
                         </div>
 
                         <div id="projectsList" class="collapsible collapse projectsList">
+                            <div class="input-group">
+                                <input type="text" class="form-control" ng-model="projectFilter.name">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
                             <div class="pre-scrollable" style="overflow-y:auto;overflow-x:auto;">
-                                <a data-ng-repeat="project in projectList" href="javascript:void(0)" onclick="" class="list-group-item" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
+                                <a data-ng-repeat="project in projectList | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
                                     <h4 class="list-group-item-heading">{{project.name}}</h4>
                                     <p class="list-group-item-text">{{project.groupId}}</p>
                                 </a>
