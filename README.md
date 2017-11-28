@@ -64,24 +64,24 @@ The dashboard API is used to get the current deploys on each project by environm
 
 # Functionality
 
-## View project groups and how many there are
+### View project groups and how many there are
 
-## View all projects and search them by name
+### View all projects and search them by name
 
-## View how many lifecycles there are
+### View how many lifecycles there are
 
-## View environments and how many there are
+### View environments and how many there are
 
-## View deploys that occured over past 24 hours (line graph, pie chart, bar graph)
+### View deploys that occured over past 24 hours (line graph, pie chart, bar graph)
 
-## View additional details about deploys that happened over past 24 hours
+### View additional details about deploys that happened over past 24 hours
 
-## Filter deploy data by hour, category (succeeded, failed, queued, started)
+### Filter deploy data by hour, category (succeeded, failed, queued, started)
 
-## Navigate to Octopus web app for deploy on graphs.
+### Navigate to Octopus web app for deploy on graphs.
 
-## View timeline of releases by project
+### View timeline of releases by project
 
-## View deploys of each release on timeline
+### View deploys of each release on timeline
 
-## Navigate to Octopus web app for release on timeline.
+### Navigate to Octopus web app for release on timeline.
