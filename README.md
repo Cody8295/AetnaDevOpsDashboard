@@ -1,6 +1,6 @@
 # Aetna DevOps Dashboard
 
-A dashboard web UI designed to see the overall status of DevOps tools and processes, this application enables the simplification of continous integration. By pulling information from various API's, the DevOps Dashboard cleverly transforms the datapoints into rich visuals and useful chunks of information which meaningfully relate to each other. This summary of the data provides management a very useful perspective into the day-to-day business of software development at Aetna.
+The Aetna DevOps Dashboard is a web GUI that displays the status of DevOps tools and processes in order to provide insights and simplify continous integration. By pulling information from various APIs, the DevOps Dashboard transforms the raw data into rich visualizations and interprets the data points in order to relate them to each other. This summary of the data provides management a useful perspective into the day-to-day business of software development at Aetna.
 
 ## Continous Integration
 There are three fundamental parts to the continous integration cycle at Aetna:
