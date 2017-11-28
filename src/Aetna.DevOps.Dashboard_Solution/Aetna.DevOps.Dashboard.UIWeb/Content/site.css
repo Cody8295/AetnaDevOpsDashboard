@@ -1219,10 +1219,18 @@
 }
 
 
+
 .collapsible {
     border: 1px solid #ddd !important;
     border-radius: 0px;
+
 }
+
+.pre-scrollable {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
 .collapse-trigger:hover {
     text-decoration: underline;
     background-color: #cccccc;
