@@ -23,6 +23,13 @@
             $scope.lifecycles = response.data;
         });
 
+        function getProjectGroupName(projectGroupId)
+        {
+            $scope.projectGroupList.forEach(function (group) {
+                console.log(group);
+            });
+        }
+        //getProjectGroupName("ProjectGroups-1");
         function getReleases(projectName) {
             var releases = [];
             $http.get("api/Octo/projectProgression?project=" + projectName).then(function (response) {
@@ -49,24 +56,26 @@
                         var r = releases[x];
                         var releaseURL = "\"" + r.webUrl.toString() + "\"";
 
-                        var releaseDeployHtml = "<br/><a class=\"" + r.id + "-link\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
+                        var releaseDeployHtml = "<a class=\"" + r.id + "-link c\" style=\"padding:20px;\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
 
                         //console.log(r.releaseDeploys);
                         for (var deplo in r.releaseDeploys) {
                             var depl = r.releaseDeploys[deplo];
-
+                            console.log(depl);
                             releaseDeployHtml += "<a href=\"javascript:void(0)\" onclick=\"" +
                                 "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + moment(depl.created).fromNow() +
                                 "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
-                                "<h4 class=\"list-group-item-heading\">" + depl.id + "</h4>" +
+                                "<h4 class=\"list-group-item-heading\">" + depl.id + "<small class=\"pull-right\">" + moment(depl.created).fromNow() + "</small></h4>" +
                                 "<p class=\"list-group-item-text\">Duration: " + depl.duration + "</p></a>";
                         }
                         releaseDeployHtml += "</div>";
+                        var infoAlert = "<div class=\"alert alert-info\"><i class=\"fa fa-info-circle\"></i> This release was created " + moment(r.assembled).fromNow() + "</div>";
                         var date = {
                             "startDate": r.assembled,
                             "endDate": r.assembled,
                             "headline": r.version,
-                            "text": (r.releasenotes === undefined || r.releasenotes === "" ? "No description" + releaseDeployHtml : r.releasenotes + releaseDeployHtml)
+                            "text": (r.releasenotes === undefined || r.releasenotes === "" ? infoAlert + "No description" + releaseDeployHtml : infoAlert +
+                                r.releasenotes + releaseDeployHtml)
                         };
                         dates.push(date);
                     }
@@ -80,21 +89,23 @@
                         }
                     };
 
-
-                    createStoryJS({
-                        width: '100%',
-                        height: '500',
-                        source: dataObj,
-                        embed_id: 'timeline-embed'
-                    });
-                    setTimeout(function () {
-                        for (var z = 0; z < releases.length; z++) {
-                            var r = releases[z];
-                            $("." + r.id + "-link").attr("href", r.webUrl);
-                            $("." + r.id + "-link").attr("target", "_blank");
-                        }
-                    }, 3000);
-
+                    if (dataObj.timeline.date.length < 1) { $("#tl").html("No releases for this project yet!"); } else {
+                        console.log(dataObj);
+                        createStoryJS({
+                            width: '100%',
+                            height: '500',
+                            source: dataObj,
+                            embed_id: 'timeline-embed'
+                        });
+                        console.log("DONE");
+                        setTimeout(function () {
+                            for (var z = 0; z < releases.length; z++) {
+                                var r = releases[z];
+                                $("." + r.id + "-link").attr("href", r.webUrl);
+                                $("." + r.id + "-link").attr("target", "_blank");
+                            }
+                        }, 3000);
+                    }
                 }, 1000);
             }
 
@@ -104,11 +115,6 @@
                 projects.push(p);
             });
             $('.list-group-item').on('click', function (e) {
-                //var previous = $(this).closest(".list-group").children(".active");
-                $(".projectsInfo").each(function (pr) {
-                    pr.removeClass('active');
-                });
-                $(e.target).addClass('active'); // activated list-item
                 var projName = $(this)[0].getElementsByTagName("h4")[0].innerHTML;
                 console.log(projName);
                 makeTimeLine(projects, projName);
