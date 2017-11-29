@@ -223,7 +223,6 @@
 
             function lineGraph() {
                 var ctx = document.getElementById("canvas");
-                ctx.height = 300;
                 theLineGraph = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -258,6 +257,8 @@
                         }]
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
                             yAxes: [{
                                 ticks: {
@@ -280,7 +281,6 @@
 
             function pieChart() {
                 var ctx = document.getElementById("canvas");
-                ctx.height = 300;
                 const genLabelsDef = Chart.defaults.pie.legend.labels.generateLabels;
                 const genLabelsNew = function (chart) {
                     if (genLabelsNew['firstCall']) {
@@ -295,6 +295,8 @@
                 thePieChart = new Chart(ctx, {
                     type: 'pie',
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
                         legend: {
                             labels: {
                                 generateLabels: genLabelsNew
@@ -318,7 +320,6 @@
 
             function barGraph() {
                 var ctx = document.getElementById("canvas");
-                ctx.height = 300;
                 theBarGraph = new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -353,6 +354,8 @@
                         }]
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
                             yAxes: [{
                                 ticks: {
