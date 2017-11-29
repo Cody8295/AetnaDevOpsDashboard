@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
@@ -22,28 +23,43 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             Projectid = projectId;
             Channelid = channelId;
             Assembled = assembled;
-            Releasenotes = releaseNotes;
             ReleaseDeploys = releaseDeploys;
             WebUrl = webUrl;
             Details = new Dictionary<string, string>();
 
             string[] details = releaseNotes.Split(new string[] { ": ", ", ", " - " }, System.StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 1; i < details.Length - 2; i++)
+
+            if (details.Length > 10)
             {
-                string[] datum = details[i].Split(new string[] { "=" }, System.StringSplitOptions.None);
-                Details.Add(datum[0], datum[1]);
-            }
-            if (details[0].Equals("Aetna-TFS-Info"))
-            {
-                ProjectSource = Source.TFS;
-            }
-            else if (Details.ContainsKey("ChangeSet"))
-            {
-                ProjectSource = Source.TcTFS;
+                for (int i = 1; i < details.Length - 2; i++)
+                {
+                    string[] datum = details[i].Split(new string[] { "=" }, System.StringSplitOptions.None);
+                    Details.Add(datum[0], datum[1]);
+                }
+
+                Details.Add(details[details.Length - 2], details[details.Length - 1]);
+
+                if (details[0].Equals("Aetna-TFS-Info"))
+                {
+                    ProjectSource = Source.TFS;
+                }
+                else if (Details.ContainsKey("ChangeSet"))
+                {
+                    ProjectSource = Source.TcTFS;
+                }
+                else
+                {
+                    ProjectSource = Source.TcGHE;
+                }
+
+                foreach (KeyValuePair<string, string> entry in Details)
+                {
+                    Releasenotes += entry.Key + ": " + entry.Value + "<br />";
+                }
             }
             else
             {
-                ProjectSource = Source.TcGHE;
+                Releasenotes = releaseNotes;
             }
         }
     }
