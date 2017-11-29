@@ -16,7 +16,7 @@
     });
 
     app.controller('octopusController', function ($scope, $http) {
-        var projects = [];
+        var projects = []; // global(ish) because its used in makeTimeLine and project list
 
         $scope.$on('finished', function (ngRepeatFinishedEvent) {
             $('.list-group-item').on('click', function (e) {
@@ -51,7 +51,7 @@
                 console.log(group);
             });
         }
-        //getProjectGroupName("ProjectGroups-1");
+
         function getReleases(projectName) {
             var releases = [];
             $http.get("api/Octo/projectProgression?project=" + projectName).then(function (response) {
@@ -63,15 +63,16 @@
         };
 
         function makeTimeLine(pName) {
-            var proj;
-            projects.forEach(function (p) {
-                if (p.name == pName) { proj = p; }
+            var proj;                              // used to define the project JSON we're dealing with
+            projects.forEach(function (p) {        // loop all projects to find the one
+                if (p.name == pName) { proj = p; } // and set it to our reference
             });
-            if (proj === undefined) { return; }
+            if (proj === undefined) { return; }    // dont do anything if we cant find the project
             var releases = getReleases(proj.id);
             var dates = [];
             $("#tl").html("<div id='timeline-embed'></div>");
-            setTimeout(function () {
+            setTimeout(function () { // this 1 second wait allows the dateObj's to populate, without it the timeline doesn't generate
+                                     // TODO: remove delay and sync wait for the dateObj's to load before making timeline to increase speed
                 for (var x = 0; x < releases.length; x++) {
                     var r = releases[x];
                     var releaseURL = "\"" + r.webUrl.toString() + "\"";
@@ -96,7 +97,8 @@
                             "<p class=\"list-group-item-text\">Duration: " + depl.duration + "</p></a>";
                     }
                     releaseDeployHtml += "</div>";
-                    var infoAlert = "<div class=\"alert alert-info\"><i class=\"fa fa-info-circle\"></i> This release was created " + moment(r.assembled).fromNow() + "</div>";
+                    var infoAlert = "<div class=\"alert alert-info\"><i class=\"fa fa-info-circle\"></i> This release was created " +
+                        moment(r.assembled).fromNow() + "</div>";
                     var date = {
                         "startDate": r.assembled,
                         "endDate": r.assembled,
@@ -124,8 +126,10 @@
                         source: dataObj,
                         embed_id: 'timeline-embed'
                     });
-                    console.log("DONE");
-                    setTimeout(function () {
+                    setTimeout(function () { // this 3 second wait is to allow the timeline to generate all the slides
+                                             // without it, the links to octopus for deploys and releases wouldn't work.
+                                             // Either figure out how to directly set the links href or wait just until
+                                             // the link element exists to set its href
                         for (var z = 0; z < releases.length; z++) {
                             var r = releases[z];
                             for (var deplo in r.releaseDeploys)
@@ -194,7 +198,6 @@
             }
 
             response.data.forEach(function (d) {
-                //console.log(d);
                 var timeString = moment(d.timeAndDate);
                 var rightNow = moment();
                 var hour = timeString.hour();
@@ -380,11 +383,7 @@
                 if (c == "DeploymentFailed") { return "list-group-item-danger"; }
                 if (c == "DeploymentSucceeded") { return "list-group-item-success"; }
             }
-
-            function checkRadio() {
-                //console.log($(".btn-group").find(".active").attr("id"));
-            }
-
+            
             function setupLineGraph() {
                 document.getElementById("canvas").onclick = function (e) {
                     var htmlDeploys = "";
@@ -400,9 +399,8 @@
                         var cat = d.category;
                         var dt = moment(d.dateTime);
                         var timePassed = dt.fromNow();
-
-                        //console.log(msg + "," + timePassed);
-                        var environData = "<a href=\\'#\\' style=\\'width:100%\\' id=\\'deploy-" + deployCount + "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a>";
+                        var environData = "<a href=\\'#\\' style=\\'width:100%\\' id=\\'deploy-" + deployCount +
+                            "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a>";
 
                         // Triply nested, double terminating quotations are really fun
                         // -> onclick="element.html('\\"someText\\"')"
@@ -412,7 +410,8 @@
                                 e.machines.machines.forEach(function (machine) {
                                     var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
                                     machineList += "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
-                                        machine.name + "<span class=\\'pull-right\\'>" + (machine.isInProcess === "true" ? isInProcessStr : "") + "<small>" + machine.status + "</small></span></h4><p class=\\'list-group-item-text\\'>" +
+                                        machine.name + "<span class=\\'pull-right\\'>" + (machine.isInProcess === "true" ? isInProcessStr : "") +
+                                        "<small>" + machine.status + "</small></span></h4><p class=\\'list-group-item-text\\'>" +
                                         machine.statusSummary + "</p></li>";
                                 });
                                 return "<div class=\\'card text-center\\'><div class=\\'card-header\\'>" + id +
@@ -427,7 +426,8 @@
                         });
                         console.log(d);
                         htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
-                            environData + "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" + deployCount + "').attr('href', '" + d.webUrl + "')}, 1000);\" class=\"list-group-item " + coloredListElement(cat) +
+                            environData + "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" + deployCount + "').attr('href', '" +
+                            d.webUrl + "')}, 1000);\" class=\"list-group-item " + coloredListElement(cat) +
                             "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
                             "<h4 class=\"list-group-item-heading\">" + d.environs[0].name +
                             "<div class='pull-right'><small>" + timePassed + "</small></div></h4>" +
