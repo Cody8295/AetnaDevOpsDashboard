@@ -82,6 +82,13 @@
                     for (var deplo in r.releaseDeploys) {
                         var depl = r.releaseDeploys[deplo];
                         console.log(depl);
+                        var date = {
+                            "startDate": depl.created,
+                            "endDate": depl.completedTime,
+                            "headline": depl.id,
+                            "text": "<a class=\"" + depl.id + "-link c\" style=\"padding:20px;\" href=\"#\">Open in Octopus</a>" + depl.errorMessage
+                        };
+                        dates.push(date);
                         releaseDeployHtml += "<a href=\"javascript:void(0)\" onclick=\"" +
                             "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + moment(depl.created).fromNow() +
                             "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
@@ -121,9 +128,16 @@
                     setTimeout(function () {
                         for (var z = 0; z < releases.length; z++) {
                             var r = releases[z];
+                            for (var deplo in r.releaseDeploys)
+                            {
+                                var depl = r.releaseDeploys[deplo];
+                                $("." + depl.id + "-link").attr("href", depl.webUrl);
+                                $("." + depl.id + "-link").attr("target", "_blank");
+                            }
                             $("." + r.id + "-link").attr("href", r.webUrl);
                             $("." + r.id + "-link").attr("target", "_blank");
                         }
+                        
                     }, 3000);
                 }
             }, 1000);

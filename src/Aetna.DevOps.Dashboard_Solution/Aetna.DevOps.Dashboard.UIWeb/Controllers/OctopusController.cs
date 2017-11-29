@@ -92,8 +92,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
             Stream dataStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(dataStream);
-            
-            string serverResponse = reader.ReadToEnd();
+            string serverResponse = "";
+            try
+            {
+                serverResponse = reader.ReadToEnd();
+            }catch(IOException ioe)
+            {
+                serverResponse = ""; // server force closed connection for some reason
+            }
             reader.Close();
             response.Close();
             return serverResponse;
@@ -118,7 +124,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     p.ReleaseId.ToString(), p.TaskId.ToString(), p.ChannelId.ToString(), p.ReleaseVersion.ToString(),
                     p.Created.ToString(), p.QueueTime.ToString(), p.CompletedTime.ToString(), p.State.ToString(),
                     p.HasWarningsOrErrors.ToString(), p.ErrorMessage.ToString(), p.Duration.ToString(), p.IsCurrent.ToString(),
-                    p.IsCompleted.ToString(), projName));
+                    p.IsCompleted.ToString(), projName, API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + p.Id.ToString()));
                 }
             }
             return projList;
@@ -245,7 +251,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                                 d.TaskId.ToString(), d.ChannelId.ToString(), d.ReleaseVersion.ToString(),
                                 d.Created.ToString(), d.QueueTime.ToString(), d.CompletedTime.ToString(),
                                 d.State.ToString(), d.HasWarningsOrErrors.ToString(), d.ErrorMessage.ToString(),
-                                d.Duration.ToString(), d.IsCurrent.ToString(), d.IsCompleted.ToString(), "");
+                                d.Duration.ToString(), d.IsCurrent.ToString(), d.IsCompleted.ToString(), "", API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + d.Id.ToString());
                             releaseDeploys.Add(ad);
                         }
                     }
