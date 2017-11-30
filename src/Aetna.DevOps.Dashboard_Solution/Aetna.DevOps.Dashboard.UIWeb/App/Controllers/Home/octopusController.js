@@ -467,7 +467,10 @@
                         return;
                     }
                     var deployCount = 0; // used to tag button links for later usage
+                   
                     allDeploys[points[0]._index].forEach(function (d) {
+                        console.log(points[0]._index);
+                        console.log(allDeploys[points[0]._index]);
                         var msg = d.message;
                         var cat = d.category;
                         var dt = moment(d.dateTime);
@@ -503,7 +506,7 @@
                             environData + "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" + deployCount + "').attr('href', '" +
                             d.webUrl + "')}, 1000);\" class=\"list-group-item " + coloredListElement(cat) +
                             "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
-                            "<h4 class=\"list-group-item-heading\">" + d.environs[0].name +
+                            "<h4 class=\"list-group-item-heading\">" + (d.environs.length>0?d.environs[0].name:"Not named") +
                             "<div class='pull-right'><small>" + timePassed + "</small></div></h4>" +
                             "<p class=\"list-group-item-text\">" + msg + "</p></a>";
                         deployCount += 1;

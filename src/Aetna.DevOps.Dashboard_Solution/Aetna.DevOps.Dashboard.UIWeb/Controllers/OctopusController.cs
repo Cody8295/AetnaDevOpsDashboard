@@ -99,7 +99,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 response = request.GetResponse();
-            }catch(WebException)
+            } catch (WebException)
             {
                 return ""; // server didnt respond, send blank response
             }
@@ -109,7 +109,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 serverResponse = reader.ReadToEnd();
-            }catch(IOException ioe)
+            } catch (IOException ioe)
             {
                 serverResponse = ""; // server force closed connection for some reason
             }
@@ -331,7 +331,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return "API error";
         }
         #endregion
-        
+
         #region "ISO to Datetime"
         /// <summary>
         /// Converts the ISO standard datetime into the C# DateTime which is then converted to a string
@@ -344,7 +344,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             return dateTime.ToString();
         }
         #endregion
-        
+
         #region "Format deploys for graphing"
         /// <summary>
         /// Transforms JSON from Octopus API/Events into a list of Deploys ready to be used in ChartJS
@@ -365,7 +365,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
                 dynamic deployLinks = JsonConvert.DeserializeObject(o.RelatedDocumentIds.ToString());
                 string webUrl = "";
-                foreach(string str in deployLinks)
+                foreach (string str in deployLinks)
                 {
                     if (str.StartsWith("Deployments-")) { webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str; break; }
                 }
@@ -373,7 +373,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 Deploy d = new Deploy(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
                     o.Category.ToString(), webUrl);
-                dl.Add(d);
+                if (d.Category == "DeploymentSucceeded" || d.Category == "DeploymentFailed" ||
+                    d.Category == "DeploymentStarted" || d.Category == "DeploymentQueued")
+                {
+                    dl.Add(d);
+                }
             }
             return dl;
         }
