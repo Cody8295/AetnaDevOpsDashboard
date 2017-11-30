@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Controllers.OctopusController">
+    <Position X="7" Y="0.5" Width="3.75" />
+    <NestedTypes>
+      <Enum Name="Aetna.DevOps.Dashboard.UIWeb.Controllers.OctopusController.APIdatum" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\OctopusController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAIADCCBAAARAGAAAAIUIBAKEAIMAQAMgAIAAAAAAAg=</HashCode>
+      <FileName>Controllers\OctopusController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.ActiveDeploy">
+    <Position X="1.25" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQACEAAAAAACQAAACAAAAAAABAgDAJQAAgQABAAAAAg=</HashCode>
+      <FileName>Models\ActiveDeploy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.DataState">
+    <Position X="4" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAACAAAAAAAAAAAAAAACAAAAAAAAAAAgAAACAQA=</HashCode>
+      <FileName>Models\DataState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.Deploy">
+    <Position X="11" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAEAQAAAAEAAAACAAAAAAAAIAAACAA=</HashCode>
+      <FileName>Models\Deploy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.DeployList">
+    <Position X="11" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DeployList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.Environment">
+    <Position X="4.75" Y="2.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACACAAAAAgAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Environment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.EnvironmentList">
+    <Position X="4.25" Y="5.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EnvironmentList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.Machine">
+    <Position X="13.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAGEAAAAAAAAAAAAAQAIAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Models\Machine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.MachineList">
+    <Position X="13.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\MachineList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.Project">
+    <Position X="9" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAAAAAAAAQQAAAAQAAEAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Project.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.ProjectGroup">
+    <Position X="4.5" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAABAAE=</HashCode>
+      <FileName>Models\ProjectGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.ProjectGroupDictionary">
+    <Position X="13.25" Y="2.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAGAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Models\ProjectGroupDictionary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.ProjectList">
+    <Position X="11" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Models\ProjectList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.Release">
+    <Position X="1" Y="0.5" Width="2.75" />
+    <NestedTypes>
+      <Enum Name="Aetna.DevOps.Dashboard.UIWeb.Models.Release.Source" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Models\Release.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IAACAAEAAAABACAAAAQAAAAAAAACAAAACEAABAAAAAA=</HashCode>
+      <FileName>Models\Release.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Aetna.DevOps.Dashboard.UIWeb.Models.ReleaseList">
+    <Position X="6.75" Y="7.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Models\ReleaseList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

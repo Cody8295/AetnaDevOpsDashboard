@@ -390,6 +390,7 @@
             function setupPieGraph() {
                 document.getElementById("canvas").onclick = function (e, i) {
                     var htmlDeploys = "<div class=\"envList\">";
+                    if (thePieChart === undefined) { console.log("PROBLEM "); return; }
                     var points = thePieChart.getElementsAtEvent(e);
                     if (points[0] === undefined) { // user didn't click on a point
                         $(".deployData").html("");
@@ -458,6 +459,7 @@
             function setupLineGraph() {
                 document.getElementById("canvas").onclick = function (e) {
                     var htmlDeploys = "";
+                    if (theLineGraph === undefined) { return; }
                     var points = theLineGraph.getElementsAtEvent(e);
                     if (points[0] === undefined) { // user didn't click on a point
                         $(".deployData").html("");
@@ -518,7 +520,7 @@
 
             lineGraph(); // default representation
             setupLineGraph();
-            setupPieGraph();
+            //setupPieGraph();
 
             $(document).ready(function () {
                 $('.btn-group .btn').mouseup(function (e) {
@@ -537,6 +539,7 @@
                             if (theLineGraph !== undefined) { theLineGraph.destroy(); theLineGraph = undefined; }
                             if (theBarGraph !== undefined) { theBarGraph.destroy(); theBarGraph = undefined; }
                             pieChart();
+                            setupPieGraph();
                         }
                         if (btnId == "opt3") {
                             if (theBarGraph !== undefined) { return; }
