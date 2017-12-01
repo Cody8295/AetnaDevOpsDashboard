@@ -11,7 +11,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public string Status;
         public string StatusSummary;
         public string IsInProcess;
-        public Machine(string id, string name, string url, System.Collections.Generic.List<string> environments, string status, string statusSummary, string isInProcess)
+        public Machine(string id, string name, string url, List<string> environments, string status, string statusSummary, string isInProcess)
         {
             Id = id;
             Name = name;
@@ -20,6 +20,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             Status = status;
             StatusSummary = statusSummary;
             IsInProcess = isInProcess;
+        }
+
+        public Machine Clone()
+        {
+            Machine newMachine = new Machine(Id, Name, Url, new List<string>(), Status, StatusSummary, IsInProcess);
+
+            foreach (string environment in Environments)
+            {
+                newMachine.Environments.Add(environment);
+            }
+
+            return newMachine;
         }
     }
 }

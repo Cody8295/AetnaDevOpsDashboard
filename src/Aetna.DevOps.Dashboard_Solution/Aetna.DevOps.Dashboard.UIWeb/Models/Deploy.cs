@@ -24,5 +24,23 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         {
             return Message;
         }
+
+        public Deploy Clone()
+        {
+            List<string> relatedDocs = new List<string>(RelatedDocs.Capacity);
+            foreach (string doc in RelatedDocs)
+            {
+                relatedDocs.Add(doc);
+            }
+            
+            Deploy newDeploy = new Deploy(TimeAndDate, Message, relatedDocs, Category, WebUrl);
+
+            foreach (Environment environment in Environs)
+            {
+                newDeploy.Environs.Add(environment.Clone());
+            }
+
+            return newDeploy;
+        }
     }
 }
