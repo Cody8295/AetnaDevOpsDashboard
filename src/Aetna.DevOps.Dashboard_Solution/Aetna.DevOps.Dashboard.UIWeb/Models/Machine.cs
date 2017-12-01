@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Machine
+    public class Machine : Clonable<Machine>
     {
         public string Id;
         public string Name;

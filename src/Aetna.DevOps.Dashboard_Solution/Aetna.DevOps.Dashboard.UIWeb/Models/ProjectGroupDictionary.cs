@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class ProjectGroupDictionary
+    public class ProjectGroupDictionary : Clonable<ProjectGroupDictionary>
     {
         public Dictionary<string, ProjectGroup> ProjectGroups;
         public ProjectGroupDictionary()

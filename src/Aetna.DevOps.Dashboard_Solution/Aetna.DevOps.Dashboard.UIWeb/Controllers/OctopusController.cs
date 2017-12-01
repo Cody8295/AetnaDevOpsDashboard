@@ -453,7 +453,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             List<ProjectGroup> pg = SortProjectGroups();
             if (state.ProjectGroups == null || state.ProjectGroups != pg)
             {
-                state.ProjectGroups = SortProjectGroups();
+                state.ProjectGroups = new List<ProjectGroup>();
+                foreach (ProjectGroup group in pg)
+                {
+                    state.ProjectGroups.Add(group.Clone());
+                }
                 state.IsChanged["ProjectGroups"] = true;
                 anyChange = true;
             }
@@ -461,7 +465,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             List<Project> pl = MakeProjectList();
             if (state.Projects == null || state.Projects != pl)
             {
-                state.Projects = pl;
+                state.Projects = new List<Project>();
+                foreach (Project project in pl)
+                {
+                    state.Projects.Add(project.Clone());
+                }
                 state.IsChanged["Projects"] = true;
                 anyChange = true;
             }
@@ -476,7 +484,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Environment> env = MakeEnvironmentList().Environments;
+            List<Environment> env = MakeEnvironmentList().Clone();
             if (state.Environments == null || state.Environments != env)
             {
                 state.Environments = env;

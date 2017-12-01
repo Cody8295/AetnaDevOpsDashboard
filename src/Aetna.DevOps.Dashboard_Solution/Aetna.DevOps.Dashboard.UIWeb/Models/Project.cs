@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Project
+    public class Project : Clonable<Project>
     {
         public string GroupId;
         public string Name;

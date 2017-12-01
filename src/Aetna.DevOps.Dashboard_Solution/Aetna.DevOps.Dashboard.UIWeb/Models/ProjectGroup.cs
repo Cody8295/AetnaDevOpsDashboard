@@ -4,13 +4,13 @@
     {
         public string GroupName;
         public string GroupId;
-        public ProjectList Projects;
+        public List<Project> Projects;
 
         public ProjectGroup (string groupName, string groupId)
         {
             GroupName = groupName;
             GroupId = groupId;
-            Projects = new ProjectList();
+            Projects = new List<Project>();
         }
 
         public void AddProject(Project project)

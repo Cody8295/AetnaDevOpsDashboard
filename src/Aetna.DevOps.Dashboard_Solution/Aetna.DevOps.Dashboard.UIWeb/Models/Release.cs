@@ -3,9 +3,9 @@ using System.Collections;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Release
+    public class Release : Clonable<Release>
     {
-        public string Id, Version, Projectid, Channelid, Assembled, Releasenotes, WebUrl;
+        public string Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, WebUrl;
         public List<ActiveDeploy> ReleaseDeploys;
         public Dictionary<string, string> Details;
         public enum Source
@@ -20,8 +20,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         {
             Id = id;
             Version = version;
-            Projectid = projectId;
-            Channelid = channelId;
+            ProjectId = projectId;
+            ChannelId = channelId;
             Assembled = assembled;
             ReleaseDeploys = releaseDeploys;
             WebUrl = webUrl;
@@ -54,24 +54,24 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
                 foreach (KeyValuePair<string, string> entry in Details)
                 {
-                    Releasenotes += entry.Key + ": " + entry.Value + "<br />";
+                    ReleaseNotes += entry.Key + ": " + entry.Value + "<br />";
                 }
             }
             else
             {
-                Releasenotes = releaseNotes;
+                ReleaseNotes = releaseNotes;
             }
         }
 
         public Release Clone()
         {
-            releaseDeploys = new List<ActiveDeploy>();
+            List<ActiveDeploy> releaseDeploys = new List<ActiveDeploy>();
             foreach (ActiveDeploy deploy in ReleaseDeploys)
             {
                 releaseDeploys.Add(deploy.Clone());
             }
 
-            return new Release(Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, releaseDeploys, WebUrl)
+            return new Release(Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, releaseDeploys, WebUrl);
         }
     }
 }

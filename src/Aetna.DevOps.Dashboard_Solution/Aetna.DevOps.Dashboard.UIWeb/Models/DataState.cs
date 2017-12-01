@@ -7,7 +7,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
     {
         public List<ProjectGroup> ProjectGroups { get; set; }
         public List<Project> Projects { get; set; }
-        public int Lifecycles { get; set; } //Temporary until we add Lifecycle object
+        public int Lifecycles { get; set; } 
         public List<Environment> Environments { get; set; }
         public List<Deploy> Deploys { get; set; }
 

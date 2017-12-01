@@ -1,6 +1,6 @@
 ﻿namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class ActiveDeploy
+    public class ActiveDeploy : Clonable<ActiveDeploy>
     {
         public string Id, ProjectId, ReleaseId, TaskId, ChannelId, ReleaseVersion, Created, QueueTime, CompletedTime, State,
             HasWarningsOrErrors, ErrorMessage, Duration, IsCurrent, IsCompleted, ProjectName, WebUrl;

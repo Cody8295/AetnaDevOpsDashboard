@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Deploy
+    public class Deploy : Clonable<Deploy>
     {
         public string TimeAndDate;
         public string Message;
