@@ -1073,7 +1073,7 @@
     <Compile Include="Controllers\OctopusController.cs" />
     <Compile Include="Models\ActiveDeploy.cs" />
     <Compile Include="Models\Clonable.cs" />
-    <Compile Include="Models\ListExtension.cs" />
+    <Compile Include="Models\ClonableListExtension.cs" />
     <Compile Include="Models\DataState.cs" />
     <Compile Include="Models\Deploy.cs" />
     <Compile Include="Controllers\DeployHub.cs" />

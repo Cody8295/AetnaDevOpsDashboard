@@ -1,4 +1,6 @@
-﻿namespace Aetna.DevOps.Dashboard.UIWeb.Models
+﻿using System.Collections.Generic;
+
+namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public class ProjectGroup
     {

@@ -109,7 +109,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 serverResponse = reader.ReadToEnd();
-            } catch (IOException ioe)
+            } catch (IOException)
             {
                 serverResponse = ""; // server force closed connection for some reason
             }
@@ -206,9 +206,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// number of machines
         /// </summary>
         /// <returns>EnvironmentList</returns>
-        private static EnvironmentList MakeEnvironmentList()
+        private static List<Environment> MakeEnvironmentList()
         {
-            EnvironmentList el = new EnvironmentList();
+            List<Environment> el = new List<Environment>();
             Dictionary<string, int> numMachines = GetNumberMachines(GetResponse(APIdatum.machines));
             Dictionary<string, string> environments = GetNumberEnviroments(GetResponse(APIdatum.environments));
 
@@ -277,8 +277,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private List<Release> GetReleaseList(string response)
         {
             dynamic releases = JsonConvert.DeserializeObject(response);
-            ReleaseList rl = new ReleaseList();
-            if (String.IsNullOrEmpty(response)) { return rl.Releases; } // if response is empty, do not proceed
+            List<Release> rl = new List<Release>();
+            if (String.IsNullOrEmpty(response)) { return rl; } // if response is empty, do not proceed
 
             foreach (dynamic r in releases.Releases)
             {
@@ -306,7 +306,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     releaseDeploys, API_URL.TrimEnd("/api/".ToCharArray()) + webUrl);
                 rl.Add(re);
             }
-            return rl.Releases;
+            return rl;
         }
         #endregion
 
@@ -351,10 +351,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="jsonTxt">JSON string</param>
         /// <returns>DeployList</returns>
-        private DeployList GraphDeployments(string jsonTxt)
+        private List<Deploy> GraphDeployments(string jsonTxt)
         {
-            if (String.IsNullOrEmpty(jsonTxt)) { return new DeployList(); } // if response is empty, do not proceed
-            DeployList dl = new DeployList();
+            if (String.IsNullOrEmpty(jsonTxt)) { return new List<Deploy>(); } // if response is empty, do not proceed
+            List<Deploy> dl = new List<Deploy>();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach (dynamic o in jsonDeser.Items)
             {
@@ -389,12 +389,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="envId">ID of some Environment</param>
         /// <returns>MachineList</returns>
-        private static MachineList GetMachines(string envId)
+        private static List<Machine> GetMachines(string envId)
         {
             string machineResponse = GetResponse(APIdatum.machines, envId);
-            if (String.IsNullOrEmpty(machineResponse)) { return new MachineList(); } // if response is empty, do not proceed
+            if (String.IsNullOrEmpty(machineResponse)) { return new List<Machine>(); } // if response is empty, do not proceed
             dynamic mach = JsonConvert.DeserializeObject(machineResponse);
-            MachineList m = new MachineList();
+            List <Machine> m = new List<Machine>();
             foreach (dynamic mac in mach.Items)
             {
                 System.Collections.Generic.List<string> el = new System.Collections.Generic.List<string>();
@@ -420,7 +420,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private Environment GetEnviron(string envName)
         {
             string environData = GetResponse(APIdatum.environments, envName);
-            if (String.IsNullOrEmpty(environData)) { return new Environment("","","",new MachineList()); } // if response is empty, do not proceed
+            if (String.IsNullOrEmpty(environData)) { return new Environment("","","",new List<Machine>()); } // if response is empty, do not proceed
             dynamic env = JsonConvert.DeserializeObject(environData);
             Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), GetMachines(envName));
             return e;
@@ -644,7 +644,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                return Ok<List<Machine>>(GetMachines(envId).Machines);
+                return Ok<List<Machine>>(GetMachines(envId));
             }
             catch (Exception exception)
             {
@@ -686,8 +686,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                EnvironmentList el = MakeEnvironmentList();
-                return Ok<List<Environment>>(el.Environments);
+                List<Environment> el = MakeEnvironmentList();
+                return Ok<List<Environment>>(el);
             }
             catch (Exception exception)
             {
@@ -730,21 +730,21 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                DeployList dl = GraphDeployments(GetResponse(APIdatum.deploys));
-                for (int x = 0; x < dl.Deploys.Count; x++)
+                List<Deploy> dl = GraphDeployments(GetResponse(APIdatum.deploys));
+                for (int x = 0; x < dl.Count; x++)
                 {
-                    if (dl.Deploys[x].RelatedDocs.Count > 0)
+                    if (dl[x].RelatedDocs.Count > 0)
                     {
-                        foreach (string docID in dl.Deploys[x].RelatedDocs)
+                        foreach (string docID in dl[x].RelatedDocs)
                         {
                             if (docID.Contains("Environments"))
                             {
-                                dl.Deploys[x].Environs.Add(GetEnviron(docID));
+                                dl[x].Environs.Add(GetEnviron(docID));
                             }
                         }
                     }
                 }
-                return Ok<System.Collections.Generic.List<Deploy>>(dl.Deploys);
+                return Ok<System.Collections.Generic.List<Deploy>>(dl);
             }
             catch (Exception exception)
             {
