@@ -20,5 +20,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             DeploymentProcess = deploymentProcess;
         }
         public string GetGroupId() { return GroupId; }
+
+        public Project Clone()
+        {
+            return new Project(Id, GroupId, Name, Lifecycle, DeploymentProcess);
+        }
     }
 }

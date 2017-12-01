@@ -23,5 +23,15 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         {
             return new List<ProjectGroup>(ProjectGroups.Values);
         }
+
+        public ProjectGroupDictionary Clone()
+        {
+            ProjectGroupDictionary newProjectGroupDictionary = new ProjectGroupDictionary();
+            foreach (KeyValuePair<string, ProjectGroup> entry in ProjectGroups) {
+                newProjectGroupDictionary.AddProjectGroup(entry.Key, entry.Value.Clone());
+            }
+
+            return newProjectGroupDictionary;
+        }
     }
 }

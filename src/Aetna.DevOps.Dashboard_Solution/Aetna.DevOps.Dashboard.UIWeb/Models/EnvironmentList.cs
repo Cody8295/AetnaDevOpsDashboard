@@ -12,7 +12,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             EnvironmentList newEnvironmentList = new EnvironmentList();
             foreach (Environment environment in Environments)
             {
-                newEnvironmentList.Add(environment);
+                newEnvironmentList.Add(environment.Clone());
             }
             return newEnvironmentList;
         }

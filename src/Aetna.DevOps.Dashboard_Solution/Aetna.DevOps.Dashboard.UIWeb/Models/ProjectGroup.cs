@@ -4,18 +4,25 @@
     {
         public string GroupName;
         public string GroupId;
-        public ProjectList ProjectList;
+        public ProjectList Projects;
 
         public ProjectGroup (string groupName, string groupId)
         {
             GroupName = groupName;
             GroupId = groupId;
-            ProjectList = new ProjectList();
+            Projects = new ProjectList();
         }
 
         public void AddProject(Project project)
         {
-            ProjectList.Add(project);
+            Projects.Add(project);
+        }
+
+        public ProjectGroup Clone()
+        {
+            ProjectGroup newProjectGroup = new ProjectGroup(GroupName, GroupId);
+            newProjectGroup.Projects = Projects.Clone();
+            return newProjectGroup;
         }
     }
 }

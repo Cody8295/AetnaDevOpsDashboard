@@ -62,5 +62,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
                 Releasenotes = releaseNotes;
             }
         }
+
+        public Release Clone()
+        {
+            releaseDeploys = new List<ActiveDeploy>();
+            foreach (ActiveDeploy deploy in ReleaseDeploys)
+            {
+                releaseDeploys.Add(deploy.Clone());
+            }
+
+            return new Release(Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, releaseDeploys, WebUrl)
+        }
     }
 }

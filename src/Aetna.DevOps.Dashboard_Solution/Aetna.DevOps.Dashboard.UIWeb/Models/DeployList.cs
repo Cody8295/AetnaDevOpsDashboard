@@ -13,7 +13,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             DeployList newDeployList = new DeployList();
             foreach (Deploy deploy in Deploys)
             {
-                newDeployList.Add(deploy);
+                newDeployList.Add(deploy.Clone());
             }
             return newDeployList;
         }
