@@ -26,5 +26,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             newProjectGroup.Projects = Projects.Clone();
             return newProjectGroup;
         }
+
+        public bool Equals(ProjectGroup other)
+        {
+            return (GroupName == other.GroupName && GroupId == other.GroupId && Projects.Equals(other.Projects));
+        }
     }
 }

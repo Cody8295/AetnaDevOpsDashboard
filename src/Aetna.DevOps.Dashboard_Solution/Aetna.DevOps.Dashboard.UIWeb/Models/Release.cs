@@ -73,5 +73,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
             return new Release(Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, releaseDeploys, WebUrl);
         }
+
+        public bool Equals(Release other)
+        {
+            return (Id == other.Id && Version == other.Version && ProjectId == other.ProjectId && ChannelId == other.ChannelId && Assembled == other.Assembled && ReleaseNotes == other.ReleaseNotes && WebUrl == other.WebUrl && ReleaseDeploys.Equals(other.ReleaseDeploys) && Details.Equals(other.Details));
+        }
     }
 }

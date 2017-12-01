@@ -1073,7 +1073,7 @@
     <Compile Include="Controllers\OctopusController.cs" />
     <Compile Include="Models\ActiveDeploy.cs" />
     <Compile Include="Models\Clonable.cs" />
-    <Compile Include="Models\ClonableListExtension.cs" />
+    <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\DataState.cs" />
     <Compile Include="Models\Deploy.cs" />
     <Compile Include="Controllers\DeployHub.cs" />
@@ -1082,7 +1082,6 @@
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\ProjectGroup.cs" />
-    <Compile Include="Models\ProjectGroupDictionary.cs" />
     <Compile Include="Models\Release.cs" />
     <Compile Include="Controllers\Startup.cs" />
     <Compile Include="Global.asax.cs">

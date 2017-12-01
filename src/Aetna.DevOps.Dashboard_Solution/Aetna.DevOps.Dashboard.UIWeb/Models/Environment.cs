@@ -26,5 +26,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         {
             return new Environment(Id, Name, Description, Machines.Clone());
         }
+
+        public bool Equals(Environment other)
+        {
+            return (Id == other.Id && Name == other.Name && Description == other.Description && Machines.Equals(other.Machines));
+        }
     }
 }

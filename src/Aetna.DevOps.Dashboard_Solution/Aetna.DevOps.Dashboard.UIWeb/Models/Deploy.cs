@@ -42,5 +42,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
             return newDeploy;
         }
+
+        public bool Equals(Deploy other)
+        {
+            return (TimeAndDate == other.TimeAndDate && Message == other.Message && RelatedDocs.Equals(other.RelatedDocs) && Category == other.Category && Environs.Equals(other.Environs) && WebUrl == other.WebUrl);
+        }
     }
 }

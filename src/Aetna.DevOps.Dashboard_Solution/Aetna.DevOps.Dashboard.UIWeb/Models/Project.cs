@@ -25,5 +25,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         {
             return new Project(Id, GroupId, Name, Lifecycle, DeploymentProcess);
         }
+
+        public bool Equals(Project other)
+        {
+            return (GroupId == other.GroupId && Name == other.Name && Lifecycle == other.Lifecycle && DeploymentProcess == other.DeploymentProcess && RelatedDocs.Equals(other.RelatedDocs) && Id == other.Id);
+        }
     }
 }

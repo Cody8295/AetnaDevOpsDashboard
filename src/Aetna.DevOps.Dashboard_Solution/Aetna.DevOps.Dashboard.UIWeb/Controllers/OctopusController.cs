@@ -244,7 +244,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private static List<ProjectGroup> SortProjectGroups()
         {
             List<ProjectGroup> pg = new List<ProjectGroup>();
-            ProjectGroupDictionary pgd = new ProjectGroupDictionary();
+            Dictionary<string,ProjectGroup> pgd = new Dictionary<string, ProjectGroup>();
 
             string jsonTxt = GetResponse(APIdatum.projectGroups);
             if (String.IsNullOrEmpty(jsonTxt)) { return pg; } // if response is empty, do not proceed
@@ -253,17 +253,17 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (dynamic o in jsonDeser.Items)
             {
-                pgd.AddProjectGroup(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
+                pgd.Add(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
             }
 
             List<Project> projects = MakeProjectList();
 
             foreach (Project p in projects)
             {
-                pgd.addProject(p.GetGroupId(), p);
+                pgd.AddProject(p.GetGroupId(), p);
             }
 
-            pg = pgd.getProjectGroups();
+            pg = pgd.GetProjectGroups();
             return pg;
         }
         #endregion
@@ -451,7 +451,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             // Get New Data
 
             List<ProjectGroup> pg = SortProjectGroups().Clone();
-            if (state.ProjectGroups == null || state.ProjectGroups != pg)
+            if (state.ProjectGroups == null || !state.ProjectGroups.Equals(pg))
             {
                 state.ProjectGroups = pg;
                 state.IsChanged["ProjectGroups"] = true;
@@ -459,7 +459,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Project> pl = MakeProjectList().Clone();
-            if (state.Projects == null || state.Projects != pl)
+            if (state.Projects == null || !state.Projects.Equals(pl))
             {
                 state.Projects = pl;
                 state.IsChanged["Projects"] = true;
@@ -477,7 +477,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Environment> env = MakeEnvironmentList().Clone();
-            if (state.Environments == null || state.Environments != env)
+            if (state.Environments == null || !state.Environments.Equals(env))
             {
                 state.Environments = env;
                 state.IsChanged["Environments"] = true;
@@ -485,7 +485,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Deploy> dp = null; // Temporary
-            if (state.Deploys != dp)
+            if (dp == null || state.Deploys.Equals(dp))
             {
                 state.Deploys = dp;
                 state.IsChanged["Deploys"] = true;
