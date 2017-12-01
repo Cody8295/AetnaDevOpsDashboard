@@ -19,5 +19,10 @@
         {
             return Name + ":" + Machines.Machines.Count;
         }
+
+        public Environment Clone()
+        {
+            return new Environment(Id, Name, Description, Machines.Clone());
+        }
     }
 }
