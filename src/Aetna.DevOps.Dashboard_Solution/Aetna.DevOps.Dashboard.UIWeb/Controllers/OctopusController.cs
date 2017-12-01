@@ -450,26 +450,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             // Get New Data
 
-            List<ProjectGroup> pg = SortProjectGroups();
+            List<ProjectGroup> pg = SortProjectGroups().Clone();
             if (state.ProjectGroups == null || state.ProjectGroups != pg)
             {
-                state.ProjectGroups = new List<ProjectGroup>();
-                foreach (ProjectGroup group in pg)
-                {
-                    state.ProjectGroups.Add(group.Clone());
-                }
+                state.ProjectGroups = pg;
                 state.IsChanged["ProjectGroups"] = true;
                 anyChange = true;
             }
 
-            List<Project> pl = MakeProjectList();
+            List<Project> pl = MakeProjectList().Clone();
             if (state.Projects == null || state.Projects != pl)
             {
-                state.Projects = new List<Project>();
-                foreach (Project project in pl)
-                {
-                    state.Projects.Add(project.Clone());
-                }
+                state.Projects = pl;
                 state.IsChanged["Projects"] = true;
                 anyChange = true;
             }
