@@ -119,13 +119,13 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region "Get Active Projects by Environment"
+        #region "Get Active Deploys by Environment"
         /// <summary>
         /// Gives the current deploys for some Environment
         /// </summary>
         /// <param name="envId">ID for some Environment</param>
         /// <returns>A generic list of ActiveDeploy</returns>
-        private static List<ActiveDeploy> GetEnvironmentProjects(string envId)
+        private static List<ActiveDeploy> GetActiveDeploysByEnvironment(string envId)
         {
             List<ActiveDeploy> projList = new List<ActiveDeploy>();
             List<Project> projects = MakeProjectList();
@@ -573,7 +573,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                return Ok<List<ActiveDeploy>>(GetEnvironmentProjects(envId));
+                return Ok<List<ActiveDeploy>>(GetActiveDeploysByEnvironment(envId));
             }
             catch (Exception exception)
             {

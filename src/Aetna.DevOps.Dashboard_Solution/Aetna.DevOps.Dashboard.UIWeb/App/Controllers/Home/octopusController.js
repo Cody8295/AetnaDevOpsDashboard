@@ -141,7 +141,7 @@
             }, 1000);
         };
 
-        $http.get("api/Octo/projectsInfo").then(function (response) {
+        $http.get("api/Octo/projects").then(function (response) {
             $scope.projectList = response.data;
             
             response.data.forEach(function (p) {
