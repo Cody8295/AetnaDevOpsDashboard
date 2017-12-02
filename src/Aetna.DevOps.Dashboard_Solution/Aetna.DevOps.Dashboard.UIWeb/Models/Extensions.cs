@@ -9,6 +9,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
     {
         public static List<T> Clone<T> (this List<T> list) where T : Clonable<T>
         {
+            if (list == null) return null;
             List<T> newList = new List<T>();
             foreach (T element in list)
             {
@@ -19,10 +20,22 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
         public static Dictionary<string, T> Clone<T>(this Dictionary<string, T> dictionary) where T : Clonable<T>
         {
+            if (dictionary == null) return null;
             Dictionary<string, T> newDictionary = new Dictionary<string, T>();
             foreach (KeyValuePair<string,T> element in dictionary)
             {
                 newDictionary.Add(element.Key, element.Value.Clone());
+            }
+            return newDictionary;
+        }
+
+        public static Dictionary<string, bool> Clone (this Dictionary<string, bool> dictionary)
+        {
+            if (dictionary == null) return null;
+            Dictionary<string, bool> newDictionary = new Dictionary<string, bool>();
+            foreach (KeyValuePair<string, bool> element in dictionary)
+            {
+                newDictionary.Add(element.Key, element.Value);
             }
             return newDictionary;
         }

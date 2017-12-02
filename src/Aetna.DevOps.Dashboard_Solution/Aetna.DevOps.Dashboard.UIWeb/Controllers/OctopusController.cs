@@ -351,7 +351,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="jsonTxt">JSON string</param>
         /// <returns>DeployList</returns>
-        private List<Deploy> GraphDeployments(string jsonTxt)
+        private static List<Deploy> GraphDeployments(string jsonTxt)
         {
             if (String.IsNullOrEmpty(jsonTxt)) { return new List<Deploy>(); } // if response is empty, do not proceed
             List<Deploy> dl = new List<Deploy>();
@@ -435,9 +435,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="state">The state of data being sent to client</param>
         /// <returns>Boolean</returns>
-        public static Boolean UpdateDataState(DataState state)
+        public static bool UpdateDataState(ref DataState state)
         {
-            Boolean anyChange = false; // debugging: should be false by default, set true on change
+            bool anyChange = false; // debugging: should be false by default, set true on change
 
             // Used to notify user when data has changed
             state.IsChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
@@ -450,7 +450,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             // Get New Data
 
-            List<ProjectGroup> pg = SortProjectGroups().Clone();
+            List<ProjectGroup> pg = SortProjectGroups();
             if (state.ProjectGroups == null || !state.ProjectGroups.Equals(pg))
             {
                 state.ProjectGroups = pg;
@@ -458,7 +458,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Project> pl = MakeProjectList().Clone();
+            List<Project> pl = MakeProjectList();
             if (state.Projects == null || !state.Projects.Equals(pl))
             {
                 state.Projects = pl;
@@ -476,7 +476,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Environment> env = MakeEnvironmentList().Clone();
+            List<Environment> env = MakeEnvironmentList();
             if (state.Environments == null || !state.Environments.Equals(env))
             {
                 state.Environments = env;
@@ -484,7 +484,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Deploy> dp = null; // Temporary
+            List<Deploy> dp = GraphDeployments(GetResponse(APIdatum.deploys)); 
             if (dp == null || state.Deploys.Equals(dp))
             {
                 state.Deploys = dp;
@@ -492,6 +492,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
+            if (anyChange) state = state.Clone();
             return anyChange;
         }
         #endregion
