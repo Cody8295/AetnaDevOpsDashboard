@@ -8,14 +8,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class DeployHub : Hub
     {
         private static DataState currentState = new DataState();
-        private static System.Timers.Timer timer = new System.Timers.Timer(5000); // Set Timer to run every 5 seconds
+        private static System.Timers.Timer timer = new System.Timers.Timer(2000); // Set Timer to run every 2 seconds
         public DeployHub() : base()
         {
             timer.Elapsed += (sender, e) =>
             {
                 if (OctopusController.UpdateDataState(currentState))
                 {
-                    Clients.All.onChange(currentState);
+                    Clients.All.onChange(currentState.Clone());
                 }
             };
             timer.Enabled = true;

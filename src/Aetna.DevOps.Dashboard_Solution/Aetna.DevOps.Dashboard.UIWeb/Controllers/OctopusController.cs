@@ -109,7 +109,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             try
             {
                 serverResponse = reader.ReadToEnd();
-            } catch (IOException ioe)
+            } catch (IOException)
             {
                 serverResponse = ""; // server force closed connection for some reason
             }
@@ -206,9 +206,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// number of machines
         /// </summary>
         /// <returns>EnvironmentList</returns>
-        private static EnvironmentList MakeEnvironmentList()
+        private static List<Environment> MakeEnvironmentList()
         {
-            EnvironmentList el = new EnvironmentList();
+            List<Environment> el = new List<Environment>();
             Dictionary<string, int> numMachines = GetNumberMachines(GetResponse(APIdatum.machines));
             Dictionary<string, string> environments = GetNumberEnviroments(GetResponse(APIdatum.environments));
 
@@ -244,7 +244,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private static List<ProjectGroup> SortProjectGroups()
         {
             List<ProjectGroup> pg = new List<ProjectGroup>();
-            ProjectGroupDictionary pgd = new ProjectGroupDictionary();
+            Dictionary<string,ProjectGroup> pgd = new Dictionary<string, ProjectGroup>();
 
             string jsonTxt = GetResponse(APIdatum.projectGroups);
             if (String.IsNullOrEmpty(jsonTxt)) { return pg; } // if response is empty, do not proceed
@@ -253,17 +253,17 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (dynamic o in jsonDeser.Items)
             {
-                pgd.AddProjectGroup(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
+                pgd.Add(o.Id.ToString(), new ProjectGroup(o.Name.ToString(), o.Id.ToString()));
             }
 
             List<Project> projects = MakeProjectList();
 
             foreach (Project p in projects)
             {
-                pgd.addProject(p.GetGroupId(), p);
+                pgd.AddProject(p.GetGroupId(), p);
             }
 
-            pg = pgd.getProjectGroups();
+            pg = pgd.GetProjectGroups();
             return pg;
         }
         #endregion
@@ -277,8 +277,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private List<Release> GetReleaseList(string response)
         {
             dynamic releases = JsonConvert.DeserializeObject(response);
-            ReleaseList rl = new ReleaseList();
-            if (String.IsNullOrEmpty(response)) { return rl.Releases; } // if response is empty, do not proceed
+            List<Release> rl = new List<Release>();
+            if (String.IsNullOrEmpty(response)) { return rl; } // if response is empty, do not proceed
 
             foreach (dynamic r in releases.Releases)
             {
@@ -306,7 +306,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     releaseDeploys, API_URL.TrimEnd("/api/".ToCharArray()) + webUrl);
                 rl.Add(re);
             }
-            return rl.Releases;
+            return rl;
         }
         #endregion
 
@@ -351,10 +351,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="jsonTxt">JSON string</param>
         /// <returns>DeployList</returns>
-        private DeployList GraphDeployments(string jsonTxt)
+        private static List<Deploy> GraphDeployments(string jsonTxt)
         {
-            if (String.IsNullOrEmpty(jsonTxt)) { return new DeployList(); } // if response is empty, do not proceed
-            DeployList dl = new DeployList();
+            if (String.IsNullOrEmpty(jsonTxt)) { return new List<Deploy>(); } // if response is empty, do not proceed
+            List<Deploy> dl = new List<Deploy>();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach (dynamic o in jsonDeser.Items)
             {
@@ -389,12 +389,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="envId">ID of some Environment</param>
         /// <returns>MachineList</returns>
-        private static MachineList GetMachines(string envId)
+        private static List<Machine> GetMachines(string envId)
         {
             string machineResponse = GetResponse(APIdatum.machines, envId);
-            if (String.IsNullOrEmpty(machineResponse)) { return new MachineList(); } // if response is empty, do not proceed
+            if (String.IsNullOrEmpty(machineResponse)) { return new List<Machine>(); } // if response is empty, do not proceed
             dynamic mach = JsonConvert.DeserializeObject(machineResponse);
-            MachineList m = new MachineList();
+            List <Machine> m = new List<Machine>();
             foreach (dynamic mac in mach.Items)
             {
                 System.Collections.Generic.List<string> el = new System.Collections.Generic.List<string>();
@@ -420,7 +420,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private Environment GetEnviron(string envName)
         {
             string environData = GetResponse(APIdatum.environments, envName);
-            if (String.IsNullOrEmpty(environData)) { return new Environment("","","",new MachineList()); } // if response is empty, do not proceed
+            if (String.IsNullOrEmpty(environData)) { return new Environment("","","",new List<Machine>()); } // if response is empty, do not proceed
             dynamic env = JsonConvert.DeserializeObject(environData);
             Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), GetMachines(envName));
             return e;
@@ -435,9 +435,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="state">The state of data being sent to client</param>
         /// <returns>Boolean</returns>
-        public static Boolean UpdateDataState(DataState state)
+        public static bool UpdateDataState(DataState state)
         {
-            Boolean anyChange = false; // debugging: should be false by default, set true on change
+            bool anyChange = false; // debugging: should be false by default, set true on change
 
             // Used to notify user when data has changed
             state.IsChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
@@ -451,15 +451,15 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             // Get New Data
 
             List<ProjectGroup> pg = SortProjectGroups();
-            if (state.ProjectGroups == null || state.ProjectGroups != pg)
+            if (state.ProjectGroups == null || !state.ProjectGroups.Equals(pg))
             {
-                state.ProjectGroups = SortProjectGroups();
+                state.ProjectGroups = pg;
                 state.IsChanged["ProjectGroups"] = true;
                 anyChange = true;
             }
 
             List<Project> pl = MakeProjectList();
-            if (state.Projects == null || state.Projects != pl)
+            if (state.Projects == null || !state.Projects.Equals(pl))
             {
                 state.Projects = pl;
                 state.IsChanged["Projects"] = true;
@@ -476,16 +476,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Environment> env = MakeEnvironmentList().Environments;
-            if (state.Environments == null || state.Environments != env)
+            List<Environment> env = MakeEnvironmentList();
+            if (state.Environments == null || !state.Environments.Equals(env))
             {
                 state.Environments = env;
                 state.IsChanged["Environments"] = true;
                 anyChange = true;
             }
 
-            List<Deploy> dp = null; // Temporary
-            if (state.Deploys != dp)
+            List<Deploy> dp = GraphDeployments(GetResponse(APIdatum.deploys)); 
+            if (state.Deploys == null || state.Deploys.Equals(dp))
             {
                 state.Deploys = dp;
                 state.IsChanged["Deploys"] = true;
@@ -636,7 +636,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                return Ok<List<Machine>>(GetMachines(envId).Machines);
+                return Ok<List<Machine>>(GetMachines(envId));
             }
             catch (Exception exception)
             {
@@ -678,8 +678,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                EnvironmentList el = MakeEnvironmentList();
-                return Ok<List<Environment>>(el.Environments);
+                List<Environment> el = MakeEnvironmentList();
+                return Ok<List<Environment>>(el);
             }
             catch (Exception exception)
             {
@@ -722,21 +722,21 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                DeployList dl = GraphDeployments(GetResponse(APIdatum.deploys));
-                for (int x = 0; x < dl.Deploys.Count; x++)
+                List<Deploy> dl = GraphDeployments(GetResponse(APIdatum.deploys));
+                for (int x = 0; x < dl.Count; x++)
                 {
-                    if (dl.Deploys[x].RelatedDocs.Count > 0)
+                    if (dl[x].RelatedDocs.Count > 0)
                     {
-                        foreach (string docID in dl.Deploys[x].RelatedDocs)
+                        foreach (string docID in dl[x].RelatedDocs)
                         {
                             if (docID.Contains("Environments"))
                             {
-                                dl.Deploys[x].Environs.Add(GetEnviron(docID));
+                                dl[x].Environs.Add(GetEnviron(docID));
                             }
                         }
                     }
                 }
-                return Ok<System.Collections.Generic.List<Deploy>>(dl.Deploys);
+                return Ok<System.Collections.Generic.List<Deploy>>(dl);
             }
             catch (Exception exception)
             {

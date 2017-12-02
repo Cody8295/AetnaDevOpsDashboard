@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Machine
+    public class Machine : Clonable<Machine>
     {
         public string Id;
         public string Name;
@@ -32,6 +32,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             }
 
             return newMachine;
+        }
+
+        public bool Equals(Machine other)
+        {
+            return (Id == other.Id && Name == other.Name && Environments.Equals(other.Environments) && Status == other.Status && StatusSummary == other.StatusSummary && IsInProcess == other.IsInProcess);
         }
     }
 }

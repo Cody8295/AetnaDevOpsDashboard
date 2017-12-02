@@ -65,33 +65,33 @@
 
                     <div class="panel panel-default">
                         <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList">
-                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups}}</span>
+                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups.length}}</span>
                         </div>
 
                         <div id="projectGroupList" class="collapsible panel-collapse collapse">
                             <div class="pre-scrollable">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="projectGroup in projectGroupList" class="list-group-item">
-                                        {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projectList.count}}</span>
+                                    <li data-ng-repeat="projectGroup in projectGroups" class="list-group-item">
+                                        {{projectGroup.GroupName}} <span class="badge badge-default badge-pill">{{projectGroup.Projects.length}}</span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectsList">
-                            <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill projects">{{projects}}</span>
+                            <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill projects">{{projects.length}}</span>
                         </div>
 
                         <div id="projectsList" class="collapsible collapse projectsList">
                             <div class="input-group">
-                                <input type="text" class="form-control" ng-model="projectFilter.name">
+                                <input type="text" class="form-control" ng-model="projectFilter.Name">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                 </span>
                             </div>
                             <div class="pre-scrollable">
-                                <a data-ng-repeat="project in projectList | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
-                                    <h4 class="list-group-item-heading">{{project.name}}</h4>
-                                    <p class="list-group-item-text">{{project.groupId}}</p>
+                                <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item project" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
+                                    <h4 class="list-group-item-heading">{{project.Name}}</h4>
+                                    <p class="list-group-item-text">{{project.GroupId}}</p>
                                 </a>
                             </div>
                         </div>
@@ -101,14 +101,14 @@
                         </div>
 
                         <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments">
-                            <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill numEnvironments">{{environments}}</span>
+                            <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill numEnvironments">{{environments.length}}</span>
                         </div>
 
                         <div id="environments" class="collapsible panel-collapse collapse">
                             <div class="pre-scrollable">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="environment in environmentList" class="list-group-item">
-                                        {{environment.name}} <span class="badge badge-default badge-pill"> {{environment.description}} </span>
+                                    <li data-ng-repeat="environment in environments" class="list-group-item">
+                                        {{environment.Name}} <span class="badge badge-default badge-pill"> {{environment.Description}} </span>
                                     </li>
                                 </ul>
                             </div>
@@ -116,7 +116,7 @@
 
                         <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#graph">
 
-                            <i class="fa fa-space-shuttle"></i>&nbsp;Deploys
+                            <i class="fa fa-space-shuttle"></i>&nbsp;Deploys <!--<span class="pull-right badge badge-default badge-pill numActiveDeploys">{{numActiveDeploys}}</span>-->
                         </div>
 
                         <div id="graph" class="collapsible collapse graph">

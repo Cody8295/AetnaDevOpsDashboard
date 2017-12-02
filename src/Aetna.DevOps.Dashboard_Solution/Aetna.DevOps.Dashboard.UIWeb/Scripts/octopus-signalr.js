@@ -12,53 +12,40 @@ var scope = angular.element($('.octopus-column')).scope();
     console.log("UDPATING"); //debugging
 
     if (currentState.IsChanged["ProjectGroups"]) {
-        //console.log(currentState.ProjectGroups.length);
-        //console.log(scope.projectGroups);
-        scope.projectGroups = currentState.ProjectGroups.length;
-        var pgInside = "";
-        for (var pgIndex in currentState.ProjectGroups) {
-            var pg = currentState.ProjectGroups[pgIndex];
-            pgInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" +
-                pg.GroupName +
-                "<span class=\"pull-right\">" +
-                pg.ProjectList.count +
-                "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
-        }
-        $(".projectGroupList").html(pgInside);
+        //console.log(currentState.ProjectGroups);
+        scope.projectGroups = currentState.ProjectGroups;
         // Display an indicator
     }
 
     if (currentState.IsChanged["Projects"]) {
-        //console.log("Pj"); //debugging
-        $(".projects").text(currentState.Projects.length);
+        //console.log(currentState.Projects);
+        scope.projects = currentState.Projects;
         // Display an indicator
     }
 
     if (currentState.IsChanged["Lifecycles"]) {
-        //console.log("Lf"); //debugging
-        $(".lifecycles").text(currentState.Lifecycles); // .Count once Lifecycles object is added
+        //console.log(currentState.Lifecycles);
+        scope.lifecycles = currentState.Lifecycles; // .Count if Lifecycles object is added
         // Display an indicator
     }
 
     if (currentState.IsChanged["Environments"]) {
-        //console.log("nE"); //debugging
-        $(".numEnvironments").text(currentState.Environments.length);
-        var envInside = "";
-        for (var envIndex in currentState.Environments) {
-            var env = currentState.Environments[envIndex];
-            envInside += "<div class=\"panel- footer\">&nbsp;&nbsp;&nbsp;" +
-                env.Name +
-                "<span class=\"pull-right\">" +
-                env.Description +
-                "&nbsp;&nbsp;&nbsp;&nbsp;</span></div>";
-        }
-        $(".environments").html(envInside);
+        //console.log(currentState.Environments);
+        scope.environments = currentState.Environments;
         // Display an indicator
     }
 
     if (currentState.IsChanged["Deploys"]) {
-        //console.log("dp"); //debugging
-        //Update Deploys
+        //console.log(currentState.Deploys);
+
+        /*
+        var active = 0;
+        currentState.Deploys.forEach(function(deploy) {
+            if (deploy != null && deploy.Category === "DeploymentStarted") active++; //Not correct (shows all started in past 24 hours, not just currently "started")
+        }); 
+        scope.numActiveDeploys = active;*/
+
+        scope.deploys = currentState.Deploys;
         //Display an indicator
     }
 

@@ -1072,21 +1072,17 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\OctopusController.cs" />
     <Compile Include="Models\ActiveDeploy.cs" />
+    <Compile Include="Models\Clonable.cs" />
+    <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\DataState.cs" />
     <Compile Include="Models\Deploy.cs" />
     <Compile Include="Controllers\DeployHub.cs" />
-    <Compile Include="Models\DeployList.cs" />
     <Compile Include="Models\Environment.cs" />
-    <Compile Include="Models\EnvironmentList.cs" />
     <Compile Include="Models\Machine.cs" />
-    <Compile Include="Models\MachineList.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\ProjectGroup.cs" />
-    <Compile Include="Models\ProjectGroupDictionary.cs" />
-    <Compile Include="Models\ProjectList.cs" />
     <Compile Include="Models\Release.cs" />
-    <Compile Include="Models\ReleaseList.cs" />
     <Compile Include="Controllers\Startup.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

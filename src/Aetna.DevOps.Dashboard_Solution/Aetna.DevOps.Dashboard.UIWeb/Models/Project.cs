@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Project
+    public class Project : Clonable<Project>
     {
         public string GroupId;
         public string Name;
@@ -24,6 +24,11 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public Project Clone()
         {
             return new Project(Id, GroupId, Name, Lifecycle, DeploymentProcess);
+        }
+
+        public bool Equals(Project other)
+        {
+            return (GroupId == other.GroupId && Name == other.Name && Lifecycle == other.Lifecycle && DeploymentProcess == other.DeploymentProcess && RelatedDocs.Equals(other.RelatedDocs) && Id == other.Id);
         }
     }
 }

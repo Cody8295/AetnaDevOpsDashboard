@@ -1,16 +1,18 @@
-﻿namespace Aetna.DevOps.Dashboard.UIWeb.Models
+﻿using System.Collections.Generic;
+
+namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class ProjectGroup
+    public class ProjectGroup : Clonable<ProjectGroup>
     {
         public string GroupName;
         public string GroupId;
-        public ProjectList Projects;
+        public List<Project> Projects;
 
         public ProjectGroup (string groupName, string groupId)
         {
             GroupName = groupName;
             GroupId = groupId;
-            Projects = new ProjectList();
+            Projects = new List<Project>();
         }
 
         public void AddProject(Project project)
@@ -23,6 +25,11 @@
             ProjectGroup newProjectGroup = new ProjectGroup(GroupName, GroupId);
             newProjectGroup.Projects = Projects.Clone();
             return newProjectGroup;
+        }
+
+        public bool Equals(ProjectGroup other)
+        {
+            return (GroupName == other.GroupName && GroupId == other.GroupId && Projects.Equals(other.Projects));
         }
     }
 }
