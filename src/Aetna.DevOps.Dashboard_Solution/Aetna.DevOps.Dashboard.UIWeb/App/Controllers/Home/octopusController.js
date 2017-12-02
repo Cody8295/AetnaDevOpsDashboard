@@ -420,7 +420,7 @@
                             d.environs.forEach(function (e) {
                                 function formatEnvironment(msg, dt, id, name, description) {
                                     var machineList = "";
-                                    e.machines.machines.forEach(function (machine) {
+                                    e.machines.forEach(function (machine) {
                                         var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
                                         machineList += "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
                                             machine.name + "<span class=\\'pull-right\\'>" + (machine.isInProcess === "true" ? isInProcessStr : "") + "<small>" + machine.status + "</small></span></h4><p class=\\'list-group-item-text\\'>" +
@@ -483,7 +483,7 @@
                         d.environs.forEach(function (e) {
                             function formatEnvironment(msg, dt, id, name, description) {
                                 var machineList = "";
-                                e.machines.machines.forEach(function (machine) {
+                                e.machines.forEach(function (machine) {
                                     var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
                                     machineList += "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
                                         machine.name + "<span class=\\'pull-right\\'>" + (machine.isInProcess === "true" ? isInProcessStr : "") +
