@@ -26,21 +26,15 @@
             });
         });
 
-        $http.get("api/Octo/projectList").then(function (response) { // projectList should be called projectGroups
-            $scope.projectGroups = response.data;
-        });
-        $http.get("api/Octo/environmentList").then(function (response) { //environmentList should be environments
-            $scope.environments = response.data;
-        });
-        $http.get("api/Octo/projectsInfo").then(function (response) { //projec
-            $scope.projects = response.data;
-        });/*
-        $http.get("api/Octo/projectGroups").then(function (response) {
+        $http.get("api/Octo/projectGroups").then(function (response) { 
             $scope.projectGroups = response.data;
         });
         $http.get("api/Octo/environments").then(function (response) {
             $scope.environments = response.data;
-        });*/
+        });
+        $http.get("api/Octo/projects").then(function (response) {
+            $scope.projects = response.data;
+        });
         $http.get("api/Octo/lifecycles").then(function (response) {
             $scope.lifecycles = response.data;
         });
@@ -54,7 +48,7 @@
 
         function getReleases(projectName) {
             var releases = [];
-            $http.get("api/Octo/projectProgression?project=" + projectName).then(function (response) {
+            $http.get("api/Octo/releasesByProject?project=" + projectName).then(function (response) {
                 response.data.forEach(function (rel) {
                     releases.push(rel);
                 });
