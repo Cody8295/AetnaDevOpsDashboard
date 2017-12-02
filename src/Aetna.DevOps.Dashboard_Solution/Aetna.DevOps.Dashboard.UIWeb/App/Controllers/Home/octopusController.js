@@ -19,7 +19,7 @@
         var projects = []; // global(ish) because its used in makeTimeLine and project list
 
         $scope.$on('finished', function (ngRepeatFinishedEvent) {
-            $('.list-group-item').on('click', function (e) {
+            $('.project').on('click', function (e) {
                 var projName = $(this)[0].getElementsByTagName("h4")[0].innerHTML;
                 makeTimeLine(projName);
                 $('#projectModal').modal('show');

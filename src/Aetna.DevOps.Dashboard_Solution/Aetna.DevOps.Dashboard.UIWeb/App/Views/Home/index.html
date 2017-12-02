@@ -89,7 +89,7 @@
                                 </span>
                             </div>
                             <div class="pre-scrollable">
-                                <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
+                                <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item project" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
                                     <h4 class="list-group-item-heading">{{project.Name}}</h4>
                                     <p class="list-group-item-text">{{project.GroupId}}</p>
                                 </a>
