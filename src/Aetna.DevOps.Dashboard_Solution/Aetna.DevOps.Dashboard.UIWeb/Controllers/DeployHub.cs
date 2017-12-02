@@ -13,9 +13,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             timer.Elapsed += (sender, e) =>
             {
-                if (OctopusController.UpdateDataState(ref currentState))
+                if (OctopusController.UpdateDataState(currentState))
                 {
-                    Clients.All.onChange(currentState);
+                    Clients.All.onChange(currentState.Clone());
                 }
             };
             timer.Enabled = true;

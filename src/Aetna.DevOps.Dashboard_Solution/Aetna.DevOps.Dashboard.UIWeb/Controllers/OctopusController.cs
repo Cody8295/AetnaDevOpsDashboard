@@ -435,7 +435,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// </summary>
         /// <param name="state">The state of data being sent to client</param>
         /// <returns>Boolean</returns>
-        public static bool UpdateDataState(ref DataState state)
+        public static bool UpdateDataState(DataState state)
         {
             bool anyChange = false; // debugging: should be false by default, set true on change
 
@@ -492,7 +492,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            if (anyChange) state = state.Clone();
             return anyChange;
         }
         #endregion

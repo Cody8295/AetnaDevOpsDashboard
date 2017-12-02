@@ -12,32 +12,40 @@ var scope = angular.element($('.octopus-column')).scope();
     console.log("UDPATING"); //debugging
 
     if (currentState.IsChanged["ProjectGroups"]) {
-        scope.projectGroups = currentState.ProjectGroups.length;
-
-        scope.projectGroupList = currentState.ProjectGroups;
+        //console.log(currentState.ProjectGroups);
+        scope.projectGroups = currentState.ProjectGroups;
         // Display an indicator
     }
 
     if (currentState.IsChanged["Projects"]) {
-        scope.projects = currentState.Projects.length;
-        scope.projectList = currentState.Projects;
+        //console.log(currentState.Projects);
+        scope.projects = currentState.Projects;
         // Display an indicator
     }
 
     if (currentState.IsChanged["Lifecycles"]) {
+        //console.log(currentState.Lifecycles);
         scope.lifecycles = currentState.Lifecycles; // .Count if Lifecycles object is added
         // Display an indicator
     }
 
     if (currentState.IsChanged["Environments"]) {
-        scope.environments = currentState.Environments.length;
-
-        scope.environmentList = currentState.Environments;
+        //console.log(currentState.Environments);
+        scope.environments = currentState.Environments;
         // Display an indicator
     }
 
     if (currentState.IsChanged["Deploys"]) {
-        //Update Deploys
+        //console.log(currentState.Deploys);
+
+        /*
+        var active = 0;
+        currentState.Deploys.forEach(function(deploy) {
+            if (deploy != null && deploy.Category === "DeploymentStarted") active++; //Not correct (shows all started in past 24 hours, not just currently "started")
+        }); 
+        scope.numActiveDeploys = active;*/
+
+        scope.deploys = currentState.Deploys;
         //Display an indicator
     }
 
