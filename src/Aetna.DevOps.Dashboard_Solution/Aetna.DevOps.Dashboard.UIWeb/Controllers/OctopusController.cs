@@ -498,14 +498,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
         #region "API Calls"
 
-        #region "Project Groups"
+        #region "Number of Project Groups"
         /// <summary>
         /// Pulls information about how many project groups there are
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/projectGroups")]
+        [Route("api/Octo/numProjectGroups")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(int))]
         public IHttpActionResult GetProjectGroups()
         {
             try
@@ -519,14 +519,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region "Lifecycles"
+        #region "(Number of) Lifecycles"
         /// <summary>
         /// Pulls information about how many lifecycles there are
         /// </summary>
         /// <returns></returns>
         [Route("api/Octo/lifecycles")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(int))]
         public IHttpActionResult GetLifecycles()
         {
             try
@@ -540,14 +540,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region "Projects Info"
+        #region "Projects"
         /// <summary>
         /// Pulls information about projects
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/projectsInfo")]
+        [Route("api/Octo/projects")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Project>))]
         public IHttpActionResult GetProjectsInfo()
         {
             try
@@ -561,14 +561,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region "Projects by Environment"
+        #region "Active Deploys by Environment"
         /// <summary>
         /// Pulls information about projects by environment
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/environmentProjects")]
+        [Route("api/Octo/activeDeploysByEnvironment")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<ActiveDeploy>))]
         public IHttpActionResult GetEnvProjects(string envId)
         {
             try
@@ -587,9 +587,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// Pulls information about how many projects there are
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/projects")]
+        [Route("api/Octo/numProjects")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(int))]
         public IHttpActionResult GetProjects()
         {
             try
@@ -608,9 +608,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// Pulls information about how a project has progressed in respect to releases
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/projectProgression")]
+        [Route("api/Octo/releasesByProject")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Release>))]
         public IHttpActionResult GetProjectProgression(string project)
         {
             try
@@ -629,9 +629,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// Pulls information about how each machine for a specified environment
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/environmentMachines")]
+        [Route("api/Octo/machinesByEnvironment")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Machine>))]
         public IHttpActionResult GetEnvironmentMachines(string envId)
         {
             try
@@ -645,14 +645,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region "Environments"
+        #region "Number of Environments"
         /// <summary>
         /// Pulls information about how many enviornments there are
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/environments")]
+        [Route("api/Octo/numEnvironments")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(int))]
         public IHttpActionResult GetEnvironments()
         {
             try
@@ -671,9 +671,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// Pulls information about how many enviornments there are
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/environmentList")]
+        [Route("api/Octo/environments")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Environment>))]
         public IHttpActionResult GetEnvironmentList()
         {
             try
@@ -688,14 +688,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region "Project List"
+        #region "Project Groups"
         /// <summary>
         /// Pulls information about how many enviornments there are
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/ProjectList")]
+        [Route("api/Octo/projectGroups")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<ProjectGroup>))]
         public IHttpActionResult GetProjectList()
         {
             try
@@ -717,7 +717,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// <returns></returns>
         [Route("api/Octo/deploys")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(UserDetail))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Deploy>))]
         public IHttpActionResult GetDeploys()
         {
             try
