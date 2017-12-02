@@ -4,48 +4,49 @@
     $.connection.hub.logging = true; //debugging
     $.connection.hub.start();
 });
-function onChange(currentState) {
+function onChange(currentStateJson) {
 
-var scope = angular.element($('.octopus-column')).scope();
+    var currentState = JSON.parse(currentStateJson);
+    var scope = angular.element($('.octopus-column')).scope();
 
 
-    console.log("UDPATING"); //debugging
+    //console.log(currentState); //debugging
 
-    if (currentState.IsChanged["ProjectGroups"]) {
-        //console.log(currentState.ProjectGroups);
-        scope.projectGroups = currentState.ProjectGroups;
+    if (currentState.isChanged.projectGroups) {
+        //console.log(currentState.projectGroups);
+        scope.projectGroups = currentState.projectGroups;
         // Display an indicator
     }
 
-    if (currentState.IsChanged["Projects"]) {
-        //console.log(currentState.Projects);
-        scope.projects = currentState.Projects;
+    if (currentState.isChanged.projects) {
+        //console.log(currentState.projects);
+        scope.projects = currentState.projects;
         // Display an indicator
     }
 
-    if (currentState.IsChanged["Lifecycles"]) {
-        //console.log(currentState.Lifecycles);
-        scope.lifecycles = currentState.Lifecycles; // .Count if Lifecycles object is added
+    if (currentState.isChanged.lifecycles) {
+        //console.log(currentState.lifecycles);
+        scope.lifecycles = currentState.lifecycles; // .Count if Lifecycles object is added
         // Display an indicator
     }
 
-    if (currentState.IsChanged["Environments"]) {
-        //console.log(currentState.Environments);
-        scope.environments = currentState.Environments;
+    if (currentState.isChanged.environments) {
+        //console.log(currentState.environments);
+        scope.environments = currentState.environments;
         // Display an indicator
     }
 
-    if (currentState.IsChanged["Deploys"]) {
-        //console.log(currentState.Deploys);
+    if (currentState.isChanged.deploys) {
+        //console.log(currentState.deploys);
 
         /*
         var active = 0;
-        currentState.Deploys.forEach(function(deploy) {
+        currentState.deploys.forEach(function(deploy) {
             if (deploy != null && deploy.Category === "DeploymentStarted") active++; //Not correct (shows all started in past 24 hours, not just currently "started")
         }); 
         scope.numActiveDeploys = active;*/
 
-        scope.deploys = currentState.Deploys;
+        scope.deploys = currentState.deploys;
         //Display an indicator
     }
 

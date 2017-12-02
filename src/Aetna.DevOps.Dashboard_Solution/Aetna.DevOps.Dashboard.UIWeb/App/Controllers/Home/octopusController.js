@@ -26,28 +26,28 @@
             });
         });
 
-        $http.get("api/Octo/ProjectList").then(function (response) {
-            $scope.projectGroupList = response.data;
+        $http.get("api/Octo/projectList").then(function (response) { // projectList should be called projectGroups
+            $scope.projectGroups = response.data;
         });
-        $http.get("api/Octo/environmentList").then(function (response) {
-            $scope.environmentList = response.data;
+        $http.get("api/Octo/environmentList").then(function (response) { //environmentList should be environments
+            $scope.environments = response.data;
         });
-        $http.get("api/Octo/projects").then(function (response) {
+        $http.get("api/Octo/projectsInfo").then(function (response) { //projec
             $scope.projects = response.data;
-        });
+        });/*
         $http.get("api/Octo/projectGroups").then(function (response) {
             $scope.projectGroups = response.data;
         });
         $http.get("api/Octo/environments").then(function (response) {
             $scope.environments = response.data;
-        });
+        });*/
         $http.get("api/Octo/lifecycles").then(function (response) {
             $scope.lifecycles = response.data;
         });
 
         function getProjectGroupName(projectGroupId)
         {
-            $scope.projectGroupList.forEach(function (group) {
+            $scope.projectGroups.forEach(function (group) {
                 console.log(group);
             });
         }

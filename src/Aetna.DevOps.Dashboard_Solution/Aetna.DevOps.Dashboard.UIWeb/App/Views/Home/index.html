@@ -72,7 +72,7 @@
                             <div class="pre-scrollable">
                                 <ul class="list-group">
                                     <li data-ng-repeat="projectGroup in projectGroups" class="list-group-item">
-                                        {{projectGroup.GroupName}} <span class="badge badge-default badge-pill">{{projectGroup.Projects.length}}</span>
+                                        {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projects.length}}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -83,15 +83,15 @@
 
                         <div id="projectsList" class="collapsible collapse projectsList">
                             <div class="input-group">
-                                <input type="text" class="form-control" ng-model="projectFilter.Name">
+                                <input type="text" class="form-control" ng-model="projectFilter.name">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                 </span>
                             </div>
                             <div class="pre-scrollable">
                                 <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item project" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
-                                    <h4 class="list-group-item-heading">{{project.Name}}</h4>
-                                    <p class="list-group-item-text">{{project.GroupId}}</p>
+                                    <h4 class="list-group-item-heading">{{project.name}}</h4>
+                                    <p class="list-group-item-text">{{project.groupId}}</p>
                                 </a>
                             </div>
                         </div>
@@ -108,7 +108,7 @@
                             <div class="pre-scrollable">
                                 <ul class="list-group">
                                     <li data-ng-repeat="environment in environments" class="list-group-item">
-                                        {{environment.Name}} <span class="badge badge-default badge-pill"> {{environment.Description}} </span>
+                                        {{environment.name}} <span class="badge badge-default badge-pill"> {{environment.description}} </span>
                                     </li>
                                 </ul>
                             </div>
