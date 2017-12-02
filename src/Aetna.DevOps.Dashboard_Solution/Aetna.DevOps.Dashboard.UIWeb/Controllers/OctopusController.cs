@@ -485,7 +485,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Deploy> dp = GraphDeployments(GetResponse(APIdatum.deploys)); 
-            if (dp == null || state.Deploys.Equals(dp))
+            if (state.Deploys == null || state.Deploys.Equals(dp))
             {
                 state.Deploys = dp;
                 state.IsChanged["Deploys"] = true;
