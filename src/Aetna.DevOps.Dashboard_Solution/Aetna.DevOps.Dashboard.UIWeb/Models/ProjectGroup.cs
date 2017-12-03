@@ -22,7 +22,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
         public bool Equals(ProjectGroup other)
         {
-            return (GroupName == other.GroupName && GroupId == other.GroupId && Projects.Equals<Project>(other.Projects));
+            return (GroupName == other.GroupName && GroupId == other.GroupId && Projects.DeepEquals<Project>(other.Projects));
         }
     }
 }

@@ -5,15 +5,15 @@
     $.connection.hub.start();
 });
 function onChange(currentStateJson) {
-    var debugging = true;
+    var debugging = false;
     var currentState = JSON.parse(currentStateJson);
     var scope = angular.element($('.octopus-column')).scope();
 
 
-    //if (debugging) console.log(currentState);
+    if (debugging) console.log(currentState);
 
     if (currentState.isChanged.projectGroups) {
-        if (debugging) console.log("ProjectGroups");
+        if (debugging) console.log("ProjectGroups Update");
         scope.projectGroups = currentState.projectGroups;
         // Display an indicator
     }

@@ -451,7 +451,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             // Get New Data
 
             List<ProjectGroup> pg = SortProjectGroups();
-            if (state.ProjectGroups == null || !state.ProjectGroups.Equals<ProjectGroup>(pg))
+            if (state.ProjectGroups == null || !state.ProjectGroups.DeepEquals<ProjectGroup>(pg))
             {
                 state.ProjectGroups = pg;
                 state.IsChanged["ProjectGroups"] = true;
@@ -459,7 +459,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Project> pl = MakeProjectList();
-            if (state.Projects == null || !state.Projects.Equals<Project>(pl))
+            if (state.Projects == null || !state.Projects.DeepEquals<Project>(pl))
             {
                 state.Projects = pl;
                 state.IsChanged["Projects"] = true;
@@ -477,7 +477,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Environment> env = MakeEnvironmentList();
-            if (state.Environments == null || !state.Environments.Equals<Environment>(env))
+            if (state.Environments == null || !state.Environments.DeepEquals<Environment>(env))
             {
                 state.Environments = env;
                 state.IsChanged["Environments"] = true;
@@ -485,7 +485,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Deploy> dp = GraphDeployments(GetResponse(ApiDatum.Deploys)); 
-            if (state.Deploys == null || state.Deploys.Equals<Deploy>(dp))
+            if (state.Deploys == null || state.Deploys.DeepEquals<Deploy>(dp))
             {
                 state.Deploys = dp;
                 state.IsChanged["Deploys"] = true;

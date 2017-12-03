@@ -9,7 +9,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
     {
         #region Deep Equals
         #region List
-        public static bool Equals<T>(this List<T> list, List<T> other) where T : OctopusModel<T>
+        public static bool DeepEquals<T>(this List<T> list, List<T> other) where T : OctopusModel<T>
         {
             if (list == null) return other == null;
             if (list.Count != other.Count) return false;
@@ -24,7 +24,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             return true;
         }
 
-        public static bool Equals(this List<string> list, List<string> other)
+        public static bool DeepEquals(this List<string> list, List<string> other)
         {
             if (list == null) return other == null;
             if (list.Count != other.Count) return false;
@@ -36,7 +36,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         }
         #endregion
         #region Dictionary
-        public static bool Equals<T>(this Dictionary<string, T> dictionary, Dictionary<string, T> other) where T : OctopusModel<T>
+        public static bool DeepEquals<T>(this Dictionary<string, T> dictionary, Dictionary<string, T> other) where T : OctopusModel<T>
         {
             if (dictionary == null) return other == null;
             if (dictionary.Count != other.Count) return false;
@@ -47,7 +47,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             return true;
         }
 
-        public static bool Equals (this Dictionary<string, string> dictionary, Dictionary<string, string> other)
+        public static bool DeepEquals (this Dictionary<string, string> dictionary, Dictionary<string, string> other)
         {
             if (dictionary == null) return other == null;
             if (dictionary.Count != other.Count) return false;

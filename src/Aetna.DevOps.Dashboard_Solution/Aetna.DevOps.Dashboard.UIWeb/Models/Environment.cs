@@ -27,7 +27,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             if (Id != other.Id) System.Diagnostics.Debug.WriteLine("Id");
             if (Id != other.Id) System.Diagnostics.Debug.WriteLine("Name");
             if (Id != other.Id) System.Diagnostics.Debug.WriteLine("Description");
-            return (Id == other.Id && Name == other.Name && Description == other.Description && Machines.Equals<Machine>(other.Machines));
+            return (Id == other.Id && Name == other.Name && Description == other.Description && Machines.DeepEquals<Machine>(other.Machines));
         }
     }
 }

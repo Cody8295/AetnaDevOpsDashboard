@@ -24,7 +24,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
         public bool Equals(Machine other)
         {
-            return (Id == other.Id && Name == other.Name && Environments.Equals(other.Environments) && Status == other.Status && /*StatusSummary == other.StatusSummary &&*/ IsInProcess == other.IsInProcess);
+            return (Id == other.Id && Name == other.Name && Environments.DeepEquals(other.Environments) && Status == other.Status && StatusSummary == other.StatusSummary && IsInProcess == other.IsInProcess);
         }
     }
 }
