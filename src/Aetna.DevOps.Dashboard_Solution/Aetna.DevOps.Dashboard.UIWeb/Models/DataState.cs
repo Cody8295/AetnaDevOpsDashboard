@@ -11,6 +11,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public int Lifecycles { get; set; } 
         public List<Environment> Environments { get; set; }
         public List<Deploy> Deploys { get; set; }
+        public List<Deploy> LiveDeploys { get; set; }
 
         public Dictionary<string, bool> IsChanged { get; set; }
     }

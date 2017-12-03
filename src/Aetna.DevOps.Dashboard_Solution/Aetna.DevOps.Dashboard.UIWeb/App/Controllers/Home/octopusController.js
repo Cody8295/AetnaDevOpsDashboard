@@ -25,7 +25,7 @@
                 $('#projectModal').modal('show');
             });
         });
-
+        
         $http.get("api/Octo/projectGroups").then(function (response) { 
             $scope.projectGroups = response.data;
         });
@@ -37,6 +37,9 @@
         });
         $http.get("api/Octo/lifecycles").then(function (response) {
             $scope.lifecycles = response.data;
+        });
+        $http.get("api/Octo/liveDeploys").then(function (response) {
+            $scope.liveDeploys = response.data;
         });
 
         function getProjectGroupName(projectGroupId)
