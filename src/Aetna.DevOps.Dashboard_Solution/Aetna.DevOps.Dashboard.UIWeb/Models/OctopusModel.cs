@@ -1,9 +1,7 @@
 ﻿namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public interface Clonable<T>
+    public interface OctopusModel<T>
     {
-        T Clone();
-
         bool Equals(T other);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Machine : Clonable<Machine>
+    public class Machine : OctopusModel<Machine>
     {
         public string Id;
         public string Name;
@@ -22,21 +22,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             IsInProcess = isInProcess;
         }
 
-        public Machine Clone()
-        {
-            Machine newMachine = new Machine(Id, Name, Url, new List<string>(), Status, StatusSummary, IsInProcess);
-
-            foreach (string environment in Environments)
-            {
-                newMachine.Environments.Add(environment);
-            }
-
-            return newMachine;
-        }
-
         public bool Equals(Machine other)
         {
-            return (Id == other.Id && Name == other.Name && Environments.Equals(other.Environments) && Status == other.Status && StatusSummary == other.StatusSummary && IsInProcess == other.IsInProcess);
+            return (Id == other.Id && Name == other.Name && Environments.Equals(other.Environments) && Status == other.Status && /*StatusSummary == other.StatusSummary &&*/ IsInProcess == other.IsInProcess);
         }
     }
 }

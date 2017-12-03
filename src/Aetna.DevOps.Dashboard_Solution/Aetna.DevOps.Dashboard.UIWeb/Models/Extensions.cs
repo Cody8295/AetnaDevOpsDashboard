@@ -7,40 +7,24 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
     public static class Extensions
     {
-        public static List<T> Clone<T> (this List<T> list) where T : Clonable<T>
+        #region Deep Equals
+        #region List
+        public static bool Equals<T>(this List<T> list, List<T> other) where T : OctopusModel<T>
         {
-            if (list == null) return null;
-            List<T> newList = new List<T>();
-            foreach (T element in list)
+            if (list == null) return other == null;
+            if (list.Count != other.Count) return false;
+
+            for (int i = 0; i < list.Count; i++)
             {
-                newList.Add(element.Clone());
+                if (!list[i].Equals(other[i]))
+                {
+                    return false;
+                }
             }
-            return newList;
+            return true;
         }
 
-        public static Dictionary<string, T> Clone<T>(this Dictionary<string, T> dictionary) where T : Clonable<T>
-        {
-            if (dictionary == null) return null;
-            Dictionary<string, T> newDictionary = new Dictionary<string, T>();
-            foreach (KeyValuePair<string,T> element in dictionary)
-            {
-                newDictionary.Add(element.Key, element.Value.Clone());
-            }
-            return newDictionary;
-        }
-
-        public static Dictionary<string, bool> Clone (this Dictionary<string, bool> dictionary)
-        {
-            if (dictionary == null) return null;
-            Dictionary<string, bool> newDictionary = new Dictionary<string, bool>();
-            foreach (KeyValuePair<string, bool> element in dictionary)
-            {
-                newDictionary.Add(element.Key, element.Value);
-            }
-            return newDictionary;
-        }
-
-        public static bool Equals<T>(this List<T> list, List<T> other) where T : Clonable<T>
+        public static bool Equals(this List<string> list, List<string> other)
         {
             if (list == null) return other == null;
             if (list.Count != other.Count) return false;
@@ -50,8 +34,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             }
             return true;
         }
-
-        public static bool Equals<T>(this Dictionary<string, T> dictionary, Dictionary<string, T> other) where T : Clonable<T>
+        #endregion
+        #region Dictionary
+        public static bool Equals<T>(this Dictionary<string, T> dictionary, Dictionary<string, T> other) where T : OctopusModel<T>
         {
             if (dictionary == null) return other == null;
             if (dictionary.Count != other.Count) return false;
@@ -72,19 +57,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             }
             return true;
         }
+        #endregion
+        #endregion
 
-        public static bool Equals (this List<string> list, List<string> other)
-        {
-            if (list == null) return other == null;
-            if (list.Count != other.Count) return false;
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (!list[i].Equals(other[i])) return false;
-            }
-            return true;
-        }
-
-        public static List<T> GetProjectGroups<T>(this Dictionary<string, T> dictionary) where T : Clonable<T>
+        public static List<T> ToList<T>(this Dictionary<string, T> dictionary) where T : OctopusModel<T>
         {
             return new List<T>(dictionary.Values);
         }

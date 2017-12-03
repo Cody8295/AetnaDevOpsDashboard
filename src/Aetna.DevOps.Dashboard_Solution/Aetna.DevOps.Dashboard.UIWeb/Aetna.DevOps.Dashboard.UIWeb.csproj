@@ -1072,7 +1072,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\OctopusController.cs" />
     <Compile Include="Models\ActiveDeploy.cs" />
-    <Compile Include="Models\Clonable.cs" />
+    <Compile Include="Models\OctopusModel.cs" />
     <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\DataState.cs" />
     <Compile Include="Models\Deploy.cs" />

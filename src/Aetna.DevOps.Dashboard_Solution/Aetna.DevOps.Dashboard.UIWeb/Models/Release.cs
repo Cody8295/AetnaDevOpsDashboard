@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Release : Clonable<Release>
+    public class Release : OctopusModel<Release>
     {
         public string Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, WebUrl;
         public List<ActiveDeploy> ReleaseDeploys;
@@ -61,17 +61,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             {
                 ReleaseNotes = releaseNotes;
             }
-        }
-
-        public Release Clone()
-        {
-            List<ActiveDeploy> releaseDeploys = new List<ActiveDeploy>();
-            foreach (ActiveDeploy deploy in ReleaseDeploys)
-            {
-                releaseDeploys.Add(deploy.Clone());
-            }
-
-            return new Release(Id, Version, ProjectId, ChannelId, Assembled, ReleaseNotes, releaseDeploys, WebUrl);
         }
 
         public bool Equals(Release other)

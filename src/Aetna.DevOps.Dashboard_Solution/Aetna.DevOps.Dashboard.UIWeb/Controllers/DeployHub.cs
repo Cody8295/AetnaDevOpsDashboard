@@ -14,9 +14,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private static System.Timers.Timer timer = new System.Timers.Timer(2000); // Set Timer to run every 2 seconds
         public DeployHub() : base()
         {
+            jsonCamelCaseSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             timer.Elapsed += (sender, e) =>
             {
-                jsonCamelCaseSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
                 if (OctopusController.UpdateDataState(currentState))
                 {
                     Clients.All.onChange(JsonConvert.SerializeObject(currentState, jsonCamelCaseSettings));

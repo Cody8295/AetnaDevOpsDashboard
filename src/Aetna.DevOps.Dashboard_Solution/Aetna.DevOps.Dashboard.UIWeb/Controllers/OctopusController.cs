@@ -263,7 +263,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 pgd.AddProject(p.GetGroupId(), p);
             }
 
-            pg = pgd.GetProjectGroups();
+            pg = pgd.ToList();
             return pg;
         }
         #endregion
@@ -437,10 +437,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// <returns>Boolean</returns>
         public static bool UpdateDataState(DataState state)
         {
-            bool anyChange = false; // debugging: should be false by default, set true on change
+            bool anyChange = false;
 
             // Used to notify user when data has changed
-            state.IsChanged = new Dictionary<string, bool>(){ // debugging: should be false by default, set true on change
+            state.IsChanged = new Dictionary<string, bool>(){
                 { "ProjectGroups", false },
                 { "Projects", false },
                 { "Lifecycles", false },
@@ -451,7 +451,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             // Get New Data
 
             List<ProjectGroup> pg = SortProjectGroups();
-            if (state.ProjectGroups == null || !state.ProjectGroups.Equals(pg))
+            if (state.ProjectGroups == null || !state.ProjectGroups.Equals<ProjectGroup>(pg))
             {
                 state.ProjectGroups = pg;
                 state.IsChanged["ProjectGroups"] = true;
@@ -459,7 +459,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Project> pl = MakeProjectList();
-            if (state.Projects == null || !state.Projects.Equals(pl))
+            if (state.Projects == null || !state.Projects.Equals<Project>(pl))
             {
                 state.Projects = pl;
                 state.IsChanged["Projects"] = true;
@@ -477,7 +477,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Environment> env = MakeEnvironmentList();
-            if (state.Environments == null || !state.Environments.Equals(env))
+            if (state.Environments == null || !state.Environments.Equals<Environment>(env))
             {
                 state.Environments = env;
                 state.IsChanged["Environments"] = true;
@@ -485,7 +485,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Deploy> dp = GraphDeployments(GetResponse(ApiDatum.Deploys)); 
-            if (state.Deploys == null || state.Deploys.Equals(dp))
+            if (state.Deploys == null || state.Deploys.Equals<Deploy>(dp))
             {
                 state.Deploys = dp;
                 state.IsChanged["Deploys"] = true;

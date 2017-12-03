@@ -1,6 +1,6 @@
 ﻿namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class ActiveDeploy : Clonable<ActiveDeploy>
+    public class ActiveDeploy : OctopusModel<ActiveDeploy>
     {
         public string Id, ProjectId, ReleaseId, TaskId, ChannelId, ReleaseVersion, Created, QueueTime, CompletedTime, State,
             HasWarningsOrErrors, ErrorMessage, Duration, IsCurrent, IsCompleted, ProjectName, WebUrl;
@@ -12,12 +12,6 @@
             Id = id; ProjectId = projectId; TaskId = taskId; ReleaseId = releaseId; ChannelId = channelId; ReleaseVersion = releaseVersion;
             Created = created; QueueTime = queueTime; CompletedTime = completedTime; State = state; HasWarningsOrErrors = hasWarningsOrErrors;
             ErrorMessage = errorMessage; Duration = duration; IsCurrent = isCurrent; IsCompleted = isCompleted; ProjectName = projectName; WebUrl = webUrl;
-        }
-
-        public ActiveDeploy Clone()
-        {
-            return new ActiveDeploy(Id,ProjectId,ReleaseId,TaskId,ChannelId,ReleaseVersion,Created,QueueTime,CompletedTime,State,
-                                    HasWarningsOrErrors,ErrorMessage,Duration,IsCurrent,IsCompleted,ProjectName,WebUrl);
         }
 
         public bool Equals(ActiveDeploy other)

@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Deploy : Clonable<Deploy>
+    public class Deploy : OctopusModel<Deploy>
     {
         public string TimeAndDate;
         public string Message;
@@ -23,24 +23,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public override string ToString()
         {
             return Message;
-        }
-
-        public Deploy Clone()
-        {
-            List<string> relatedDocs = new List<string>(RelatedDocs.Capacity);
-            foreach (string doc in RelatedDocs)
-            {
-                relatedDocs.Add(doc);
-            }
-            
-            Deploy newDeploy = new Deploy(TimeAndDate, Message, relatedDocs, Category, WebUrl);
-
-            foreach (Environment environment in Environs)
-            {
-                newDeploy.Environs.Add(environment.Clone());
-            }
-
-            return newDeploy;
         }
 
         public bool Equals(Deploy other)

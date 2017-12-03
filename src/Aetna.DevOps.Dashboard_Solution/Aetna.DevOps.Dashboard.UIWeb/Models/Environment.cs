@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class Environment : Clonable<Environment>
+    public class Environment : OctopusModel<Environment>
     {
         public string Id;
         public string Name;
@@ -22,14 +22,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             return Name + ":" + Machines.Count;
         }
 
-        public Environment Clone()
-        {
-            return new Environment(Id, Name, Description, Machines.Clone());
-        }
-
         public bool Equals(Environment other)
         {
-            return (Id == other.Id && Name == other.Name && Description == other.Description && Machines.Equals(other.Machines));
+            if (Id != other.Id) System.Diagnostics.Debug.WriteLine("Id");
+            if (Id != other.Id) System.Diagnostics.Debug.WriteLine("Name");
+            if (Id != other.Id) System.Diagnostics.Debug.WriteLine("Description");
+            return (Id == other.Id && Name == other.Name && Description == other.Description && Machines.Equals<Machine>(other.Machines));
         }
     }
 }

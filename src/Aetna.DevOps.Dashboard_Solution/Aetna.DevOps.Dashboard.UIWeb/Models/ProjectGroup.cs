@@ -2,7 +2,7 @@
 
 namespace Aetna.DevOps.Dashboard.UIWeb.Models
 {
-    public class ProjectGroup : Clonable<ProjectGroup>
+    public class ProjectGroup : OctopusModel<ProjectGroup>
     {
         public string GroupName;
         public string GroupId;
@@ -20,16 +20,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             Projects.Add(project);
         }
 
-        public ProjectGroup Clone()
-        {
-            ProjectGroup newProjectGroup = new ProjectGroup(GroupName, GroupId);
-            newProjectGroup.Projects = Projects.Clone();
-            return newProjectGroup;
-        }
-
         public bool Equals(ProjectGroup other)
         {
-            return (GroupName == other.GroupName && GroupId == other.GroupId && Projects.Equals(other.Projects));
+            return (GroupName == other.GroupName && GroupId == other.GroupId && Projects.Equals<Project>(other.Projects));
         }
     }
 }
