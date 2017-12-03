@@ -10,7 +10,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 {
    public class MetadataController : ApiController
     {
-        #region "Aetna Provided"
+        #region Aetna Provided
         public MetadataController() : this(new UserDetailHelper())
         {
         }
