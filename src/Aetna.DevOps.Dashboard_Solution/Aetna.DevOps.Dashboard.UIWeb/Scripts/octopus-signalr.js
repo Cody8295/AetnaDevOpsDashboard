@@ -1,7 +1,7 @@
 ﻿$().ready(function () {
     var $deployHub = $.connection.deployHub;
     $deployHub.client.onChange = onChange;
-    $.connection.hub.logging = true; //debugging
+    $.connection.hub.logging = false; //debugging
     $.connection.hub.start();
 });
 function onChange(currentStateJson) {

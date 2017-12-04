@@ -64,24 +64,24 @@
                 <div class="panel-body">
 
                     <div class="panel panel-default">
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList">
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#projectGroupList">
                             <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups.length}}</span>
                         </div>
 
-                        <div id="projectGroupList" class="collapsible panel-collapse collapse">
+                        <div id="projectGroupList" class="collapsible panel-collapse collapse clickable">
                             <div class="pre-scrollable">
                                 <ul class="list-group">
-                                    <li data-ng-repeat="projectGroup in projectGroups" class="list-group-item">
+                                    <li data-ng-repeat="projectGroup in projectGroups" class="list-group-item clickable">
                                         {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projects.length}}</span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectsList">
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#projectsList">
                             <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill projects">{{projects.length}}</span>
                         </div>
 
-                        <div id="projectsList" class="collapsible collapse projectsList">
+                        <div id="projectsList" class="collapsible collapse projectsList clickable">
                             <div class="input-group">
                                 <input type="text" class="form-control" ng-model="projectFilter.name">
                                 <span class="input-group-btn">
@@ -100,11 +100,11 @@
                             <i class="fa fa-heartbeat"></i>&nbsp;Lifecycles <span class="pull-right badge badge-default badge-pill lifecycles">{{lifecycles}}</span>
                         </div>
 
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments">
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#environments">
                             <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill numEnvironments">{{environments.length}}</span>
                         </div>
 
-                        <div id="environments" class="collapsible panel-collapse collapse">
+                        <div id="environments" class="collapsible panel-collapse collapse clickable">
                             <div class="pre-scrollable">
                                 <ul class="list-group">
                                     <li data-ng-repeat="environment in environments" class="list-group-item">
@@ -114,7 +114,7 @@
                             </div>
                         </div>
 
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#graph">
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#graph">
 
                             <i class="fa fa-space-shuttle"></i>&nbsp;Deploys <span class="pull-right badge badge-default badge-pill numLiveDeploys">{{liveDeploys.length}}</span>
                         </div>
@@ -131,7 +131,12 @@
                                     <input type="radio" name="options3" id="option3" value="bar" autocomplete="off"><i class="fa fa-bar-chart"></i>
                                 </label>
                             </div>
-                            <div style="max-height:400px"><br /><div class="canvas-container"><i class='fa fa-cog faa-spin animated fa-5x graph-loading'></i><canvas class="octo-canvas"></canvas></div></div>
+                            <div class="canvas-container clickable"><br />
+                                <i class='fa fa-cog faa-spin animated fa-5x graph-loading'></i>
+                                <canvas class="octo-line-canvas chart chart-line" chart-data="octoChartData" chart-labels="times" chart-series="octoSeries" chart-options="octoChartOptions" chart-colors="octoColors" chart-click="openDeployModal"> </canvas>
+                                <canvas class="octo-pie-canvas chart chart-pie" chart-data="octoPieData" chart-labels="octoSeries" chart-options="octoPieOptions" chart-colors="octoColors" chart-click="octoPieClick"></canvas>
+                                <canvas class="octo-bar-canvas chart chart-bar" chart-data="octoChartData" chart-labels="times" chart-series="octoSeries" chart-options="octoChartOptions" chart-colors="octoColors"chart-click="openDeployModal"></canvas>
+                            </div>
                             <br/>
                             <br/>
 

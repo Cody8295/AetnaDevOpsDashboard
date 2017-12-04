@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    var app = angular.module("app", ["ngRoute","ngCookies","angularMoment"]);
+    var app = angular.module("app", ["ngRoute","ngCookies","angularMoment","chart.js"]);
 
     app.config(function ($routeProvider,$locationProvider) {
         $locationProvider.hashPrefix('');

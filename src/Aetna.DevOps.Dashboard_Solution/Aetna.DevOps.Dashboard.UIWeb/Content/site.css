@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+.canvas-container {
+    max-height: 400px;
+}
+
 .graph-loading {
     display: inline-block;
     text-align: center;
