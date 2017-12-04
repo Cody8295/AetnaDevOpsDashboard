@@ -95,8 +95,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     reqString = "dashboard?";
                     break;
                 case ApiDatum.Deploys:
-                    if (param == String.Empty) { reqString = "deployments/?"; }
-                    else { reqString = "deployments/?taskState=" + param + "&";}
+                    if (param == String.Empty) { reqString = "deployments/?take=1000&"; }
+                    else { reqString = "deployments/?taskState=" + param + "&take=1000";}
                     break;
                 case ApiDatum.Deploy:
                     reqString = "deployments/" + param + "?";
