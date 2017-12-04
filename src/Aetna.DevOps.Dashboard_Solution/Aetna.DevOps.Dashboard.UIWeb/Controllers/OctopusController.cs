@@ -371,35 +371,41 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach (dynamic o in jsonDeser.Items)
             {
-                string occured = o.Occurred.ToString();
-                DateTime parsedDt = Convert.ToDateTime(occured);
-                string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
-                if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
-
-                string deployId = "",envId="";
-                dynamic deployLinks = JsonConvert.DeserializeObject(o.RelatedDocumentIds.ToString());
-                string webUrl = "";
-                foreach (string str in deployLinks)
+                if (o.Category.ToString().StartsWith("Deployment") || o.Category.ToString() == "TaskCanceled")
                 {
-                    if (str.StartsWith("Deployments-"))
+                    string occured = o.Occurred.ToString();
+                    DateTime parsedDt = Convert.ToDateTime(occured);
+                    string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
+                    if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
+
+                    string deployId = "", envId = "";
+                    dynamic deployLinks = JsonConvert.DeserializeObject(o.RelatedDocumentIds.ToString());
+                    string webUrl = "";
+                    foreach (string str in deployLinks)
                     {
-                        webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str;
-                        deployId = str;
-                    } else if (str.StartsWith("Environments"))
-                    {
-                        envId = str;
+                        if (str.StartsWith("Deployments-"))
+                        {
+                            webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str;
+                            deployId = str;
+                        }
+                        else if (str.StartsWith("Environments"))
+                        {
+                            envId = str;
+                        }
                     }
-                }
 
-                DeployEvent d = new DeployEvent(occuredISO, o.Message.ToString(),
-                    JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
-                    o.Category.ToString(), webUrl, deployId);
-                if (d.Category == "DeploymentSucceeded" || d.Category == "DeploymentFailed" ||
-                    d.Category == "DeploymentStarted" || d.Category == "DeploymentQueued")
-                {
-                    dl.Add(d);
+                    DeployEvent d = new DeployEvent(occuredISO, o.Message.ToString(),
+                        JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
+                        o.Category.ToString(), webUrl, deployId);
+                    if (!String.IsNullOrEmpty(deployId))
+                    {
+                        dl.Add(d);
+                        if (envId != "") d.Environs.Add(GetEnvironment(envId));
+                        if (d.Category == "TaskCanceled") d.Category = "DeploymentFailed";
+                    }
+                    
                 }
-                if (envId != "") d.Environs.Add(GetEnvironment(envId));
+                
             }
 
             return dl;
