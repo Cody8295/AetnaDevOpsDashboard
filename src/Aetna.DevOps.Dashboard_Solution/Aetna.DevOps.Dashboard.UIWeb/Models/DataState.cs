@@ -144,7 +144,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             if (anyChange)
             {
                 jsonSerialization = JsonConvert.SerializeObject(this, jsonCamelCaseSettings);
-                GC.Collect();
+                System.Diagnostics.Debug.WriteLine(jsonSerialization);
             }
 
             return anyChange;
