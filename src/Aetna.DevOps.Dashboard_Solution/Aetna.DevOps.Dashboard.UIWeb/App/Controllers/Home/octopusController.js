@@ -156,6 +156,31 @@
             $('.octo-line-canvas').show();
             $('.octo-pie-canvas').hide();
             $('.octo-bar-canvas').hide();
+
+            $('.btn-group .btn').mouseup(function (e) {
+                setTimeout(function () {
+                        document.getElementsByClassName("canvas").onclick =
+                            function (e) { }; // clear out the graph onclick event
+                        var btnId = $(".btn-group").find(".active").attr("id");
+                        if (btnId == "opt1") {
+                            $('.octo-line-canvas').show();
+                            $('.octo-pie-canvas').hide();
+                            $('.octo-bar-canvas').hide();
+                        }
+                        if (btnId == "opt2") {
+                            $('.octo-line-canvas').hide();
+                            $('.octo-pie-canvas').show();
+                            $('.octo-bar-canvas').hide();
+                        }
+                        if (btnId == "opt3") {
+                            $('.octo-line-canvas').hide();
+                            $('.octo-pie-canvas').hide();
+                            $('.octo-bar-canvas').show();
+                        }
+                    },
+                    300);
+
+            });
         });
 
         $http.get("api/Octo/deployEvents").then(function(response) {
@@ -212,17 +237,6 @@
             var succeededCount = 0;
             var queuedCount = 0;
             var startedCount = 0;
-
-            failed.fill(0);
-            succeeded.fill(0);
-            queued.fill(0);
-            started.fill(0);
-            allDeploys.fill([]);
-
-            failedCount = 0;
-            succeededCount = 0;
-            queuedCount = 0;
-            startedCount = 0;
 
             for (var index in $scope.deployEvents) {
                 d = $scope.deployEvents[index];
@@ -369,7 +383,7 @@
             };
 
             $scope.octoPieClick = function (points, evt) {
-                var htmlDeploys = "<div class=\"envList\">";
+                var htmlDeploys = "";
                 if (points[0] === undefined) { // user didn't click on a point
                     $(".deployData").html("");
                     $(".octoModal").hide();
@@ -378,58 +392,85 @@
                 var deployCount = 0; // used to tag button links for later usage
                 var sel = points[0]._index;
                 //indicies of categories: 3 succeeded, 2 failed, 1 queued, 0 started
-                console.log(sel);
-                var deployEvents = (sel == 0 ? "DeploymentStarted" : (sel == 1 ? "DeploymentQueued" : (sel == 2 ? "DeploymentFailed" : (sel == 3 ? "DeploymentSucceeded" : "Unrecognized"))));
-                console.log(deployEvents);
-                allDeploys.forEach(function (dh) {
+                var deployEvents = (sel == 0 ? "DeploymentStarted" : (sel == 1 ? "DeploymentQueued" : (sel == 3 ? "DeploymentFailed" : (sel == 2 ? "DeploymentSucceeded" : "Unrecognized"))));
+                var dh = $scope.deployEvents;
                     for (var x = 0; x < dh.length; x++) {
                         var d = dh[x];
-                        if (d.category != deployEvents) { continue; }
-                        console.log(d);
-                        var msg = d.message;
-                        var cat = d.category;
-                        var dt = moment(d.dateTime);
-                        var timePassed = dt.fromNow();
+                        if (d.category == deployEvents) {
+                            console.log(d.category);
+                            var msg = d.message;
+                            var cat = d.category;
+                            var dt = moment(d.dateTime);
+                            var timePassed = dt.fromNow();
 
-                        //console.log(msg + "," + timePassed);
-                        var environData = "<div class=\\'panel panel-info\\'><div class=\\'panel-heading\\' style=\\'padding-top:10px\\'><a href=\\'#\\' style=\\'width:100%;\\' id=\\'deploy-" + deployCount + "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a></div>";
-                        // Triply nested, double terminating quotations are really fun
-                        // -> onclick="element.html('\\"someText\\"')"
-                        d.environs.forEach(function (e) {
-                            function formatEnvironment(msg, dt, id, name, description) {
-                                var machineList = "";
-                                e.machines.forEach(function (machine) {
-                                    var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
-                                    machineList += "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
-                                        machine.name + "<span class=\\'pull-right\\'>" + (machine.isInProcess === "true" ? isInProcessStr : "") + "<small>" + machine.status + "</small></span></h4><p class=\\'list-group-item-text\\'>" +
-                                        machine.statusSummary + "</p></li>";
-                                });
-                                return "<div class=\\'card text-center\\'><div class=\\'card-header\\'>" + id +
-                                    "</div><div class=\\'card-block\\'><h4 class=\\'card-title\\'>" + name + "</h4>" +
-                                    "<p class=\\'card-text\\'>" + (description === undefined ? "No description" : description) + "</p></div>" +
-                                    "<ul class=\\'list-group list-group-flush\\' style=\\'overflow-y:auto;\\'>" +
-                                    machineList +
-                                    "</ul>" +
-                                    "<div class=\\'card-footer text-muted\\'>" + dt + "</div></div>";
-                            }
-                            environData += formatEnvironment(msg, timePassed, e.id, e.name, e.description);
+                            //console.log(msg + "," + timePassed);
+                            var environData =
+                                "<div class=\\'panel panel-info\\'><div class=\\'panel-heading\\' style=\\'padding-top:10px\\'><a href=\\'#\\' style=\\'width:100%;\\' id=\\'deploy-" +
+                                    deployCount +
+                                    "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a></div>";
+                            // Triply nested, double terminating quotations are really fun
+                            // -> onclick="element.html('\\"someText\\"')"
+                            d.environs.forEach(function(e) {
+                                function formatEnvironment(msg, dt, id, name, description) {
+                                    var machineList = "";
+                                    e.machines.forEach(function(machine) {
+                                        var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
+                                        machineList +=
+                                            "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
+                                            machine.name +
+                                            "<span class=\\'pull-right\\'>" +
+                                            (machine.isInProcess === "true" ? isInProcessStr : "") +
+                                            "<small>" +
+                                            machine.status +
+                                            "</small></span></h4><p class=\\'list-group-item-text\\'>" +
+                                            machine.statusSummary +
+                                            "</p></li>";
+                                    });
+                                    return "<div class=\\'card text-center\\'><div class=\\'card-header\\'>" +
+                                        id +
+                                        "</div><div class=\\'card-block\\'><h4 class=\\'card-title\\'>" +
+                                        name +
+                                        "</h4>" +
+                                        "<p class=\\'card-text\\'>" +
+                                        (description === undefined ? "No description" : description) +
+                                        "</p></div>" +
+                                        "<ul class=\\'list-group list-group-flush\\' style=\\'overflow-y:auto;\\'>" +
+                                        machineList +
+                                        "</ul>" +
+                                        "<div class=\\'card-footer text-muted\\'>" +
+                                        dt +
+                                        "</div></div>";
+                                }
 
-                        });
-                        environData += "</div>"; // closes the bootstrap panel
-                        console.log(d);
-                        htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
-                            environData + "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" + deployCount + "').attr('href', '" + d.webUrl + "')}, 1000);\" class=\"list-group-item " + coloredListElement(cat) +
-                            "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
-                            "<h4 class=\"list-group-item-heading\">" + d.environs[0].name +
-                            "<div class='pull-right'><small>" + timePassed + "</small></div></h4>" +
-                            "<p class=\"list-group-item-text\">" + msg + "</p></a>";
-                        deployCount += 1;
+                                environData += formatEnvironment(msg, timePassed, e.id, e.name, e.description);
+
+                            });
+                            environData += "</div>"; // closes the bootstrap panel
+                            htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
+                                environData +
+                                "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" +
+                                deployCount +
+                                "').attr('href', '" +
+                                d.webUrl +
+                                "')}, 1000);\" class=\"list-group-item " +
+                                coloredListElement(cat) +
+                                "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
+                                "<h4 class=\"list-group-item-heading\">" +
+                                d.environs[0].name +
+                                "<div class='pull-right'><small>" +
+                                timePassed +
+                                "</small></div></h4>" +
+                                "<p class=\"list-group-item-text\">" +
+                                msg +
+                                "</p></a>";
+                            deployCount += 1;
+                        }
                     }
-                });
+                
+
                 if (htmlDeploys == "") { return; }
-                htmlDeploys += "</div>";
                 $("#octoModal").modal("show");
-                $(".envList").replaceWith(htmlDeploys);
+                $(".envList").html(htmlDeploys);
                 $(".envList").show();
             };
 
@@ -459,31 +500,6 @@
 
             $(document).ready(function () {
                 $('.graph-loading').hide();
-
-                $('.btn-group .btn').mouseup(function(e) {
-                    setTimeout(function() {
-                            document.getElementsByClassName("canvas").onclick =
-                                function(e) {}; // clear out the graph onclick event
-                            var btnId = $(".btn-group").find(".active").attr("id");
-                            if (btnId == "opt1") {
-                                $('.octo-line-canvas').show();
-                                $('.octo-pie-canvas').hide();
-                                $('.octo-bar-canvas').hide();
-                            }
-                            if (btnId == "opt2") {
-                                $('.octo-line-canvas').hide();
-                                $('.octo-pie-canvas').show();
-                                $('.octo-bar-canvas').hide();
-                            }
-                            if (btnId == "opt3") {
-                                $('.octo-line-canvas').hide();
-                                $('.octo-pie-canvas').hide();
-                                $('.octo-bar-canvas').show();
-                            }
-                        },
-                        300);
-
-                });
             });
         });
     });
