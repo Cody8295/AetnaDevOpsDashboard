@@ -41,7 +41,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Deploys = 4,
             Machines = 5,
             Releases = 6,
-            Dashboard = 7
+            Dashboard = 7,
+            LiveDeploys = 8
         }
         #endregion
 
@@ -90,6 +91,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     break;
                 case ApiDatum.Dashboard:
                     reqString = "dashboard?";
+                    break;
+                case ApiDatum.LiveDeploys:
+                    reqString = "deployments/?taskState=executing&";
                     break;
                 default: break;
             }
@@ -240,8 +244,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region Sort Project List
-        private static List<ProjectGroup> SortProjectGroups()
+        #region Make Project Group List
+        private static List<ProjectGroup> MakeProjectGroupList()
         {
             List<ProjectGroup> pg = new List<ProjectGroup>();
             Dictionary<string,ProjectGroup> pgd = new Dictionary<string, ProjectGroup>();
@@ -345,7 +349,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region Get Deploys, Formatted for Graphing
+        #region Make Deploy List, Formatted for Graphing
         /// <summary>
         /// Transforms JSON from Octopus API/Events into a list of Deploys ready to be used in ChartJS
         /// </summary>
@@ -380,7 +384,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 }
             }
 
-
             for (int x = 0; x < dl.Count; x++)
             {
                 if (dl[x].RelatedDocs.Count > 0)
@@ -399,30 +402,24 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region Get Live Deploys
+        #region Make Live Deploy List
         /// <summary>
         /// Transforms JSON from Octopus API/Events into a list of Deploys ready to be used in ChartJS
         /// </summary>
         /// <param name="jsonTxt">JSON string</param>
         /// <returns>DeployList</returns>
-        private static List<Deploy> MakeLiveDeployList(string jsonTxt)
+        private static List<LiveDeploy> MakeLiveDeployList()
         {
-            List<Deploy> allDeploys = MakeDeployList(jsonTxt);
-            allDeploys.Reverse(); // order deploys from oldest to newest
-            List<Deploy> liveDeploys = new List<Deploy>();
-
-            foreach (Deploy deploy in allDeploys)
+            List<LiveDeploy> liveDeploys = new List<LiveDeploy>();
+            string jsonTxt = GetResponse(ApiDatum.LiveDeploys);
+            if (!String.IsNullOrEmpty(jsonTxt)) // if response is empty, do not proceed
             {
-                switch (deploy.Category)
+                dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+                foreach (dynamic o in jsonDeser.Items)
                 {
-                    case "DeploymentStarted":
-                        liveDeploys.Add(deploy);
-                        break;
-                    case "DeploymentFailed":
-                    case "DeploymentSucceeded":
-                        liveDeploys.RemoveAll(element => element.WebUrl == deploy.WebUrl);
-                        break;
+                    liveDeploys.Add(new LiveDeploy(o.Id.ToString(), o.ProjectId.ToString(), o.ReleaseId.ToString(), o.EnvironmentId.ToString(), o.Links.Web.ToString(), o.Created.ToString()));
                 }
+                
             }
 
             return liveDeploys;
@@ -497,7 +494,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             // Get New Data
 
-            List<ProjectGroup> pg = SortProjectGroups();
+            List<ProjectGroup> pg = MakeProjectGroupList();
             if (state.ProjectGroups == null || !state.ProjectGroups.DeepEquals<ProjectGroup>(pg))
             {
                 state.ProjectGroups = pg;
@@ -539,8 +536,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Deploy> ldp = MakeLiveDeployList(GetResponse(ApiDatum.Deploys));
-            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<Deploy>(ldp))
+            List<LiveDeploy> ldp = MakeLiveDeployList();
+            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<LiveDeploy>(ldp))
             {
                 state.LiveDeploys = ldp;
                 state.IsChanged["LiveDeploys"] = true;
@@ -755,7 +752,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             try
             {
-                List<ProjectGroup> pg = SortProjectGroups();
+                List<ProjectGroup> pg = MakeProjectGroupList();
                 return Ok<List<ProjectGroup>>(pg);
             }
             catch (Exception exception)
@@ -789,18 +786,17 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
         #region Live Deploys
         /// <summary>
-        /// Pulls information about how many of the deploys from the last 24 hours are live
+        /// Pulls list of all currently executing deploys
         /// </summary>
         /// <returns></returns>
         [Route("api/Octo/liveDeploys")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Deploy>))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<LiveDeploy>))]
         public IHttpActionResult GetLiveDeploys()
         {
             try
             {
-                List<Deploy> dl = MakeLiveDeployList(GetResponse(ApiDatum.Deploys));
-                return Ok<List<Deploy>>(dl);
+                return Ok<List<LiveDeploy>>(MakeLiveDeployList());
             }
             catch (Exception exception)
             {
