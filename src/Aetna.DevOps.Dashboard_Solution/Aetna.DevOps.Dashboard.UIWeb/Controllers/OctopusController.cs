@@ -672,7 +672,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Deploy> dp = MakeDeployList();
-            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<Deploy>(dp))
+            if (state.LiveDeploys == null || !state.Deploys.DeepEquals<Deploy>(dp))
             {
                 state.Deploys = dp;
                 state.LiveDeploys = MakeDeployList("Executing");
