@@ -1,3 +1,16 @@
+.octo-canvas {
+    height: 100%;
+    width: 100%;
+}
+
+.graph-loading {
+    display: inline-block;
+    text-align: center;
+    vertical-align: bottom;
+    width: 100%;
+    height: 100%;
+}
+
 .tl-slidenav-next{
     max-height:20%;
 }

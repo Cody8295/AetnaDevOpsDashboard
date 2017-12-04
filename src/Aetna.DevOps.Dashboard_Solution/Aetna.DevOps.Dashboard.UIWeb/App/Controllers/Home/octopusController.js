@@ -154,6 +154,7 @@
 
         $http.get("api/Octo/deployEvents").then(function (response) {
             $scope.deployEvents = response.data;
+            
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working
                 $("body").tooltip({ selector: '[data-toggle=tooltip]' });
             }); // tooltip fix
@@ -162,6 +163,29 @@
             var hr = new Date(); // the date and time right now
             var startTime = hr.getHours(); // the "start" time (really the time the graph ends at)
             var times = []; // array of hours for the graphs labels
+
+
+            var lastHour = 1; // used to determine if 12 o'clock is noon or midnight
+
+            for (var hs = startTime - 23; hs <= startTime; hs++) {
+                var s = (hs < 0 ? 24 + hs : (hs == 0 ? 12 : hs));
+                if (lastHour == 11 || lastHour == 23) {
+                    if (lastHour == 11) {
+                        times.push("Noon");
+                    }
+                    if (lastHour == 23) {
+                        times.push("Midnight");
+                    }
+                    lastHour = s;
+                    continue;
+                }
+                times.push((s <= 11 ? s + "AM" : (s == 12 ? 12 : s % 12) + "PM"));
+                lastHour = s;
+            }
+            function parseIsoLocal(s) {
+                var b = s.split(/\D/);
+                return new Date(b[0], b[1] - 1, b[2], b[3], b[4], b[5]);
+            }
 
             // These 5 arrays hold information about deployments over the past 24 hours
             var failed = []; failed.length = 24; failed.fill(0);
@@ -176,55 +200,62 @@
             var queuedCount = 0;
             var startedCount = 0;
 
-            var lastHour = 1; // used to determine if 12 o'clock is noon or midnight
+            function update() {
+                if ($scope.deployEvents.length == 0) return;
+                var ctxContainer = document.getElementsByClassName("canvas-container")[0];
+                var ctx = document.getElementsByClassName("octo-canvas")[0];
+                ctxContainer.removeChild(ctx);
+                ctxContainer.innerHTML = "<canvas class='octo-canvas'></canvas>";
 
-            for (var hs = startTime - 23; hs <= startTime; hs++) {
-                var s = (hs < 0 ? 24 + hs : (hs == 0 ? 12 : hs));
-                if (lastHour == 11 || lastHour == 23) {
-                    if (lastHour == 11) { times.push("Noon"); }
-                    if (lastHour == 23) { times.push("Midnight"); }
-                    lastHour = s;
-                    continue;
+                failed.fill(0);
+                succeeded.fill(0);
+                queued.fill(0);
+                started.fill(0);
+                allDeploys.fill([]);
+
+                failedCount = 0;
+                succeededCount = 0;
+                queuedCount = 0;
+                startedCount = 0;
+
+                for (var index in $scope.deployEvents) {
+                    d = $scope.deployEvents[index];
+                    var timeString = moment(d.timeAndDate);
+                    var rightNow = moment();
+                    var hour = timeString.hour();
+                    var timeDiff = timeString.diff(rightNow, 'hours');
+                    hour = 23 - (timeDiff < 0 ? timeDiff * -1 : timeDiff);
+                    allDeploys[hour] = (allDeploys[hour] === undefined ? [] : allDeploys[hour]).concat(
+                        {
+                            "message": d.message,
+                            "category": d.category,
+                            "dateTime": timeString,
+                            "environs": d.environs,
+                            "webUrl": d.webUrl
+                        }
+                    );
+                    if (d.category === "DeploymentFailed") {
+                        failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
+                        failedCount++;
+                    };
+                    if (d.category === "DeploymentSucceeded") {
+                        succeeded[hour] = (succeeded[hour] !== undefined ? succeeded[hour] + 1 : 1)
+                        succeededCount++;
+                    };
+                    if (d.category === "DeploymentQueued") {
+                        queued[hour] = (queued[hour] !== undefined ? queued[hour] + 1 : 1)
+                        queuedCount++;
+                    };
+                    if (d.category === "DeploymentStarted") {
+                        started[hour] = (started[hour] !== undefined ? started[hour] + 1 : 1)
+                        startedCount++;
+                    };
                 }
-                times.push((s <= 11 ? s + "AM" : (s == 12 ? 12 : s % 12) + "PM"));
-                lastHour = s;
-            }
-
-            function parseIsoLocal(s) {
-                var b = s.split(/\D/);
-                return new Date(b[0], b[1] - 1, b[2], b[3], b[4], b[5]);
-            }
-
-            for (var index in $scope.deployEvents) {
-                d = $scope.deployEvents[index];
-                var timeString = moment(d.timeAndDate);
-                var rightNow = moment();
-                var hour = timeString.hour();
-                var timeDiff = timeString.diff(rightNow, 'hours');
-                hour = 23 - (timeDiff < 0 ? timeDiff * -1 : timeDiff);
-                allDeploys[hour] = (allDeploys[hour] === undefined ? [] : allDeploys[hour]).concat(
-                    { "message": d.message, "category": d.category, "dateTime": timeString, "environs": d.environs, "webUrl": d.webUrl }
-                );
-                if (d.category === "DeploymentFailed") {
-                    failed[hour] = (failed[hour] !== undefined ? failed[hour] + 1 : 1)
-                    failedCount++;
-                };
-                if (d.category === "DeploymentSucceeded") {
-                    succeeded[hour] = (succeeded[hour] !== undefined ? succeeded[hour] + 1 : 1)
-                    succeededCount++;
-                };
-                if (d.category === "DeploymentQueued") {
-                    queued[hour] = (queued[hour] !== undefined ? queued[hour] + 1 : 1)
-                    queuedCount++;
-                };
-                if (d.category === "DeploymentStarted") {
-                    started[hour] = (started[hour] !== undefined ? started[hour] + 1 : 1)
-                    startedCount++;
-                };
             }
 
             function lineGraph() {
-                var ctx = document.getElementById("canvas");
+                update();
+                var ctx = document.getElementsByClassName("octo-canvas")[0];
                 theLineGraph = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -282,7 +313,8 @@
 
 
             function pieChart() {
-                var ctx = document.getElementById("canvas");
+                update();
+                var ctx = document.getElementsByClassName("octo-canvas")[0];
                 const genLabelsDef = Chart.defaults.pie.legend.labels.generateLabels;
                 const genLabelsNew = function (chart) {
                     if (genLabelsNew['firstCall']) {
@@ -324,7 +356,8 @@
             }
 
             function barGraph() {
-                var ctx = document.getElementById("canvas");
+                update();
+                var ctx = document.getElementsByClassName("octo-canvas")[0];
                 theBarGraph = new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -387,7 +420,7 @@
             }
 
             function setupPieGraph() {
-                document.getElementById("canvas").onclick = function (e, i) {
+                document.getElementsByClassName("octo-canvas")[0].onclick = function (e, i) {
                     var htmlDeploys = "<div class=\"envList\">";
                     if (thePieChart === undefined) { console.log("PROBLEM "); return; }
                     var points = thePieChart.getElementsAtEvent(e);
@@ -456,7 +489,7 @@
             }
 
             function setupLineGraph() {
-                document.getElementById("canvas").onclick = function (e) {
+                document.getElementsByClassName("octo-canvas")[0].onclick = function (e) {
                     var htmlDeploys = "";
                     if (theLineGraph === undefined) { return; }
                     var points = theLineGraph.getElementsAtEvent(e);
@@ -527,7 +560,7 @@
             $(document).ready(function () {
                 $('.btn-group .btn').mouseup(function (e) {
                     setTimeout(function () {
-                        document.getElementById("canvas").onclick = function (e) { }; // clear out the graph onclick event
+                        document.getElementsByClassName("octo-canvas")[0].onclick = function (e) { }; // clear out the graph onclick event
                         var btnId = $(".btn-group").find(".active").attr("id");
                         if (btnId == "opt1") {
                             if (theLineGraph !== undefined) { return; }

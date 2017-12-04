@@ -227,7 +227,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
             foreach (KeyValuePair<string, string> element in environments)
             {
-                el.Add(new Environment(element.Value, element.Key, (numMachines.ContainsKey(element.Value) ? numMachines[element.Value].ToString() : "0"), GetMachines(element.Value), GetActiveDeploysByEnvironment(element.Value)));
+                el.Add(new Environment(element.Value, element.Key, (numMachines.ContainsKey(element.Value) ? numMachines[element.Value].ToString() : "0"), GetMachines(element.Value)));
             }
 
             return el;
@@ -598,9 +598,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         private static Environment GetEnvironment(string envName)
         {
             string environData = GetResponse(ApiDatum.Environments, envName);
-            if (String.IsNullOrEmpty(environData)) { return new Environment("","","",new List<Machine>(), new List<ActiveDeploy>()); } // if response is empty, do not proceed
+            if (String.IsNullOrEmpty(environData)) { return new Environment("","","",new List<Machine>()); } // if response is empty, do not proceed
             dynamic env = JsonConvert.DeserializeObject(environData);
-            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), GetMachines(envName), GetActiveDeploysByEnvironment(env.Id.ToString()) );
+            Environment e = new Environment(env.Id.ToString(), env.Name.ToString(), env.Description.ToString(), GetMachines(envName) );
             return e;
         }
         #endregion
