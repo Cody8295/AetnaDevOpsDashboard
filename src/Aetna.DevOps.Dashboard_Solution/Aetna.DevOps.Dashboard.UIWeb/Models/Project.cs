@@ -9,14 +9,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public string Lifecycle;
         public string DeploymentProcess;
         public string Id;
+        public List<Release> Releases;
 
-        public Project(string id, string groupId, string name, string lifecycle, string deploymentProcess)
+        public Project(string id, string groupId, string name, string lifecycle, string deploymentProcess, List<Release> releases)
         {
             Id = id;
             GroupId = groupId;
             Name = name;
             Lifecycle = lifecycle;
             DeploymentProcess = deploymentProcess;
+            Releases = releases;
         }
         public string GetGroupId() { return GroupId; }
 

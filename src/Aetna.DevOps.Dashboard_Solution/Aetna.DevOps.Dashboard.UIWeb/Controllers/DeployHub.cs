@@ -9,16 +9,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     [HubName("deployHub")]
     public class DeployHub : Hub
     {
-        private static DataState currentState = new DataState();
-        private static System.Timers.Timer timer = new System.Timers.Timer(2000); // Set Timer to run every 2 seconds
+        private static DataState currentState = DataState.Instance;
+        private static System.Timers.Timer timer = new System.Timers.Timer(5000); // Set Timer to run every 5 seconds
         public DeployHub() : base()
         {
-            var jsonCamelCaseSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
             timer.Elapsed += (sender, e) =>
             {
-                if (OctopusController.UpdateDataState(currentState))
+                if (currentState.Update())
                 {
-                    Clients.All.onChange(JsonConvert.SerializeObject(currentState, jsonCamelCaseSettings));
+                    string serialization = currentState.JsonSerialization;
+                    Clients.All.onChange(serialization);
                 }
             };
             timer.Enabled = true;
