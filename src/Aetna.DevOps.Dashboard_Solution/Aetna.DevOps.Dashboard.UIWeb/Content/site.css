@@ -15,6 +15,11 @@
     padding: 20px;
 }
 
+.open-in-octopus-deploy {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 .deploy-item {
     display:block;
     overflow: hidden;

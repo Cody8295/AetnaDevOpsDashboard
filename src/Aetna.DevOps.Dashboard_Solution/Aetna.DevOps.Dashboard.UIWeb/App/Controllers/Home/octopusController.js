@@ -320,9 +320,9 @@
                     var cat = d.category;
                     var dt = moment(d.dateTime);
                     var timePassed = dt.fromNow();
-                    var environData = "<a href=\\'#\\' class=\\'fill-width\\' id=\\'deploy-" +
+                    var environData = "<a href=\\'#\\' id=\\'deploy-" +
                         deployCount +
-                        "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a>";
+                        "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary fill-width open-in-octopus\\'>Open in Octopus</a>";
 
                     // Triply nested, double terminating quotations are really fun
                     // -> onclick="element.html('\\"someText\\"')"
@@ -368,7 +368,7 @@
                         deployCount +
                         "').attr('href', '" +
                         d.webUrl +
-                        "')}, 1000);\" class=\"deploy-button list-group-item" +
+                        "')}, 1000);\" class=\"list-group-item " +
                         coloredListElement(cat) +
                         "\">" +
                         "<h4 class=\"list-group-item-heading\">" +
@@ -413,9 +413,9 @@
 
                             //console.log(msg + "," + timePassed);
                             var environData =
-                                "<div class=\\'panel panel-info\\'><div class=\\'panel-heading environ-data\\'><a href=\\'#\\' class=\\'environ-link\\' id=\\'deploy-" +
+                                "<div class=\\'panel panel-info\\'><div class=\\'panel-heading environ-data\\'><a href=\\'#\\' id=\\'deploy-" +
                                     deployCount +
-                                    "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a></div>";
+                                    "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary environ-link open-in-octopus \\'>Open in Octopus</a></div>";
                             // Triply nested, double terminating quotations are really fun
                             // -> onclick="element.html('\\"someText\\"')"
                             d.environs.forEach(function(e) {
@@ -460,7 +460,7 @@
                                 deployCount +
                                 "').attr('href', '" +
                                 d.webUrl +
-                                "')}, 1000);\" class=\"list-group-item deploy-item" +
+                                "')}, 1000);\" class=\"list-group-item deploy-item " +
                                 coloredListElement(cat) +
                                 "\">" +
                                 "<h4 class=\"list-group-item-heading\">" +
