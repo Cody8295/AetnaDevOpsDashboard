@@ -126,8 +126,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             {
                 serverResponse = ""; // server force closed connection for some reason
             }
-            reader.Close();
-            response.Close();
+            reader.Dispose();
+            response.Dispose();
             return serverResponse;
         }
         #endregion
