@@ -74,7 +74,7 @@
                     var r = releases[x];
                     var releaseURL = "\"" + r.webUrl.toString() + "\"";
 
-                    var releaseDeployHtml = "<a class=\"" + r.id + "-link c\" style=\"padding:20px;\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
+                    var releaseDeployHtml = "<a class=\"open-in-octopus " + r.id + "-link c\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
 
                     //console.log(r.releaseDeploys);
                     for (var deplo in r.releaseDeploys) {
@@ -84,12 +84,12 @@
                             "startDate": depl.created,
                             "endDate": depl.completedTime,
                             "headline": depl.id,
-                            "text": "<a class=\"" + depl.id + "-link c\" style=\"padding:20px;\" href=\"#\">Open in Octopus</a>" + depl.errorMessage
+                            "text": "<a class=\"open-in-octopus" + depl.id + "-link c\" href=\"#\">Open in Octopus</a>" + depl.errorMessage
                         };
                         dates.push(date);
                         releaseDeployHtml += "<a href=\"javascript:void(0)\" onclick=\"" +
-                            "\" class=\"list-group-item\" data-toggle=\"tooltip\" data-original-title=\"" + moment(depl.created).fromNow() +
-                            "\" style=\"display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;\">" +
+                            "\" class=\"deploy-button list-group-item \" data-toggle=\"tooltip\" data-original-title=\"" + moment(depl.created).fromNow() +
+                            "\">" +
                             "<h4 class=\"list-group-item-heading\">" + depl.id + "<small class=\"pull-right\">" + moment(depl.created).fromNow() + "</small></h4>" +
                             "<p class=\"list-group-item-text\">Duration: " + depl.duration + "</p></a>";
                     }
@@ -153,6 +153,7 @@
         });
 
         $(document).ready(function () {
+            $('.charts').hide();
             $('.octo-line-canvas').show();
             $('.octo-pie-canvas').hide();
             $('.octo-bar-canvas').hide();
@@ -319,7 +320,7 @@
                     var cat = d.category;
                     var dt = moment(d.dateTime);
                     var timePassed = dt.fromNow();
-                    var environData = "<a href=\\'#\\' style=\\'width:100%\\' id=\\'deploy-" +
+                    var environData = "<a href=\\'#\\' class=\\'fill-width\\' id=\\'deploy-" +
                         deployCount +
                         "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a>";
 
@@ -349,7 +350,7 @@
                                 "<p class=\\'card-text\\'>" +
                                 (description === undefined ? "No description" : description) +
                                 "</p></div>" +
-                                "<ul class=\\'list-group list-group-flush\\' style=\\'overflow-y:auto;\\'>" +
+                                "<ul class=\\'list-group list-group-flush scrolling-list\\'>" +
                                 machineList +
                                 "</ul>" +
                                 "<div class=\\'card-footer text-muted\\'>" +
@@ -367,9 +368,9 @@
                         deployCount +
                         "').attr('href', '" +
                         d.webUrl +
-                        "')}, 1000);\" class=\"list-group-item " +
+                        "')}, 1000);\" class=\"deploy-button list-group-item" +
                         coloredListElement(cat) +
-                        "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
+                        "\">" +
                         "<h4 class=\"list-group-item-heading\">" +
                         (d.environs.length > 0 ? d.environs[0].name : "Not named") +
                         "<div class='pull-right'><small>" +
@@ -412,7 +413,7 @@
 
                             //console.log(msg + "," + timePassed);
                             var environData =
-                                "<div class=\\'panel panel-info\\'><div class=\\'panel-heading\\' style=\\'padding-top:10px\\'><a href=\\'#\\' style=\\'width:100%;\\' id=\\'deploy-" +
+                                "<div class=\\'panel panel-info\\'><div class=\\'panel-heading environ-data\\'><a href=\\'#\\' class=\\'environ-link\\' id=\\'deploy-" +
                                     deployCount +
                                     "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary\\'>Open in Octopus</a></div>";
                             // Triply nested, double terminating quotations are really fun
@@ -441,7 +442,7 @@
                                         "<p class=\\'card-text\\'>" +
                                         (description === undefined ? "No description" : description) +
                                         "</p></div>" +
-                                        "<ul class=\\'list-group list-group-flush\\' style=\\'overflow-y:auto;\\'>" +
+                                        "<ul class=\\'list-group list-group-flush scrolling-list\\'>" +
                                         machineList +
                                         "</ul>" +
                                         "<div class=\\'card-footer text-muted\\'>" +
@@ -459,9 +460,9 @@
                                 deployCount +
                                 "').attr('href', '" +
                                 d.webUrl +
-                                "')}, 1000);\" class=\"list-group-item " +
+                                "')}, 1000);\" class=\"list-group-item deploy-item" +
                                 coloredListElement(cat) +
-                                "\" style=\"display:block;overflow: hidden; height:100px; padding: 3px 10px;\">" +
+                                "\">" +
                                 "<h4 class=\"list-group-item-heading\">" +
                                 d.environs[0].name +
                                 "<div class='pull-right'><small>" +
@@ -505,6 +506,7 @@
 
             $(document).ready(function () {
                 $('.graph-loading').hide();
+                $('.charts').show();
             });
         });
     });
