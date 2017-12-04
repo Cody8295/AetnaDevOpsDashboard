@@ -152,7 +152,7 @@
             });
         });
 
-        $http.get("api/Octo/deploys").then(function (response) {
+        $http.get("api/Octo/deployEvents").then(function (response) {
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working
                 $("body").tooltip({ selector: '[data-toggle=tooltip]' });
             }); // tooltip fix
@@ -398,12 +398,12 @@
                     var sel = points[0]._index;
                     //indicies of categories: 3 succeeded, 2 failed, 1 queued, 0 started
                     console.log(sel);
-                    var deploys = (sel == 0 ? "DeploymentStarted" : (sel == 1 ? "DeploymentQueued" : (sel == 2 ? "DeploymentFailed" : (sel == 3 ? "DeploymentSucceeded" : "Unrecognized"))));
-                    console.log(deploys);
+                    var deployEvents = (sel == 0 ? "DeploymentStarted" : (sel == 1 ? "DeploymentQueued" : (sel == 2 ? "DeploymentFailed" : (sel == 3 ? "DeploymentSucceeded" : "Unrecognized"))));
+                    console.log(deployEvents);
                     allDeploys.forEach(function (dh) {
                         for (var x = 0; x < dh.length; x++) {
                             var d = dh[x];
-                            if (d.category != deploys) { continue; }
+                            if (d.category != deployEvents) { continue; }
                             console.log(d);
                             var msg = d.message;
                             var cat = d.category;

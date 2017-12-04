@@ -36,8 +36,8 @@ function onChange(currentStateJson) {
         // Display an indicator
     }
 
-    if (currentState.isChanged.deploys) {
-        if ($.connection.hub.logging) console.log("Deploys Update");
+    if (currentState.isChanged.deployEvents) {
+        if ($.connection.hub.logging) console.log("Deploy Events Update");
         scope.deploys = currentState.deploys;
         scope.liveDeploys = currentState.liveDeploys;
         //Display an indicator

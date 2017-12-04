@@ -38,11 +38,13 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Projects = 1,
             Lifecycles = 2,
             Environments = 3,
-            Deploys = 4,
+            DeployEvents = 4,
             Machines = 5,
             Releases = 6,
             Dashboard = 7,
-            LiveDeploys = 8
+            LiveDeploys = 8,
+            Deploys = 9,
+            Task = 10
         }
         #endregion
 
@@ -72,7 +74,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 case ApiDatum.Environments:
                     reqString = "environments/" + (param == String.Empty ? "" : param) + "?";
                     break;
-                case ApiDatum.Deploys:
+                case ApiDatum.DeployEvents:
                     reqString = "events?take=1000&";
                     break;
                 case ApiDatum.Machines:
@@ -94,6 +96,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     break;
                 case ApiDatum.LiveDeploys:
                     reqString = "deployments/?taskState=executing&";
+                    break;
+                case ApiDatum.Deploys:
+                    reqString = "deployments/" + param + "?";
+                    break;
+                case ApiDatum.Task:
+                    reqString = "tasks/" + param + "?";
                     break;
                 default: break;
             }
@@ -123,7 +131,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region Get Active Deploys by Environment
+        #region Get Active DeployEvents by Environment
         /// <summary>
         /// Gives the current deploys for some Environment
         /// </summary>
@@ -349,16 +357,16 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region Make Deploy List, Formatted for Graphing
+        #region Make DeployEvent List, Formatted for Graphing
         /// <summary>
-        /// Transforms JSON from Octopus API/Events into a list of Deploys ready to be used in ChartJS
+        /// Transforms JSON from Octopus API/Events into a list of DeployEvents ready to be used in ChartJS
         /// </summary>
         /// <param name="jsonTxt">JSON string</param>
         /// <returns>DeployList</returns>
-        private static List<Deploy> MakeDeployList(string jsonTxt)
+        private static List<DeployEvent> MakeDeployEventList(string jsonTxt)
         {
-            if (String.IsNullOrEmpty(jsonTxt)) { return new List<Deploy>(); } // if response is empty, do not proceed
-            List<Deploy> dl = new List<Deploy>();
+            if (String.IsNullOrEmpty(jsonTxt)) { return new List<DeployEvent>(); } // if response is empty, do not proceed
+            List<DeployEvent> dl = new List<DeployEvent>();
             dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
             foreach (dynamic o in jsonDeser.Items)
             {
@@ -367,16 +375,21 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
                 if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
 
+                string deployId = "";
                 dynamic deployLinks = JsonConvert.DeserializeObject(o.RelatedDocumentIds.ToString());
                 string webUrl = "";
                 foreach (string str in deployLinks)
                 {
-                    if (str.StartsWith("Deployments-")) { webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str; break; }
+                    if (str.StartsWith("Deployments-"))
+                    {
+                        webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str;
+                        deployId = str;
+                    }
                 }
 
-                Deploy d = new Deploy(occuredISO, o.Message.ToString(),
+                DeployEvent d = new DeployEvent(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
-                    o.Category.ToString(), webUrl);
+                    o.Category.ToString(), webUrl, GetDeploy(deployId));
                 if (d.Category == "DeploymentSucceeded" || d.Category == "DeploymentFailed" ||
                     d.Category == "DeploymentStarted" || d.Category == "DeploymentQueued")
                 {
@@ -404,25 +417,78 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
 
         #region Make Live Deploy List
         /// <summary>
-        /// Transforms JSON from Octopus API/Events into a list of Deploys ready to be used in ChartJS
+        /// Retrieves a list of all live deploys from Octopus API
         /// </summary>
         /// <param name="jsonTxt">JSON string</param>
         /// <returns>DeployList</returns>
-        private static List<LiveDeploy> MakeLiveDeployList()
+        private static List<Deploy> MakeLiveDeployList()
         {
-            List<LiveDeploy> liveDeploys = new List<LiveDeploy>();
+            List<Deploy> liveDeploys = new List<Deploy>();
             string jsonTxt = GetResponse(ApiDatum.LiveDeploys);
             if (!String.IsNullOrEmpty(jsonTxt)) // if response is empty, do not proceed
             {
                 dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
                 foreach (dynamic o in jsonDeser.Items)
                 {
-                    liveDeploys.Add(new LiveDeploy(o.Id.ToString(), o.ProjectId.ToString(), o.ReleaseId.ToString(), o.EnvironmentId.ToString(), o.Links.Web.ToString(), o.Created.ToString()));
+                    liveDeploys.Add(new Deploy(o.Id.ToString(), o.ProjectId.ToString(), o.ReleaseId.ToString(), o.EnvironmentId.ToString(), o.Links.Web.ToString(), o.Created.ToString(),Deploy.State.Executing));
                 }
                 
             }
 
             return liveDeploys;
+        }
+        #endregion
+
+        #region Get Deploy
+        /// <summary>
+        /// Transforms JSON from Octopus API/Events into a list of DeployEvents ready to be used in ChartJS
+        /// </summary>
+        /// <param name="jsonTxt">JSON string</param>
+        /// <returns>DeployList</returns>
+        private static Deploy GetDeploy(string id)
+        {
+            if (String.IsNullOrEmpty(id)) return null;
+
+            Deploy deploy;
+            string jsonTxt = GetResponse(ApiDatum.Deploys, id);
+            if (!String.IsNullOrEmpty(jsonTxt)) // if response is empty, do not proceed
+            {
+                dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+                Deploy.State state = Deploy.State.Unknown;
+                string taskJson = GetResponse(ApiDatum.Task, jsonDeser.TaskId.ToString());
+                if (!String.IsNullOrEmpty(taskJson))
+                {
+                    dynamic taskDeserialization = JsonConvert.DeserializeObject(taskJson);
+                    switch (taskDeserialization.ToString())
+                    {
+                        case "Success":
+                            state = Deploy.State.Success;
+                            break;
+                        case "Failed":
+                            state = Deploy.State.Failed;
+                            break;
+                        case "Queued":
+                            state = Deploy.State.Queued;
+                            break;
+                        case "Executing":
+                            state = Deploy.State.Executing;
+                            break;
+                        case "Canceled":
+                            state = Deploy.State.Canceled;
+                            break;
+                    }
+                }
+                deploy = new Deploy(id, jsonDeser.ProjectId.ToString(),
+                    jsonDeser.ReleaseId.ToString(), jsonDeser.EnvironmentId.ToString(), jsonDeser.Links.Web.ToString(),
+                    jsonDeser.Created.ToString(), state);
+
+            }
+            else
+            {
+                deploy = null;
+            }
+
+            return deploy;
         }
         #endregion
 
@@ -488,8 +554,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 { "Projects", false },
                 { "Lifecycles", false },
                 { "Environments", false },
-                { "Deploys", false },
-                { "LiveDeploys", false }
+                { "DeployEvents", false },
+                { "Deploys", false }
              };
 
             // Get New Data
@@ -528,19 +594,19 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<Deploy> dp = MakeDeployList(GetResponse(ApiDatum.Deploys)); 
-            if (state.Deploys == null || !state.Deploys.DeepEquals<Deploy>(dp))
+            List<DeployEvent> dp = MakeDeployEventList(GetResponse(ApiDatum.DeployEvents)); 
+            if (state.Deploys == null || !state.Deploys.DeepEquals<DeployEvent>(dp))
             {
                 state.Deploys = dp;
-                state.IsChanged["Deploys"] = true;
+                state.IsChanged["DeployEvents"] = true;
                 anyChange = true;
             }
 
-            List<LiveDeploy> ldp = MakeLiveDeployList();
-            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<LiveDeploy>(ldp))
+            List<Deploy> ldp = MakeLiveDeployList();
+            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<Deploy>(ldp))
             {
                 state.LiveDeploys = ldp;
-                state.IsChanged["LiveDeploys"] = true;
+                state.IsChanged["Deploys"] = true;
                 anyChange = true;
             }
 
@@ -762,20 +828,20 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         }
         #endregion
 
-        #region Deploys
+        #region Deploy Events
         /// <summary>
         /// Pulls information about how many deploys there are over the past 24 hours and information about each one
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/deploys")]
+        [Route("api/Octo/deployEvents")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Deploy>))]
-        public IHttpActionResult GetDeploys()
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<DeployEvent>))]
+        public IHttpActionResult GetDeployEvents()
         {
             try
             {
-                List<Deploy> dl = MakeDeployList(GetResponse(ApiDatum.Deploys));
-                return Ok<System.Collections.Generic.List<Deploy>>(dl);
+                List<DeployEvent> dl = MakeDeployEventList(GetResponse(ApiDatum.DeployEvents));
+                return Ok<System.Collections.Generic.List<DeployEvent>>(dl);
             }
             catch (Exception exception)
             {
@@ -791,12 +857,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// <returns></returns>
         [Route("api/Octo/liveDeploys")]
         [ResponseType(typeof(int))]
-        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<LiveDeploy>))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Deploy>))]
         public IHttpActionResult GetLiveDeploys()
         {
             try
             {
-                return Ok<List<LiveDeploy>>(MakeLiveDeployList());
+                return Ok<List<Deploy>>(MakeLiveDeployList());
             }
             catch (Exception exception)
             {

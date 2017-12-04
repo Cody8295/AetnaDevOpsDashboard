@@ -1072,11 +1072,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\OctopusController.cs" />
     <Compile Include="Models\ActiveDeploy.cs" />
-    <Compile Include="Models\LiveDeploy.cs" />
+    <Compile Include="Models\Deploy.cs" />
     <Compile Include="Models\OctopusModel.cs" />
     <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\DataState.cs" />
-    <Compile Include="Models\Deploy.cs" />
+    <Compile Include="Models\DeployEvent.cs" />
     <Compile Include="Controllers\DeployHub.cs" />
     <Compile Include="Models\Environment.cs" />
     <Compile Include="Models\Machine.cs" />
