@@ -89,7 +89,7 @@
                                 </span>
                             </div>
                             <div class="pre-scrollable">
-                                <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item project" data-toggle="tooltip" data-original-title="{{project.lifecycle}}" style="display:block;overflow: hidden; border-top-left-radius: 0; border-top-right-radius: 0; height:70px; padding: 3px 10px;">
+                                <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item project" data-toggle="tooltip" data-original-title="{{project.lifecycle}}">
                                     <h4 class="list-group-item-heading">{{project.name}}</h4>
                                     <p class="list-group-item-text">{{project.groupId}}</p>
                                 </a>
@@ -149,17 +149,17 @@
             </div>
         </div>
 
-        <div id="octoModal" class="modal fade col-xs-12 col-md-8 col-md-offset-2" role="dialog" style="max-height:90%;height:90%;overflow-y:auto" ng-controller="octopusController">
-            <div class="modal-dialog" style="max-height:90%;overflow-y:auto;">
+        <div id="octoModal" class="modal fade col-xs-12 col-md-8 col-md-offset-2 octo-modal" role="dialog" ng-controller="octopusController">
+            <div class="modal-dialog octo-modal-dialog">
                 <div class="modal-content">
                     
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"> <i class="fa fa-times-circle"></i></button>
                             <h4 class="modal-title">Selected Deploys</h4>
                         </div>
-                        <div class="modal-body" style="max-height:90%;overflow-y:auto;">
+                        <div class="modal-body octo-modal-body">
                             <div class="row">
-                                <div class="col-md-6 pre-scrollable" style="overflow-y:auto;overflow-x:auto;"><div class="list-group envList"></div></div>
+                                <div class="col-md-6 pre-scrollable env-list-scrollbox"><div class="list-group envList"></div></div>
                                 <div class="col-md-6"><div class="deployData" ></div></div>
                             </div>
 
@@ -170,14 +170,14 @@
             </div>
         </div>
 
-        <div id="projectModal" class="modal fade" role="dialog" style="width:95%;max-height:90%;height:90%;overflow-y:auto" ng-controller="octopusController">
-            <div class="modal-dialog" style="width:95%;max-height:90%;overflow-y:auto;">
+        <div id="projectModal" class="modal fade octo-modal octo-project-modal" role="dialog" ng-controller="octopusController">
+            <div class="modal-dialog octo-modal-dialog octo-project-modal">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"> <i class="fa fa-times-circle"></i></button>
                         <h4 class="modal-title">Progression Timeline</h4>
                     </div>
-                    <div class="modal-body" style="max-height:90%;overflow-y:auto;">
+                    <div class="modal-body octo-modal-body">
                         <div id="tl">
                             <div id="timeline-embed">
                                 <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>

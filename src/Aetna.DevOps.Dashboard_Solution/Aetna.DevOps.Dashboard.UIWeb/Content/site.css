@@ -1,3 +1,37 @@
+.project {
+    display:block;
+    overflow: hidden; 
+    border-top-left-radius: 0; 
+    border-top-right-radius: 0; 
+    height:70px; 
+    padding: 3px 10px;
+}
+
+.octo-project-modal {
+    width: 95%;
+}
+
+.octo-modal {
+    max-height: 90%;
+    height: 90%;
+    overflow-y: auto;
+}
+
+.octo-modal-dialog {
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.octo-modal-body {
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.env-list-scrollbox {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
 .octo-canvas {
     height: 100%;
     width: 100%;
