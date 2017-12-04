@@ -283,6 +283,13 @@
 
             $scope.octoPieData = [startedCount, queuedCount, succeededCount, failedCount];
 
+            $scope.octoColors = [
+                '#97bbed',
+                '#fdb45c',
+                '#46dfbd',
+                '#f7464a'
+            ];
+
             $scope.octoSeries = [
                 "Deployments Started",
                 "Deployments Queued",
@@ -378,7 +385,7 @@
                 return;
             }
             $("#octoModal").modal("show");
-            $(".envList").replaceWith(htmlDeploys);
+            $(".envList").html(htmlDeploys);
             $(".envList").show();
             };
 
@@ -473,8 +480,6 @@
                 $(".envList").html(htmlDeploys);
                 $(".envList").show();
             };
-
-            $scope.octoColors = ['#000088', '#997733', '#008800', '#DD0000' ];
 
             $scope.octoChartOptions = {
                 responsive: true,
