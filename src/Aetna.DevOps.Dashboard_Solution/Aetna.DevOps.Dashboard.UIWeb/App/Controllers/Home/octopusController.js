@@ -153,6 +153,7 @@
         });
 
         $http.get("api/Octo/deployEvents").then(function (response) {
+            $scope.deployEvents = response.data;
             $(document).ready(function () { // via https://stackoverflow.com/questions/9446318/bootstrap-tooltips-not-working
                 $("body").tooltip({ selector: '[data-toggle=tooltip]' });
             }); // tooltip fix
@@ -194,7 +195,8 @@
                 return new Date(b[0], b[1] - 1, b[2], b[3], b[4], b[5]);
             }
 
-            response.data.forEach(function (d) {
+            for (var index in $scope.deployEvents) {
+                d = $scope.deployEvents[index];
                 var timeString = moment(d.timeAndDate);
                 var rightNow = moment();
                 var hour = timeString.hour();
@@ -219,7 +221,7 @@
                     started[hour] = (started[hour] !== undefined ? started[hour] + 1 : 1)
                     startedCount++;
                 };
-            });
+            }
 
             function lineGraph() {
                 var ctx = document.getElementById("canvas");
