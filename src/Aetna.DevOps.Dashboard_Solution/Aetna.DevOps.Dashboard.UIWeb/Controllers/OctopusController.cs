@@ -42,7 +42,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Machines = 5,
             Releases = 6,
             Dashboard = 7,
-            LiveDeploys = 8,
+            Deploys = 8,
             Deploy = 9,
             Task = 10
         }
@@ -94,8 +94,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 case ApiDatum.Dashboard:
                     reqString = "dashboard?";
                     break;
-                case ApiDatum.LiveDeploys:
-                    reqString = "deployments/?taskState=executing&";
+                case ApiDatum.Deploys:
+                    if (param == String.Empty) { reqString = "deployments/?"; }
+                    else { reqString = "deployments/?taskState=" + param + "&";}
                     break;
                 case ApiDatum.Deploy:
                     reqString = "deployments/" + param + "?";
@@ -375,7 +376,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 string occuredISO = parsedDt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fZ");
                 if (DateTime.Now.AddDays(-1) > parsedDt) { continue; } // ignore events that took place more than 1 day ago
 
-                string deployId = "";
+                string deployId = "",envId="";
                 dynamic deployLinks = JsonConvert.DeserializeObject(o.RelatedDocumentIds.ToString());
                 string webUrl = "";
                 foreach (string str in deployLinks)
@@ -384,58 +385,120 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     {
                         webUrl = API_URL.TrimEnd("/api/".ToCharArray()) + "/app#/deployments/" + str;
                         deployId = str;
+                    } else if (str.StartsWith("Environments"))
+                    {
+                        envId = str;
                     }
                 }
 
                 DeployEvent d = new DeployEvent(occuredISO, o.Message.ToString(),
                     JsonConvert.DeserializeObject<System.Collections.Generic.List<string>>(o.RelatedDocumentIds.ToString()), // nested list element
-                    o.Category.ToString(), webUrl, GetDeploy(deployId));
+                    o.Category.ToString(), webUrl, deployId);
                 if (d.Category == "DeploymentSucceeded" || d.Category == "DeploymentFailed" ||
                     d.Category == "DeploymentStarted" || d.Category == "DeploymentQueued")
                 {
                     dl.Add(d);
                 }
-            }
-
-            for (int x = 0; x < dl.Count; x++)
-            {
-                if (dl[x].RelatedDocs.Count > 0)
-                {
-                    foreach (string docID in dl[x].RelatedDocs)
-                    {
-                        if (docID.Contains("Environments"))
-                        {
-                            dl[x].Environs.Add(GetEnvironment(docID));
-                        }
-                    }
-                }
+                if (envId != "") d.Environs.Add(GetEnvironment(envId));
             }
 
             return dl;
         }
         #endregion
 
-        #region Make Live Deploy List
+        #region Make Deploy List by State
         /// <summary>
-        /// Retrieves a list of all live deploys from Octopus API
+        /// Retrieves a list of all deploys with a given state from Octopus API
         /// </summary>
-        /// <param name="jsonTxt">JSON string</param>
+        /// <param name="state">state</param>
         /// <returns>DeployList</returns>
-        private static List<Deploy> MakeLiveDeployList()
+        private static List<Deploy> MakeDeployList(string state)
         {
-            List<Deploy> liveDeploys = new List<Deploy>();
-            string jsonTxt = GetResponse(ApiDatum.LiveDeploys);
+            Deploy.State status;
+            switch (state)
+            {
+                case "Success":
+                    status = Deploy.State.Success;
+                    break;
+                case "Failed":
+                    status = Deploy.State.Failed;
+                    break;
+                case "Queued":
+                    status = Deploy.State.Queued;
+                    break;
+                case "Executing":
+                    status = Deploy.State.Executing;
+                    break;
+                case "Canceled":
+                    status = Deploy.State.Canceled;
+                    break;
+                default:
+                    status = Deploy.State.Unknown;
+                    break;
+            }
+
+
+            List<Deploy> deploys = new List<Deploy>();
+            string jsonTxt = GetResponse(ApiDatum.Deploys,state);
             if (!String.IsNullOrEmpty(jsonTxt)) // if response is empty, do not proceed
             {
                 dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
                 foreach (dynamic o in jsonDeser.Items)
                 {
-                    liveDeploys.Add(new Deploy(o.Id.ToString(), o.ProjectId.ToString(), o.ReleaseId.ToString(), o.EnvironmentId.ToString(), o.Links.Web.ToString(), o.Created.ToString(),Deploy.State.Executing));
+                    deploys.Add(new Deploy(o.Id.ToString(), o.ProjectId.ToString(), o.ReleaseId.ToString(), o.EnvironmentId.ToString(), o.Links.Web.ToString(), o.Created.ToString(), status));
                 }
-                
+
             }
 
-            return liveDeploys;
+            return deploys;
+        }
+        #endregion
+
+        #region Make Deploy List
+        /// <summary>
+        /// Retrieves a list of all deploys from Octopus API
+        /// </summary>
+        /// <param name="jsonTxt">JSON string</param>
+        /// <returns>DeployList</returns>
+        private static List<Deploy> MakeDeployList()
+        {
+            List<Deploy> deploys = new List<Deploy>();
+            string jsonTxt = GetResponse(ApiDatum.Deploys);
+            if (!String.IsNullOrEmpty(jsonTxt)) // if response is empty, do not proceed
+            {
+                dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
+                foreach (dynamic o in jsonDeser.Items)
+                {
+                    Deploy.State state = Deploy.State.Unknown;
+                    string taskJson = GetResponse(ApiDatum.Task, o.TaskId.ToString());
+                    if (!String.IsNullOrEmpty(taskJson))
+                    {
+                        dynamic taskDeserialization = JsonConvert.DeserializeObject(taskJson);
+                        switch (taskDeserialization.ToString())
+                        {
+                            case "Success":
+                                state = Deploy.State.Success;
+                                break;
+                            case "Failed":
+                                state = Deploy.State.Failed;
+                                break;
+                            case "Queued":
+                                state = Deploy.State.Queued;
+                                break;
+                            case "Executing":
+                                state = Deploy.State.Executing;
+                                break;
+                            case "Canceled":
+                                state = Deploy.State.Canceled;
+                                break;
+                        }
+                    }
+                    deploys.Add(new Deploy(o.Id.ToString(), o.ProjectId.ToString(), o.ReleaseId.ToString(), o.EnvironmentId.ToString(), o.Links.Web.ToString(), o.Created.ToString(), state));
+                }
+
+            }
+
+            return deploys;
         }
         #endregion
 
@@ -594,18 +657,19 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 anyChange = true;
             }
 
-            List<DeployEvent> dp = MakeDeployEventList(GetResponse(ApiDatum.DeployEvents)); 
-            if (state.Deploys == null || !state.Deploys.DeepEquals<DeployEvent>(dp))
+            List<DeployEvent> dep = MakeDeployEventList(GetResponse(ApiDatum.DeployEvents)); 
+            if (state.DeployEvents == null || !state.DeployEvents.DeepEquals<DeployEvent>(dep))
             {
-                state.Deploys = dp;
+                state.DeployEvents = dep;
                 state.IsChanged["DeployEvents"] = true;
                 anyChange = true;
             }
 
-            List<Deploy> ldp = MakeLiveDeployList();
-            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<Deploy>(ldp))
+            List<Deploy> dp = MakeDeployList();
+            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<Deploy>(dp))
             {
-                state.LiveDeploys = ldp;
+                state.Deploys = dp;
+                state.LiveDeploys = MakeDeployList("Executing");
                 state.IsChanged["Deploys"] = true;
                 anyChange = true;
             }
@@ -855,14 +919,35 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         /// Pulls list of all currently executing deploys
         /// </summary>
         /// <returns></returns>
-        [Route("api/Octo/liveDeploys")]
+        [Route("api/Octo/deploysByStatus")]
         [ResponseType(typeof(int))]
         [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Deploy>))]
-        public IHttpActionResult GetLiveDeploys()
+        public IHttpActionResult GetLiveDeploys(string status)
         {
             try
             {
-                return Ok<List<Deploy>>(MakeLiveDeployList());
+                return Ok<List<Deploy>>(MakeDeployList(status));
+            }
+            catch (Exception exception)
+            {
+                return InternalServerError(exception);
+            }
+        }
+        #endregion
+
+        #region Deploys
+        /// <summary>
+        /// Pulls list of all currently executing deploys
+        /// </summary>
+        /// <returns></returns>
+        [Route("api/Octo/deploys")]
+        [ResponseType(typeof(int))]
+        [SwaggerResponse(200, "Ok - call was successful.", typeof(List<Deploy>))]
+        public IHttpActionResult GetDeploys()
+        {
+            try
+            {
+                return Ok<List<Deploy>>(MakeDeployList());
             }
             catch (Exception exception)
             {

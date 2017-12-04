@@ -10,9 +10,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public string Category;
         public List<Environment> Environs;
         public string WebUrl;
-        public Deploy Deployment;
+        public string DeployId;
 
-        public DeployEvent(string timeAndDate, string msg, List<string> related, string category, string webUrl, Deploy deployment)
+        public DeployEvent(string timeAndDate, string msg, List<string> related, string category, string webUrl, string deployId)
         {
             TimeAndDate = timeAndDate;
             Message = msg;
@@ -20,7 +20,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
             Category = category;
             Environs = new List<Environment>();
             WebUrl = webUrl;
-            Deployment = deployment;
+            DeployId = deployId;
         }
         public override string ToString()
         {

@@ -10,7 +10,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
     public class DeployHub : Hub
     {
         private static JsonSerializerSettings jsonCamelCaseSettings;
-        private static DataState currentState = new DataState();
+        public static DataState currentState = new DataState();
         private static System.Timers.Timer timer = new System.Timers.Timer(2000); // Set Timer to run every 2 seconds
         public DeployHub() : base()
         {

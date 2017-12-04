@@ -38,7 +38,7 @@
         $http.get("api/Octo/lifecycles").then(function (response) {
             $scope.lifecycles = response.data;
         });
-        $http.get("api/Octo/liveDeploys").then(function (response) {
+        $http.get("api/Octo/deploysByStatus?status=Executing").then(function (response) {
             $scope.liveDeploys = response.data;
         });
 
