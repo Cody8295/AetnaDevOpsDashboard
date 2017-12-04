@@ -43,7 +43,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             Releases = 6,
             Dashboard = 7,
             LiveDeploys = 8,
-            Deploys = 9,
+            Deploy = 9,
             Task = 10
         }
         #endregion
@@ -97,7 +97,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                 case ApiDatum.LiveDeploys:
                     reqString = "deployments/?taskState=executing&";
                     break;
-                case ApiDatum.Deploys:
+                case ApiDatum.Deploy:
                     reqString = "deployments/" + param + "?";
                     break;
                 case ApiDatum.Task:
@@ -450,7 +450,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             if (String.IsNullOrEmpty(id)) return null;
 
             Deploy deploy;
-            string jsonTxt = GetResponse(ApiDatum.Deploys, id);
+            string jsonTxt = GetResponse(ApiDatum.Deploy, id);
             if (!String.IsNullOrEmpty(jsonTxt)) // if response is empty, do not proceed
             {
                 dynamic jsonDeser = JsonConvert.DeserializeObject(jsonTxt);
