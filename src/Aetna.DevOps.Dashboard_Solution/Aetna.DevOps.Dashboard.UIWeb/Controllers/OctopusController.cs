@@ -75,7 +75,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     reqString = "environments/" + (param == String.Empty ? "" : param) + "?";
                     break;
                 case ApiDatum.DeployEvents:
-                    reqString = "events?take=1000&";
+                    reqString = "events?take=250&";
                     break;
                 case ApiDatum.Machines:
                     if (param == string.Empty) // all machines
@@ -95,8 +95,8 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     reqString = "dashboard?";
                     break;
                 case ApiDatum.Deploys:
-                    if (param == String.Empty) { reqString = "deployments/?take=1000&"; }
-                    else { reqString = "deployments/?taskState=" + param + "&take=1000&";}
+                    if (param == String.Empty) { reqString = "deployments/?take=250&"; }
+                    else { reqString = "deployments/?taskState=" + param + "&take=250&";}
                     break;
                 case ApiDatum.Deploy:
                     reqString = "deployments/" + param + "?";
