@@ -96,7 +96,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
                     break;
                 case ApiDatum.Deploys:
                     if (param == String.Empty) { reqString = "deployments/?take=1000&"; }
-                    else { reqString = "deployments/?taskState=" + param + "&take=1000";}
+                    else { reqString = "deployments/?taskState=" + param + "&take=1000&";}
                     break;
                 case ApiDatum.Deploy:
                     reqString = "deployments/" + param + "?";
@@ -672,10 +672,12 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
             }
 
             List<Deploy> dp = MakeDeployList();
-            if (state.LiveDeploys == null || !state.Deploys.DeepEquals<Deploy>(dp))
+            List<Deploy> ldp = MakeDeployList("Executing");
+            if (state.LiveDeploys == null || !state.LiveDeploys.DeepEquals<Deploy>(ldp) 
+                || state.Deploys == null || !state.Deploys.DeepEquals<Deploy>(dp))
             {
                 state.Deploys = dp;
-                state.LiveDeploys = MakeDeployList("Executing");
+                state.LiveDeploys = ldp;
                 state.IsChanged["Deploys"] = true;
                 anyChange = true;
             }

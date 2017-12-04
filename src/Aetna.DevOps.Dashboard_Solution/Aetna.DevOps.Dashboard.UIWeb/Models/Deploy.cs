@@ -42,7 +42,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
         public bool Equals(Deploy other)
         {
-            return (Id==other.Id && ProjectId == other.ProjectId && ReleaseId == other.ReleaseId && WebUrl == other.WebUrl && EnvironmentId == other.EnvironmentId && CreationTime == other.CreationTime);
+            return (Id==other.Id && ProjectId == other.ProjectId && ReleaseId == other.ReleaseId && WebUrl == other.WebUrl && EnvironmentId == other.EnvironmentId && CreationTime == other.CreationTime && TaskState == other.TaskState);
         }
     }
 }
