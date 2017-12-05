@@ -11,6 +11,10 @@
     padding: 3px 10px;
 }
 
+.machine-list {
+    padding-bottom: 0;
+}
+
 .open-in-octopus {
     padding: 20px;
 }
@@ -35,7 +39,7 @@
     padding-top: 10px;
 }
 
-.environ-linky {
+.environ-link {
     width: 100%;
 }
 

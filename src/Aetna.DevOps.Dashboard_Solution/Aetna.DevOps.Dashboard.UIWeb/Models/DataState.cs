@@ -73,8 +73,6 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         /// <summary>
         /// Checks if any Octopus API data has changed from last state send to client
         /// </summary>
-        /// <param name="state">The state of data being sent to client</param>
-        /// <returns>Boolean</returns>
         public void UpdateAll()
         {
 
@@ -621,11 +619,14 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         /// <summary>
         /// Gets an Environment object for some Octopus environment by ID
         /// </summary>
-        /// <param name="envName">Some Environment ID</param>
+        /// <param name="envId">Some Environment ID</param>
         /// <returns>Environment</returns>
-        private Environment GetEnvironment(string envName)
+        private Environment GetEnvironment(string envId)
         {
-            foreach (Environment environment in Environments) if (environment.Name == envName) return environment;
+            foreach (Environment environment in Environments)
+            {
+                if (environment.Id == envId) return environment;
+            }
             return null;
         }
         #endregion

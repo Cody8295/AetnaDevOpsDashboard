@@ -303,183 +303,48 @@
                     display: true
                 }
             }
-
+           
             $scope.openDeployModal = function(points, evt) {
-                var htmlDeploys = "";
                 if (points[0] === undefined) { // user didn't click on a point
-                    $(".deployData").html("");
                     $(".octoModal").hide();
                     return;
                 }
 
-                var deployCount = 0; // used to tag button links for later usage
 
-                for (var index in $scope.deployEvents) {
-                    var d = $scope.deployEvents[index];
-                    var msg = d.message;
-                    var cat = d.category;
-                    var dt = moment(d.dateTime);
-                    var timePassed = dt.fromNow();
-                    var environData = "<a href=\\'#\\' id=\\'deploy-" +
-                        deployCount +
-                        "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary fill-width open-in-octopus\\'>Open in Octopus</a>";
-
-                    // Triply nested, double terminating quotations are really fun
-                    // -> onclick="element.html('\\"someText\\"')"
-                    d.environs.forEach(function(e) {
-                        function formatEnvironment(msg, dt, id, name, description) {
-                            var machineList = "";
-                            e.machines.forEach(function(machine) {
-                                var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
-                                machineList +=
-                                    "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
-                                    machine.name +
-                                    "<span class=\\'pull-right\\'>" +
-                                    (machine.isInProcess === "true" ? isInProcessStr : "") +
-                                    "<small>" +
-                                    machine.status +
-                                    "</small></span></h4><p class=\\'list-group-item-text\\'>" +
-                                    machine.statusSummary +
-                                    "</p></li>";
-                            });
-                            return "<div class=\\'card text-center\\'><div class=\\'card-header\\'>" +
-                                id +
-                                "</div><div class=\\'card-block\\'><h4 class=\\'card-title\\'>" +
-                                name +
-                                "</h4>" +
-                                "<p class=\\'card-text\\'>" +
-                                (description === undefined ? "No description" : description) +
-                                "</p></div>" +
-                                "<ul class=\\'list-group list-group-flush scrolling-list\\'>" +
-                                machineList +
-                                "</ul>" +
-                                "<div class=\\'card-footer text-muted\\'>" +
-                                dt +
-                                "</div></div>";
-                        }
-
-                        environData += formatEnvironment(msg, timePassed, e.id, e.name, e.description);
-                    });
-                    console.log(d);
-                    environData += "</div>"; // closes the bootstrap panel
-                    htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
-                        environData +
-                        "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" +
-                        deployCount +
-                        "').attr('href', '" +
-                        d.webUrl +
-                        "')}, 1000);\" class=\"list-group-item " +
-                        coloredListElement(cat) +
-                        "\">" +
-                        "<h4 class=\"list-group-item-heading\">" +
-                        (d.environs.length > 0 ? d.environs[0].name : "Not named") +
-                        "<div class='pull-right'><small>" +
-                        timePassed +
-                        "</small></div></h4>" +
-                        "<p class=\"list-group-item-text\">" +
-                        msg +
-                        "</p></a>";
-                    deployCount += 1;
-                }
-
-            if (htmlDeploys == "") {
-                return;
-            }
-            $("#octoModal").modal("show");
-            $(".envList").html(htmlDeploys);
-            $(".envList").show();
+                $("#octoModal").modal("show");
             };
 
             $scope.octoPieClick = function (points, evt) {
-                var htmlDeploys = "";
                 if (points[0] === undefined) { // user didn't click on a point
-                    $(".deployData").html("");
                     $(".octoModal").hide();
                     return;
                 }
-                var deployCount = 0; // used to tag button links for later usage
-                var sel = points[0]._index;
-                //indicies of categories: 3 succeeded, 2 failed, 1 queued, 0 started
-                var deployEvents = (sel == 0 ? "DeploymentStarted" : (sel == 1 ? "DeploymentQueued" : (sel == 3 ? "DeploymentFailed" : (sel == 2 ? "DeploymentSucceeded" : "Unrecognized"))));
-                var dh = $scope.deployEvents;
-                    for (var x = 0; x < dh.length; x++) {
-                        var d = dh[x];
-                        if (d.category == deployEvents) {
-                            console.log(d.category);
-                            var msg = d.message;
-                            var cat = d.category;
-                            var dt = moment(d.dateTime);
-                            var timePassed = dt.fromNow();
+                $(".deployData").hide();
+                var scope = angular.element($('#octoModal')).scope();
 
-                            //console.log(msg + "," + timePassed);
-                            var environData =
-                                "<div class=\\'panel panel-info\\'><div class=\\'panel-heading environ-data\\'><a href=\\'#\\' id=\\'deploy-" +
-                                    deployCount +
-                                    "\\' target=\\'_blank\\' type=\\'submit\\' class=\\'btn btn-primary environ-link open-in-octopus \\'>Open in Octopus</a></div>";
-                            // Triply nested, double terminating quotations are really fun
-                            // -> onclick="element.html('\\"someText\\"')"
-                            d.environs.forEach(function(e) {
-                                function formatEnvironment(msg, dt, id, name, description) {
-                                    var machineList = "";
-                                    e.machines.forEach(function(machine) {
-                                        var isInProcessStr = "<i class=\\'fa fa-cog faa-spin animated fa-5x\\'></i>";
-                                        machineList +=
-                                            "<li class=\\'list-group-item\\' ><h4 class=\\'list-group-item-header\\'>" +
-                                            machine.name +
-                                            "<span class=\\'pull-right\\'>" +
-                                            (machine.isInProcess === "true" ? isInProcessStr : "") +
-                                            "<small>" +
-                                            machine.status +
-                                            "</small></span></h4><p class=\\'list-group-item-text\\'>" +
-                                            machine.statusSummary +
-                                            "</p></li>";
-                                    });
-                                    return "<div class=\\'card text-center\\'><div class=\\'card-header\\'>" +
-                                        id +
-                                        "</div><div class=\\'card-block\\'><h4 class=\\'card-title\\'>" +
-                                        name +
-                                        "</h4>" +
-                                        "<p class=\\'card-text\\'>" +
-                                        (description === undefined ? "No description" : description) +
-                                        "</p></div>" +
-                                        "<ul class=\\'list-group list-group-flush scrolling-list\\'>" +
-                                        machineList +
-                                        "</ul>" +
-                                        "<div class=\\'card-footer text-muted\\'>" +
-                                        dt +
-                                        "</div></div>";
-                                }
-
-                                environData += formatEnvironment(msg, timePassed, e.id, e.name, e.description);
-
-                            });
-                            environData += "</div>"; // closes the bootstrap panel
-                            htmlDeploys += "<a href=\"javascript:void(0)\" onclick=\"$('.deployData').html('" +
-                                environData +
-                                "'); $('.deployData').show(); setTimeout(function () { $('#deploy-" +
-                                deployCount +
-                                "').attr('href', '" +
-                                d.webUrl +
-                                "')}, 1000);\" class=\"list-group-item deploy-item " +
-                                coloredListElement(cat) +
-                                "\">" +
-                                "<h4 class=\"list-group-item-heading\">" +
-                                d.environs[0].name +
-                                "<div class='pull-right'><small>" +
-                                timePassed +
-                                "</small></div></h4>" +
-                                "<p class=\"list-group-item-text\">" +
-                                msg +
-                                "</p></a>";
-                            deployCount += 1;
-                        }
+                while (scope.selectedDeploys.length > 0) {
+                    scope.selectedDeploys.pop();
+                }
+                var statusNum = points[0]._index;
+                var status = (statusNum == 0 ? "DeploymentStarted" : (statusNum == 1 ? "DeploymentQueued" : (statusNum == 2 ? "DeploymentSucceeded" : (statusNum == 3 ? "DeploymentFailed" : "Unrecognized"))));
+                for (var index = 0; index < 10; index++) {
+                    var deployEvent = $scope.deployEvents[index];
+                    if (deployEvent.category === status) {
+                        scope.selectedDeploys.push({
+                            environmentName: deployEvent.environs[0].name,
+                            time: moment(deployEvent.dateTime).fromNow(),
+                            colorClass: coloredListElement(status),
+                            message: deployEvent.message,
+                            date: moment(deployEvent.dateTime),
+                            webUrl: deployEvent.webUrl,
+                            click: function () {
+                                scope.selectEnvironment(environmentName, date, webUrl);
+                            }
+                        });
                     }
-                
-
-                if (htmlDeploys == "") { return; }
+                }
+                scope.$apply();
                 $("#octoModal").modal("show");
-                $(".envList").html(htmlDeploys);
-                $(".envList").show();
             };
 
             $scope.octoChartOptions = {
@@ -509,5 +374,32 @@
                 $('.charts').show();
             });
         });
+    });
+
+    app.controller('octopusModalController', function ($scope, $http) {
+        $scope.selectedDeploys = [];
+        $scope.webUrl = "/#/";
+        $scope.date = "now";
+        $scope.eventClick = function (environmentName, date, webUrl) {
+            $scope.date = date;
+            $scope.webUrl = webUrl;
+            var octoScope = angular.element($('.octopus-column')).scope();
+            for (var index in octoScope.environments) {
+                var environment = octoScope.environments[index];
+                if (environment.name === environmentName) {
+                    if (environment.description == undefined) {
+                        environment.description = "No description";
+                    }
+                    $scope.selectedEnvironment = environment;
+                    console.log($scope.selectedEnvironment.id);
+                    $('.deployData').show();
+                    return;
+                }
+            }
+        };
+    });
+
+    app.controller('octopusProjectModalController', function ($scope, $http) {
+
     });
 }());

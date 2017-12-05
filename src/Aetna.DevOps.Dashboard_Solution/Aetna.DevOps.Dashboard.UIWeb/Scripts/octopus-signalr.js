@@ -7,44 +7,44 @@
 function onChange(projectGroups, projects, lifecycles, environments, deployEvents, deploys, liveDeploys) {
     var scope = angular.element($('.octopus-column')).scope();
     
-    if (projectGroups != "noChange") {
+    if (projectGroups !== "noChange") {
         if ($.connection.hub.logging) console.log("ProjectGroups Update");
         scope.projectGroups = JSON.parse(projectGroups);
         // Display an indicator
     }
     
-    if (projects != "noChange") {
+    if (projects !== "noChange") {
         if ($.connection.hub.logging) console.log("Projects Update");
         scope.projects = JSON.parse(projects);
         // Display an indicator
     }
     
-    if (lifecycles != "noChange") {
+    if (lifecycles !== "noChange") {
         if ($.connection.hub.logging) console.log("ProjectGroups Update");
         scope.lifecycles = JSON.parse(lifecycles);
         // Display an indicator
     }
 
-    if (environments != "noChange") {
+    if (environments !== "noChange") {
         if ($.connection.hub.logging) console.log("Environments Update");
         scope.environments = JSON.parse(environments);
         // Display an indicator
     }
 
-    if (deploys != "noChange") {
+    if (deploys !== "noChange") {
         if ($.connection.hub.logging) console.log("Deploys Update");
         scope.deploys = JSON.parse(deploys);
         //Display an indicator
     }
 
-    if (liveDeploys != "noChange") {
+    if (liveDeploys !== "noChange") {
         if ($.connection.hub.logging) console.log("Live Deploys Update");
         console.log(liveDeploys)
         scope.liveDeploys = JSON.parse(liveDeploys);
         //Display an indicator
     }
 
-    if (deployEvents != "noChange") {
+    if (deployEvents !== "noChange") {
         if ($.connection.hub.logging) console.log("Deploy Events Update");
         scope.deployEvents = JSON.parse(deployEvents);
 

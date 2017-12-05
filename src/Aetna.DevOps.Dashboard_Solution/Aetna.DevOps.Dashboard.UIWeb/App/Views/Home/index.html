@@ -151,7 +151,7 @@
             </div>
         </div>
 
-        <div id="octoModal" class="modal fade col-xs-12 col-md-8 col-md-offset-2 octo-modal" role="dialog" ng-controller="octopusController">
+        <div id="octoModal" class="modal fade col-xs-12 col-md-8 col-md-offset-2 octo-modal" role="dialog" ng-controller="octopusModalController">
             <div class="modal-dialog octo-modal-dialog">
                 <div class="modal-content">
                     
@@ -161,8 +161,43 @@
                         </div>
                         <div class="modal-body octo-modal-body">
                             <div class="row">
-                                <div class="col-md-6 pre-scrollable env-list-scrollbox"><div class="list-group envList"></div></div>
-                                <div class="col-md-6"><div class="deployData" ></div></div>
+                                <div class="col-md-6 pre-scrollable env-list-scrollbox">
+                                    
+                                    <div class="list-group envList">
+                                        <div data-ng-repeat="event in selectedDeploys">
+                                            <a href="javascript:void(0)" ng-click="eventClick(event.environmentName,event.time,event.webUrl)" class="list-group-item deploy-item {{event.colorClass}}">
+                                                <h4 class="list-group-item-heading"> {{event.environmentName}}
+                                                    <div class="pull-right"><small>{{event.time}}</small>
+                                                    </div></h4>
+                                                <p class="list-group-item-text">{{event.message}}</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    
+                                    <div class="deployData">
+                                        <div class="card text-center">
+                                            <div class="panel panel-info"><div class="panel-heading environ-data"><a href="{{webUrl}}" target="_blank" type="submit" class="btn btn-primary environ-link open-in-octopus ">Open in Octopus</a></div>
+                                            <div class="card-header">{{selectedEnvironment.id}}</div>
+                                            <div class="card-block"><h4 class="card-title">{{selectedEnvironment.name}}</h4>
+                                                <p class="card-text">{{selectedEnvironment.description}}</p></div>
+                                            <ul class="list-group list-group-flush scrolling-list machine-list">
+                                                <li class="list-group-item" data-ng-repeat="machine in selectedEnvironment.machines">
+                                                    <h4 class="list-group-item-header">
+                                                        {{machine.name}}
+                                                        <span class="pull-right">
+                                                            <i class="fa fa-cog faa-spin animated fa-5x" ng-if="machine.isInProcess==='true'"></i>
+                                                            <small>{{machine.status}}</small>
+                                                        </span>
+                                                    </h4>
+                                                    <p class="list-group-item-text">{{machine.statusSummary}}</p>
+                                                </li>
+                                            </ul>
+                                            <div class="card-footer text-muted">{{date}}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -172,7 +207,7 @@
             </div>
         </div>
 
-        <div id="projectModal" class="modal fade octo-modal octo-project-modal" role="dialog" ng-controller="octopusController">
+        <div id="projectModal" class="modal fade octo-modal octo-project-modal" role="dialog" ng-controller="octopusProjectModalController">
             <div class="modal-dialog octo-modal-dialog octo-project-modal">
                 <div class="modal-content">
                     <div class="modal-header">
