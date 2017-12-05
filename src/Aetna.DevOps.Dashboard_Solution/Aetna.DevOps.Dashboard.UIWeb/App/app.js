@@ -1,13 +1,14 @@
 ﻿(function () {
 
-    var app = angular.module("app", ["ngRoute","ngCookies","angularMoment"]);
+    var app = angular.module("app", ["ngRoute","ngCookies","angularMoment","chart.js"]);
 
     app.config(function ($routeProvider,$locationProvider) {
         $locationProvider.hashPrefix('');
         $routeProvider
             .when("/", {
                 templateUrl: "App/Views/Home/index.html",
-                controller: "homeIndexController"
+                controller: "homeIndexController",
+                controller: "octopusController"
             })
             .when("/AboutUs/", {
                 templateUrl: "App/Views/Home/aboutUs.html",

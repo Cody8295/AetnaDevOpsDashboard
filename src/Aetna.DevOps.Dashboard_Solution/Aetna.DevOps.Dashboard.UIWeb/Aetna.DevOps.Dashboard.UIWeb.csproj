@@ -130,6 +130,7 @@
     <Content Include="App\Controllers\Home\homeContactUsController.js" />
     <Content Include="App\Controllers\Home\homeAboutUsController.js" />
     <Content Include="App\Controllers\Home\homeIndexController.js" />
+    <Content Include="App\Controllers\Home\octopusController.js" />
     <Content Include="App\Filters\escapeFilter.js" />
     <Content Include="App\Services\restService.js" />
     <Content Include="App\Views\Home\contactUs.html" />
@@ -168,6 +169,8 @@
     <Content Include="Scripts\angular-animate.min.js" />
     <Content Include="Scripts\angular-aria.js" />
     <Content Include="Scripts\angular-aria.min.js" />
+    <Content Include="Scripts\angular-chart.js" />
+    <Content Include="Scripts\angular-chart.min.js" />
     <Content Include="Scripts\angular-cookies.js" />
     <Content Include="Scripts\angular-cookies.min.js" />
     <Content Include="Scripts\angular-csp.css" />
@@ -958,6 +961,8 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Scripts\angular-moment.min.js.map" />
+    <Content Include="OctopusControllerClassDiagram.cd" />
+    <Content Include="Scripts\angular-chart.min.js.map" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
@@ -965,7 +970,7 @@
     <Content Include="Scripts\jquery-3.2.1.slim.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
-    <Content Include="Scripts\signalr-script.js" />
+    <Content Include="Scripts\octopus-signalr.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
@@ -1068,13 +1073,27 @@
   <ItemGroup>
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\OctopusController.cs" />
+    <Compile Include="Models\ActiveDeploy.cs" />
+    <Compile Include="Models\Deploy.cs" />
+    <Compile Include="Models\OctopusModel.cs" />
+    <Compile Include="Models\Extensions.cs" />
+    <Compile Include="Models\DataState.cs" />
+    <Compile Include="Models\DeployEvent.cs" />
+    <Compile Include="Controllers\DeployHub.cs" />
+    <Compile Include="Models\Environment.cs" />
+    <Compile Include="Models\Machine.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
+    <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\ProjectGroup.cs" />
+    <Compile Include="Models\Release.cs" />
+    <Compile Include="Controllers\Startup.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\OperatingEnvironment.cs" />
-    <Compile Include="Models\UserDetail.cs" />
-    <Compile Include="Models\UserDetailHelper.cs" />
+    <Compile Include="Controllers\OperatingEnvironment.cs" />
+    <Compile Include="Controllers\UserDetail.cs" />
+    <Compile Include="Controllers\UserDetailHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1084,6 +1103,7 @@
     <Content Include="Scripts\jquery-3.2.1.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>

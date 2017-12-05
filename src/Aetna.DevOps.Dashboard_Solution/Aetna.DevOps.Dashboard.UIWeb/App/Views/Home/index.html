@@ -52,112 +52,172 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 octopus-column" ng-controller="octopusController">
             <div class="panel panel-primary">
                 
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        Deploy <img src="Images/logo-octo-inv.png" class="pull-right" height="22" />
+                        Deploy<img src="Images/logo-octo-inv.png" class="pull-right" height="22" />
                     </h3>
                 </div>
                 
                 <div class="panel-body">
 
                     <div class="panel panel-default">
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectGroupList" data-ng-controller="projectGroupController">
-                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups}}</span>
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#projectGroupList">
+                            <i class="fa fa-object-ungroup"></i>&nbsp;Project Groups<span class="pull-right badge badge-default badge-pill projectGroups">{{projectGroups.length}}</span>
                         </div>
 
-                        <div id="projectGroupList" class="collapsible panel-collapse collapse" data-ng-controller="projectGroupListController">
-                            <ul class="list-group">
-                                <li data-ng-repeat="projectGroup in projectGroupList" class="list-group-item">
-                                    {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projectList.count}}</span>
-                                </li>
-                            </ul>
+                        <div id="projectGroupList" class="collapsible panel-collapse collapse clickable">
+                            <div class="pre-scrollable">
+                                <ul class="list-group">
+                                    <li data-ng-repeat="projectGroup in projectGroups" class="list-group-item clickable">
+                                        {{projectGroup.groupName}} <span class="badge badge-default badge-pill">{{projectGroup.projects.length}}</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#projectsList" data-ng-controller="projectController">
-                            <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill projects">{{projects}}</span>
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#projectsList">
+                            <i class="fa fa-product-hunt"></i>&nbsp;Projects <span class="pull-right badge badge-default badge-pill projects">{{projects.length}}</span>
                         </div>
 
-                        <div id="projectsList" class="collapsible collapse projectsList">
-                            <div class="pre-scrollable" style="overflow-y:auto;overflow-x:auto;">
-                                <div class="list-group projectsInfo" style="position:absolute;display:none;overflow-y:auto;overflow-x:hidden;padding:25px;">
-                                </div>
+                        <div id="projectsList" class="collapsible collapse projectsList clickable">
+                            <div class="input-group">
+                                <input type="text" class="form-control" ng-model="projectFilter.name">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                            <div class="pre-scrollable">
+                                <a data-ng-repeat="project in projects | filter:projectFilter" on-finish-render="finished" href="javascript:void(0)" onclick="" class="list-group-item project" data-toggle="tooltip" data-original-title="{{project.lifecycle}}">
+                                    <h4 class="list-group-item-heading">{{project.name}}</h4>
+                                    <p class="list-group-item-text">{{project.groupId}}</p>
+                                </a>
                             </div>
                         </div>
 
-                        <div class="panel-footer" data-ng-controller="lifecyclesController">
+                        <div class="panel-footer">
                             <i class="fa fa-heartbeat"></i>&nbsp;Lifecycles <span class="pull-right badge badge-default badge-pill lifecycles">{{lifecycles}}</span>
                         </div>
 
-                        <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#environments" data-ng-controller="environmentController">
-                            <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill numEnvironments">{{environments}}</span>
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#environments">
+                            <i class="fa fa-photo"></i>&nbsp;Environments <span class="pull-right badge badge-default badge-pill numEnvironments">{{environments.length}}</span>
                         </div>
 
-                        <div id="environments" class="collapsible panel-collapse collapse" data-ng-controller="environmentListController">
-                            <ul class="list-group">
-                                <li data-ng-repeat="environment in environmentList" class="list-group-item">
-                                    {{environment.name}} <span class="badge badge-default badge-pill"> {{environment.description}} </span>
-                                </li>
-                            </ul>
+                        <div id="environments" class="collapsible panel-collapse collapse clickable">
+                            <div class="pre-scrollable">
+                                <ul class="list-group">
+                                    <li data-ng-repeat="environment in environments" class="list-group-item">
+                                        {{environment.name}} <span class="badge badge-default badge-pill"> {{environment.description}} </span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
 
+                        <div class="panel-footer collapse-trigger clickable" data-toggle="collapse" href="#graph">
 
-                                <div class="panel-footer collapse-trigger" data-toggle="collapse" href="#graph">
+                            <i class="fa fa-space-shuttle"></i>&nbsp;Deploys <span class="pull-right badge badge-default badge-pill numLiveDeploys">{{liveDeploys.length}}</span>
+                        </div>
 
-                                    <i class="fa fa-space-shuttle"></i>&nbsp;Deploys
+                        <div id="graph" class="collapsible collapse graph">
+                            <div class="btn-group pull-right" id="dataRep" data-toggle="buttons">
+                                <label class="btn btn-primary active" id="opt1">
+                                    <input type="radio" name="options1" id="option1" value="line" autocomplete="off" checked><i class="fa fa-line-chart"></i>
+                                </label>
+                                <label class="btn btn-primary" id="opt2">
+                                    <input type="radio" name="options2" id="option2" value="pie" autocomplete="off"><i class="fa fa-pie-chart"></i>
+                                </label>
+                                <label class="btn btn-primary" id="opt3">
+                                    <input type="radio" name="options3" id="option3" value="bar" autocomplete="off"><i class="fa fa-bar-chart"></i>
+                                </label>
+                            </div>
+                            <div class="canvas-container clickable"><br />
+                                <i class='fa fa-cog faa-spin animated fa-5x graph-loading'></i>
+                                <div class="charts">
+                                    <canvas class="octo-line-canvas chart chart-line" chart-data="octoChartData" chart-labels="times" chart-series="octoSeries" chart-options="octoChartOptions" chart-colors="octoColors" chart-click="openDeployModal"> </canvas>
+                                    <canvas class="octo-pie-canvas chart chart-pie" chart-data="octoPieData" chart-labels="octoSeries" chart-options="octoPieOptions" chart-colors="octoColors" chart-click="octoPieClick"></canvas>
+                                    <canvas class="octo-bar-canvas chart chart-bar" chart-data="octoChartData" chart-labels="times" chart-series="octoSeries" chart-options="octoChartOptions" chart-colors="octoColors" chart-click="openDeployModal"></canvas>
                                 </div>
+                            </div>
+                            <br/>
+                            <br/>
 
-                                <div id="graph" class="collapsible collapse graph">
-                                    <div class="btn-group pull-right" id="dataRep" data-toggle="buttons">
-                                        <label class="btn btn-primary active" id="opt1">
-                                            <input type="radio" name="options1" id="option1" value="line" autocomplete="off" checked><i class="fa fa-line-chart"></i>
-                                        </label>
-                                        <label class="btn btn-primary" id="opt2">
-                                            <input type="radio" name="options2" id="option2" value="pie" autocomplete="off"><i class="fa fa-pie-chart"></i>
-                                        </label>
-                                        <label class="btn btn-primary" id="opt3">
-                                            <input type="radio" name="options3" id="option3" value="bar" autocomplete="off"><i class="fa fa-bar-chart"></i>
-                                        </label>
-                                    </div>
-                                    <span class="center-block"><br /><canvas id="canvas" style="width:100%;height:100%;"></canvas></span>
-
-                                </div>
                         </div>
-
                     </div>
-                <div class="panel-footer"><a href="https://octodeploy.aetna.com" target="_blank"><i class="fa fa-link"></i>&nbsp;Go to website...</a></div>
-            </div>
-        </div>
-        <div id="octoModal" class="modal fade" role="dialog" style="max-height:90%;height:90%;overflow-y:auto">
-            <div class="modal-dialog" style="max-height:90%;overflow-y:auto;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"> <i class="fa fa-times-circle"></i></button>
-                        <h4 class="modal-title">Selected Deploys</h4>
-                    </div>
-                    <div class="modal-body" style="max-height:90%;overflow-y:auto;">
-                        <div class="row">
-                            <div class="col-md-6 pre-scrollable" style="overflow-y:auto;overflow-x:auto;"><div class="list-group" style="position:absolute;display:none;overflow-y:auto;"></div></div>
-                            <div class="col-md-6"><div class="deployData" style="display:none;overflow:hidden;white-space:pre-wrap"></div></div>
-                        </div>
-                        
-                       
-                    </div>
+                </div>
+                <div class="panel-footer"><a href="https://octodeploy.aetna.com" target="_blank"><i class="fa fa-link"></i>&nbsp;Go to website...</a>
+                    <a class="pull-right" href="swagger/ui/index#!/Octopus" target="_blank"><i class="fa fa-code"></i>Go to Swagger...</a>
                 </div>
             </div>
         </div>
 
-        <div id="projectModal" class="modal fade" role="dialog" style="max-height:90%;height:90%;overflow-y:auto">
-            <div class="modal-dialog" style="max-height:90%;overflow-y:auto;">
+        <div id="octoModal" class="modal fade col-xs-12 col-md-8 col-md-offset-2 octo-modal" role="dialog" ng-controller="octopusModalController">
+            <div class="modal-dialog octo-modal-dialog">
+                <div class="modal-content">
+                    
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"> <i class="fa fa-times-circle"></i></button>
+                            <h4 class="modal-title">Selected Deploys</h4>
+                        </div>
+                        <div class="modal-body octo-modal-body">
+                            <div class="row">
+                                <div class="col-md-6 pre-scrollable env-list-scrollbox">
+                                    
+                                    <div class="list-group envList">
+                                        <div data-ng-repeat="event in selectedDeploys">
+                                            <a href="javascript:void(0)" ng-click="eventClick(event.environmentName,event.time,event.webUrl)" class="list-group-item deploy-item {{event.colorClass}}">
+                                                <h4 class="list-group-item-heading"> {{event.environmentName}}
+                                                    <div class="pull-right"><small>{{event.time}}</small>
+                                                    </div></h4>
+                                                <p class="list-group-item-text">{{event.message}}</p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    
+                                    <div class="deployData pre-scrollable">
+                                        <div class="card text-center">
+                                            <div class="panel panel-info"><div class="panel-heading environ-data"><a href="{{webUrl}}" target="_blank" type="submit" class="btn btn-primary environ-link open-in-octopus ">Open in Octopus</a></div>
+                                            <div class="card-header">{{selectedEnvironment.id}}</div>
+                                            <div class="card-block"><h4 class="card-title">{{selectedEnvironment.name}}</h4>
+                                                <p class="card-text">{{selectedEnvironment.description}}</p></div>
+                                            <ul class="list-group list-group-flush scrolling-list machine-list">
+                                                <li class="list-group-item" data-ng-repeat="machine in selectedEnvironment.machines">
+                                                    <h4 class="list-group-item-header">
+                                                        {{machine.name}}
+                                                        <span class="pull-right">
+                                                            <i class="fa fa-cog faa-spin animated fa-5x" ng-if="machine.isInProcess==='true'"></i>
+                                                            <small>{{machine.status}}</small>
+                                                        </span>
+                                                    </h4>
+                                                    <p class="list-group-item-text">{{machine.statusSummary}}</p>
+                                                </li>
+                                            </ul>
+                                            <div class="card-footer text-muted">{{date}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                   </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div id="projectModal" class="modal fade octo-modal octo-project-modal" role="dialog" ng-controller="octopusProjectModalController">
+            <div class="modal-dialog octo-modal-dialog octo-project-modal">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"> <i class="fa fa-times-circle"></i></button>
                         <h4 class="modal-title">Progression Timeline</h4>
                     </div>
-                    <div class="modal-body" style="max-height:90%;overflow-y:auto;">
+                    <div class="modal-body octo-modal-body">
                         <div id="tl">
                             <div id="timeline-embed">
+                                <i class="fa fa-cog fa-spin fa-3x fa-fw"></i>
                             </div>
                         </div>
                     </div>

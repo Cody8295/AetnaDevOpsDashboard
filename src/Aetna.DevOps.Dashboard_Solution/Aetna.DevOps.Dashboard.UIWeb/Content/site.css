@@ -1,3 +1,110 @@
+.fill-width {
+    width: 100%;
+}
+
+.deploy-button {
+    display:block;
+    overflow: hidden; 
+    border-top-left-radius: 0; 
+    border-top-right-radius: 0; 
+    height:70px; 
+    padding: 3px 10px;
+}
+
+.machine-list {
+    padding-bottom: 0;
+}
+
+.open-in-octopus {
+    padding: 8px;
+    margin: 20px;
+}
+
+.open-in-octopus-deploy {
+    margin-right: 20px;
+    margin-bottom: 20px;
+    color: white !important;
+    text-decoration: none;
+}
+
+.deploy-item {
+    display:block;
+    overflow: hidden;
+    height: 100px;
+    padding: 3px 10px;
+}
+
+.scrolling-list {
+    overflow-y: auto;
+}
+
+.environ-data {
+    padding-top: 10px;
+}
+
+.environ-link {
+    width: 100%;
+}
+
+.project {
+    display:block;
+    overflow: hidden; 
+    border-top-left-radius: 0; 
+    border-top-right-radius: 0; 
+    height:70px; 
+    padding: 3px 10px;
+}
+
+.octo-project-modal {
+    width: 95%;
+}
+
+.octo-modal {
+    max-height: 90%;
+    height: 90%;
+    overflow-y: auto;
+}
+
+.octo-modal-dialog {
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.octo-modal-body {
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.env-list-scrollbox {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.octo-canvas {
+    height: 100%;
+    width: 100%;
+}
+
+.canvas-container {
+    max-height: 400px;
+}
+
+.graph-loading {
+    display: inline-block;
+    text-align: center;
+    vertical-align: bottom;
+    width: 100%;
+    height: 100%;
+}
+
+.tl-slidenav-next{
+    max-height:20%;
+}
+
+.tl-slidenav-previous{
+    max-height:20%;
+}
+
 /*!
  * font-awesome-animation - v0.0.6
  * https://github.com/l-lin/font-awesome-animation
@@ -1211,10 +1318,18 @@
 }
 
 
+
 .collapsible {
     border: 1px solid #ddd !important;
     border-radius: 0px;
+
 }
+
+.pre-scrollable {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
 .collapse-trigger:hover {
     text-decoration: underline;
     background-color: #cccccc;
@@ -1430,4 +1545,8 @@
 
 .text-xs {
     font-size: .75em;
+}
+
+.clickable {
+    cursor: pointer;
 }
