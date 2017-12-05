@@ -585,7 +585,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
                     if (!String.IsNullOrEmpty(taskJson))
                     {
                         dynamic taskDeserialization = JsonConvert.DeserializeObject(taskJson);
-                        switch (taskDeserialization.ToString())
+                        switch (taskDeserialization.State.ToString())
                         {
                             case "Success":
                                 state = Deploy.State.Success;
