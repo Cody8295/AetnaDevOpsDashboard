@@ -74,7 +74,7 @@
                     var r = releases[x];
                     var releaseURL = "\"" + r.webUrl.toString() + "\"";
 
-                    var releaseDeployHtml = "<a class=\"open-in-octopus " + r.id + "-link c\" href=\"#\">Open in Octopus</a><div class=\"list-group\">";
+                    var releaseDeployHtml = "<a class=\"open-in-octopus " + r.id + "-link c\" href=\"#\"><div class=\"btn btn-primary open-in-octopus\">Open in Octopus</div></a><div class=\"list-group\">";
 
                     //console.log(r.releaseDeploys);
                     for (var deplo in r.releaseDeploys) {
@@ -84,7 +84,7 @@
                             "startDate": depl.created,
                             "endDate": depl.completedTime,
                             "headline": depl.id,
-                            "text": "<a class=\"open-in-octopus" + depl.id + "-link c\" href=\"#\">Open in Octopus</a>" + depl.errorMessage
+                            "text": "<a class=\"open-in-octopus-deploy " + depl.id + "-link c\" href=\"#\"><div class=\"btn btn-primary open-in-octopus-deploy\">Open in Octopus</div></a>" + depl.errorMessage
                         };
                         dates.push(date);
                         releaseDeployHtml += "<a href=\"javascript:void(0)\" onclick=\"" +

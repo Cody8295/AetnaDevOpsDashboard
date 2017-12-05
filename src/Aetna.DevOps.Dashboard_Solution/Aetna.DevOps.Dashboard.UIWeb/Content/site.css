@@ -16,12 +16,15 @@
 }
 
 .open-in-octopus {
-    padding: 20px;
+    padding: 8px;
+    margin: 20px;
 }
 
 .open-in-octopus-deploy {
-    padding-left: 20px;
-    padding-right: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    color: white !important;
+    text-decoration: none;
 }
 
 .deploy-item {
