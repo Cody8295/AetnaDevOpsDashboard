@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+.charts {
+    max-height: 350px;
+}
+
 .deploy-button {
     display:block;
     overflow: hidden; 
@@ -44,6 +48,7 @@
 
 .environ-link {
     width: 100%;
+    margin-right: 10px;
 }
 
 .project {
