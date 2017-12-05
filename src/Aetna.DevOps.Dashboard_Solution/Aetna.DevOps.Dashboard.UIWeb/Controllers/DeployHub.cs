@@ -15,10 +15,18 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Controllers
         {
             timer.Elapsed += (sender, e) =>
             {
-                if (currentState.Update())
+                string projectGroups = currentState.UpdateProjectGroups();
+                string projects = currentState.UpdateProjects();
+                string lifecycles = currentState.UpdateLifecycles();
+                string environments = currentState.UpdateEnvironments();
+                string deployEvents = currentState.UpdateDeployEvents();
+                string deploys = currentState.UpdateDeploys();
+                string liveDeploys = currentState.UpdateLiveDeploys();
+
+                if (projectGroups != "noChange" || projects != "noChange" || lifecycles != "noChange" || environments != "noChange" 
+                                                || deployEvents != "noChange" || deploys != "noChange" || liveDeploys != "noChange")
                 {
-                    string serialization = currentState.JsonSerialization;
-                    Clients.All.onChange(serialization);
+                    Clients.All.onChange(projectGroups, projects, lifecycles, environments, deployEvents, deploys, liveDeploys);
                 }
             };
             timer.Enabled = true;

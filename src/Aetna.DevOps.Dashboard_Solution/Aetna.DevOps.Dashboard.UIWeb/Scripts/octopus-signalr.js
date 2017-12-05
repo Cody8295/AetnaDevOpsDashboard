@@ -1,52 +1,52 @@
 ﻿$().ready(function () {
     var $deployHub = $.connection.deployHub;
     $deployHub.client.onChange = onChange;
-    $.connection.hub.logging = false; //debugging
+    $.connection.hub.logging = true; //debugging
     $.connection.hub.start();
 });
-function onChange(currentStateJson) {
-    var currentState = JSON.parse(currentStateJson);
+function onChange(projectGroups, projects, lifecycles, environments, deployEvents, deploys, liveDeploys) {
     var scope = angular.element($('.octopus-column')).scope();
-
-
-    if ($.connection.hub.logging) console.log(currentState);
-
-    if (currentState.isChanged.projectGroups) {
+    
+    if (projectGroups != "noChange") {
         if ($.connection.hub.logging) console.log("ProjectGroups Update");
-        scope.projectGroups = currentState.projectGroups;
+        scope.projectGroups = JSON.parse(projectGroups);
         // Display an indicator
     }
     
-    if (currentState.isChanged.projects) {
+    if (projects != "noChange") {
         if ($.connection.hub.logging) console.log("Projects Update");
-        $(".project").tooltip("hide");
-        scope.projects = currentState.projects;
+        scope.projects = JSON.parse(projects);
         // Display an indicator
     }
     
-    if (currentState.isChanged.lifecycles) {
+    if (lifecycles != "noChange") {
         if ($.connection.hub.logging) console.log("ProjectGroups Update");
-        scope.lifecycles = currentState.lifecycles; // .Count if Lifecycles object is added
+        scope.lifecycles = JSON.parse(lifecycles);
         // Display an indicator
     }
 
-    if (currentState.isChanged.environments) {
+    if (environments != "noChange") {
         if ($.connection.hub.logging) console.log("Environments Update");
-        scope.environments = currentState.environments;
+        scope.environments = JSON.parse(environments);
         // Display an indicator
     }
 
-    if (currentState.isChanged.deploys) {
-        if ($.connection.hub.logging) console.log("Live Deploys Update");
-        scope.deploys = currentState.deploys;
-        scope.liveDeploys = currentState.liveDeploys;
+    if (deploys != "noChange") {
+        if ($.connection.hub.logging) console.log("Deploys Update");
+        scope.deploys = JSON.parse(deploys);
         //Display an indicator
     }
 
+    if (liveDeploys != "noChange") {
+        if ($.connection.hub.logging) console.log("Live Deploys Update");
+        console.log(liveDeploys)
+        scope.liveDeploys = JSON.parse(liveDeploys);
+        //Display an indicator
+    }
 
-    if (currentState.isChanged.deployEvents) {
+    if (deployEvents != "noChange") {
         if ($.connection.hub.logging) console.log("Deploy Events Update");
-        scope.deployEvents = currentState.deployEvents;
+        scope.deployEvents = JSON.parse(deployEvents);
 
         // These 5 arrays hold information about deployments over the past 24 hours
         var failed = [];

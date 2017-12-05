@@ -66,7 +66,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
         private DataState()
         {
-            Update();
+            UpdateAll();
         }
         
         #region Update DataState
@@ -75,80 +75,98 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         /// </summary>
         /// <param name="state">The state of data being sent to client</param>
         /// <returns>Boolean</returns>
-        public bool Update()
+        public void UpdateAll()
         {
-            bool anyChange = false;
 
-            // Used to notify user when data has changed
-            isChanged = new Dictionary<string, bool>(){
-                { "ProjectGroups", false },
-                { "Projects", false },
-                { "Lifecycles", false },
-                { "Environments", false },
-                { "DeployEvents", false },
-                { "Deploys", false }
-             };
+            UpdateProjectGroups();
+            UpdateProjects();
+            UpdateLifecycles();
+            UpdateEnvironments();
+            UpdateDeployEvents();
+            UpdateDeploys();
+            UpdateLiveDeploys();
 
-            // Get New Data
+        }
 
+        public string UpdateProjectGroups()
+        {
             List<ProjectGroup> pg = MakeProjectGroupList();
             if (ProjectGroups == null || !ProjectGroups.DeepEquals<ProjectGroup>(pg))
             {
                 projectGroups = pg;
-                IsChanged["ProjectGroups"] = true;
-                anyChange = true;
+                return JsonConvert.SerializeObject(projectGroups, jsonCamelCaseSettings);
             }
+            return "noChange";
+        }
 
+        public string UpdateProjects()
+        {
             List<Project> pl = MakeProjectList();
             if (Projects == null || !Projects.DeepEquals<Project>(pl))
             {
                 projects = pl;
-                IsChanged["Projects"] = true;
-                anyChange = true;
+                return JsonConvert.SerializeObject(projects, jsonCamelCaseSettings);
             }
+            return "noChange";
+        }
 
-            // Temporary until Lifecycle object is added
+        public string UpdateLifecycles()
+        {
             int nlc = 0;
             Int32.TryParse(GetFirstInt(GetResponse(ApiDatum.Lifecycles)), out nlc);
             if (Lifecycles != nlc)
             {
                 lifecycles = nlc;
-                IsChanged["Lifecycles"] = true;
-                anyChange = true;
+                return nlc.ToString();
             }
+            return "noChange";
+        }
 
+        public string UpdateEnvironments()
+        {
             List<Environment> env = MakeEnvironmentList();
             if (Environments == null || !Environments.DeepEquals<Environment>(env))
             {
                 environments = env;
-                IsChanged["Environments"] = true;
-                anyChange = true;
+                return JsonConvert.SerializeObject(environments, jsonCamelCaseSettings);
             }
+            return "noChange";
 
+        }
+
+        public string UpdateDeployEvents()
+        {
             List<DeployEvent> dep = MakeDeployEventList();
             if (DeployEvents == null || !DeployEvents.DeepEquals<DeployEvent>(dep))
             {
                 deployEvents = dep;
-                IsChanged["DeployEvents"] = true;
-                anyChange = true;
+                return JsonConvert.SerializeObject(deployEvents, jsonCamelCaseSettings);
             }
+            return "noChange";
+        }
 
+        public string UpdateDeploys()
+        {
             List<Deploy> dp = MakeDeployList();
             if (Deploys == null || !Deploys.DeepEquals<Deploy>(dp))
             {
                 deploys = dp;
-                liveDeploys = MakeDeployList("Executing");
-                IsChanged["Deploys"] = true;
-                anyChange = true;
+                return JsonConvert.SerializeObject(deploys, jsonCamelCaseSettings);
             }
-            if (anyChange)
-            {
-                jsonSerialization = JsonConvert.SerializeObject(this, jsonCamelCaseSettings);
-                System.Diagnostics.Debug.WriteLine(jsonSerialization);
-            }
-
-            return anyChange;
+            return "noChange";
         }
+
+        public string UpdateLiveDeploys()
+        {
+            List<Deploy> ldp = MakeDeployList("Executing");
+            if (LiveDeploys == null || !LiveDeploys.DeepEquals<Deploy>(ldp))
+            {
+                liveDeploys = ldp;
+                return JsonConvert.SerializeObject(liveDeploys, jsonCamelCaseSettings);
+            }
+            return "noChange";
+        }
+
         #endregion
 
         #region Data Retrieval Methods
