@@ -135,9 +135,9 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         public string UpdateDeployEvents()
         {
             List<DeployEvent> dep = MakeDeployEventList();
-            if (DeployEvents == null || !DeployEvents.DeepEquals<DeployEvent>(dep))
+            if (DeployEvents == null || !DeployEvents.CheapEquals(dep))
             {
-                deployEvents = dep;
+                deployEvents = MakeDeployEventList();
                 return JsonConvert.SerializeObject(deployEvents, jsonCamelCaseSettings);
             }
             return "noChange";
@@ -550,9 +550,10 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
                         o.Category.ToString(), webUrl, deployId);
                     if (!String.IsNullOrEmpty(deployId))
                     {
-                        dl.Add(d);
                         if (envId != "") d.Environs.Add(GetEnvironment(envId));
                         if (d.Category == "TaskCanceled") d.Category = "DeploymentFailed";
+                        dl.Add(d);
+
                     }
 
                 }

@@ -61,9 +61,11 @@ function onChange(projectGroups, projects, lifecycles, environments, deployEvent
         var started = [];
         started.length = 24;
         started.fill(0);
-        var allDeploys = [];
-        allDeploys.length = 24;
-        allDeploys.fill([]);
+        if (scope.allDeploys == undefined) {
+            scope.allDeploys = [];
+        }
+        scope.allDeploys.length = 24;
+        scope.allDeploys.fill([]);
 
         // total 24 hour counts for each deploy type
         var failedCount = 0;
@@ -78,7 +80,7 @@ function onChange(projectGroups, projects, lifecycles, environments, deployEvent
             var hour = timeString.hour();
             var timeDiff = timeString.diff(rightNow, 'hours');
             hour = 23 - (timeDiff < 0 ? timeDiff * -1 : timeDiff);
-            allDeploys[hour] = (allDeploys[hour] === undefined ? [] : allDeploys[hour]).concat(
+            scope.allDeploys[hour] = (scope.allDeploys[hour] === undefined ? [] : scope.allDeploys[hour]).concat(
                 {
                     "message": d.message,
                     "category": d.category,

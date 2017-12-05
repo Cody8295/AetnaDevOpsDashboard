@@ -60,6 +60,19 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
         #endregion
         #endregion
 
+        public static bool CheapEquals(this List<DeployEvent> list, List<DeployEvent> other)
+        {
+            if (list == null)
+            {
+                return other == null;
+            }
+            if (other == null || list.Count != other.Count)
+            {
+                return false;
+            }
+            return list[0].TimeAndDate == other[0].TimeAndDate;
+        }
+
         public static List<T> ToList<T>(this Dictionary<string, T> dictionary) where T : OctopusModel<T>
         {
             return new List<T>(dictionary.Values);

@@ -29,7 +29,7 @@ namespace Aetna.DevOps.Dashboard.UIWeb.Models
 
         public bool Equals(DeployEvent other)
         {
-            return (TimeAndDate == other.TimeAndDate && Message == other.Message && RelatedDocs.Equals(other.RelatedDocs) && Category == other.Category && Environs.DeepEquals<Environment>(other.Environs) && WebUrl == other.WebUrl);
+            return (TimeAndDate == other.TimeAndDate && Message == other.Message && RelatedDocs.Equals(other.RelatedDocs) && Category == other.Category/* && Environs.DeepEquals<Environment>(other.Environs) */&& WebUrl == other.WebUrl);
         }
     }
 }

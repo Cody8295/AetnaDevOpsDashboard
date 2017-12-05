@@ -229,9 +229,11 @@
             var started = [];
             started.length = 24;
             started.fill(0);
-            var allDeploys = [];
-            allDeploys.length = 24;
-            allDeploys.fill([]);
+            if ($scope.allDeploys == undefined) {
+                $scope.allDeploys = [];
+            }
+            $scope.allDeploys.length = 24;
+            $scope.allDeploys.fill([]);
 
             // total 24 hour counts for each deploy type
             var failedCount = 0;
@@ -246,7 +248,7 @@
                 var hour = timeString.hour();
                 var timeDiff = timeString.diff(rightNow, 'hours');
                 hour = 23 - (timeDiff < 0 ? timeDiff * -1 : timeDiff);
-                allDeploys[hour] = (allDeploys[hour] === undefined ? [] : allDeploys[hour]).concat(
+                $scope.allDeploys[hour] = ($scope.allDeploys[hour] === undefined ? [] : $scope.allDeploys[hour]).concat(
                     {
                         "message": d.message,
                         "category": d.category,
@@ -295,7 +297,7 @@
                 "Deployments Started",
                 "Deployments Queued",
                 "Deployments Succeeded",
-                "Deployments Failed",
+                "Deployments Failed"
             ];
 
             $scope.octoPieOptions = {
@@ -309,8 +311,28 @@
                     $(".octoModal").hide();
                     return;
                 }
+                $(".deployData").hide();
+                var scope = angular.element($('#octoModal')).scope();
 
-
+                while (scope.selectedDeploys.length > 0) {
+                    scope.selectedDeploys.pop();
+                }
+                for (var index in $scope.allDeploys[points[0]._index]) {
+                    var deployEvent = $scope.allDeploys[points[0]._index][index];
+                    console.log(deployEvent.category);
+                    scope.selectedDeploys.push({
+                        environmentName: deployEvent.environs[0].name,
+                        time: moment(deployEvent.dateTime).fromNow(),
+                        colorClass: coloredListElement(deployEvent.category),
+                        message: deployEvent.message,
+                        date: moment(deployEvent.dateTime),
+                        webUrl: deployEvent.webUrl,
+                        click: function () {
+                            scope.selectEnvironment(environmentName, date, webUrl);
+                        }
+                    });
+                }
+                scope.$apply();
                 $("#octoModal").modal("show");
             };
 
@@ -327,20 +349,24 @@
                 }
                 var statusNum = points[0]._index;
                 var status = (statusNum == 0 ? "DeploymentStarted" : (statusNum == 1 ? "DeploymentQueued" : (statusNum == 2 ? "DeploymentSucceeded" : (statusNum == 3 ? "DeploymentFailed" : "Unrecognized"))));
-                for (var index = 0; index < 10; index++) {
-                    var deployEvent = $scope.deployEvents[index];
-                    if (deployEvent.category === status) {
-                        scope.selectedDeploys.push({
-                            environmentName: deployEvent.environs[0].name,
-                            time: moment(deployEvent.dateTime).fromNow(),
-                            colorClass: coloredListElement(status),
-                            message: deployEvent.message,
-                            date: moment(deployEvent.dateTime),
-                            webUrl: deployEvent.webUrl,
-                            click: function () {
-                                scope.selectEnvironment(environmentName, date, webUrl);
-                            }
-                        });
+                for (var index in $scope.allDeploys) {
+                    for (var jindex in $scope.allDeploys[index]) {
+                        var deployEvent = $scope.allDeploys[index][jindex];
+                        var datetime = moment(deployEvent.dateTime);
+                        var fromnow = datetime.fromNow();
+                        if (deployEvent.category === status) {
+                            scope.selectedDeploys.push({
+                                environmentName: deployEvent.environs[0].name,
+                                time: fromnow,
+                                colorClass: coloredListElement(status),
+                                message: deployEvent.message,
+                                date: datetime,
+                                webUrl: deployEvent.webUrl,
+                                click: function() {
+                                    scope.selectEnvironment(environmentName, date, webUrl);
+                                }
+                            });
+                        }
                     }
                 }
                 scope.$apply();
@@ -391,7 +417,6 @@
                         environment.description = "No description";
                     }
                     $scope.selectedEnvironment = environment;
-                    console.log($scope.selectedEnvironment.id);
                     $('.deployData').show();
                     return;
                 }
